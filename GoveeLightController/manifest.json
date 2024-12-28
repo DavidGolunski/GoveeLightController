@@ -1,0 +1,69 @@
+{
+  "Actions": [
+    {
+      "Icon": "Images/icon",
+      "Name": "This is a keyaction",
+      "States": [
+        {
+          "Image": "Images/pluginAction",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "This is a tooltip",
+      "UUID": "com.davidgolunski.goveelightcontroller.keyaction",
+      "PropertyInspectorPath": "PropertyInspector/PluginActionPI.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Global Settings",
+      "States": [
+        {
+          "Image": "Images/pluginAction",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Change the settings for all plugin actions",
+      "UUID": "com.davidgolunski.goveelightcontroller.globalsettingsaction",
+      "PropertyInspectorPath": "PropertyInspector/GlobalSettings.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Turn Off",
+      "States": [
+        {
+          "Image": "Images/pluginAction",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Turn off one or more devices",
+      "UUID": "com.davidgolunski.goveelightcontroller.turnoffaction",
+      "PropertyInspectorPath": "PropertyInspector/GlobalSettings.html"
+    }
+  ],
+  "Author": "David Golunski",
+  "Name": "GoveeLightContoller",
+  "Description": "TODO_ENTER_PLUGIN_DESCRIPTION",
+  "Icon": "Images/pluginIcon",
+  "URL": "https://TODO_ENTER_YOUR_HOMEPAGE.com",
+  "Version": "1.0",
+  "CodePath": "com.davidgolunski.goveelightcontroller",
+  "Category": "GoveeLightController",
+  "CategoryIcon": "Images/categoryIcon",
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "6.4"
+  },
+  "UUID": "com.davidgolunski.goveelightcontroller"
+}
