@@ -14,22 +14,32 @@ using System.Threading.Tasks;
 using System.Transactions;
 
 namespace GoveeLightController {
-    [PluginActionId("com.davidgolunski.goveelightcontroller.turnoffaction")]
+    [PluginActionId("com.davidgolunski.goveelightcontroller.setbrightnessaction")]
 
-    public class TurnOffAction : KeypadBase {
+    public class SetBrightnessAction : KeypadBase {
 
-        private DeviceListSettings localSettings;
+        private class SetBrightnessSettings : DeviceListSettings {
+
+            [JsonProperty(PropertyName = "brightness")]
+            public int brightness { get; set; }
+
+            public SetBrightnessSettings() : base() {
+                brightness = 100;
+            }
+        }
+
+
+        private SetBrightnessSettings localSettings;
         private DeviceListSettings globalSettings;
-        
 
 
-        public TurnOffAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
+        public SetBrightnessAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
-                this.localSettings = new DeviceListSettings();
+                this.localSettings = new SetBrightnessSettings();
                 SaveSettings();
             }
             else {
-                this.localSettings = payload.Settings.ToObject<DeviceListSettings>();
+                this.localSettings = payload.Settings.ToObject<SetBrightnessSettings>();
             }
             this.globalSettings = new DeviceListSettings();
             GlobalSettingsManager.Instance.RequestGlobalSettings();
@@ -38,17 +48,17 @@ namespace GoveeLightController {
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"TurnOffAction: Destructor called");
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"SetBrightnessAction: Destructor called");
         }
 
         public override void KeyPressed(KeyPayload payload) {
             if(localSettings.useGlobalSettings) {
-                GoveeDeviceController.Instance.TurnOff(globalSettings.deviceIpList);
+                GoveeDeviceController.Instance.SetBrightness(localSettings.brightness, globalSettings.deviceIpList);
             }
             else {
-                GoveeDeviceController.Instance.TurnOff(localSettings.deviceIpList);
+                GoveeDeviceController.Instance.SetBrightness(localSettings.brightness, localSettings.deviceIpList);
             }
-            
+
         }
 
         public override void KeyReleased(KeyPayload payload) { }

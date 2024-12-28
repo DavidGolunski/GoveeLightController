@@ -11,90 +11,103 @@ namespace GoveeLightController {
 
         private static GoveeDeviceController instance;
         public static GoveeDeviceController Instance { 
-            get => instance ?? (instance = new GoveeDeviceController(3, 40, 60));
+            get => instance ?? (instance = new GoveeDeviceController(40, 60));
             private set => instance = value;
         }
 
-        private readonly int _deviceConnectTimeout;
-        private readonly int _standardBrightness;
-        private readonly int _highlightBrightness;
+        private int _standardBrightness;
+        private int _highlightBrightness;
         private Dictionary<string, GoveeDevice> _devices;
         private Color _primaryColor = Color.BLACK;
         private bool _terminateEffect = false; // Flag to stop special effects
         private Thread _effectThread;          // Placeholder for effect thread
 
-        private GoveeDeviceController(int deviceConnectTimeout = 3, int standardBrightness = 40, int highlightBrightness = 100, List<string> deviceIpList = null) {
-            _deviceConnectTimeout = deviceConnectTimeout;
+        private GoveeDeviceController(int standardBrightness = 40, int highlightBrightness = 100) {
             _standardBrightness = standardBrightness;
             _highlightBrightness = highlightBrightness;
 
-            if(deviceIpList == null) {
-                _devices = GoveeDevice.GetDevices(_deviceConnectTimeout);
-                if(_devices.Count > 0) {
-                    Logger.Instance.LogMessage(TracingLevel.INFO, $"Found {_devices.Count} Govee Devices");
-                }
-                else {
-                    Logger.Instance.LogMessage(TracingLevel.WARN, "Have not found any Govee Devices");
-                }
-            }
-            else {
-                _devices = deviceIpList.ToDictionary(ip => ip, ip => new GoveeDevice(ip, null, null));
-            }
-
-            Task.Delay(1000).Wait();
-            SetBrightness(_standardBrightness);
-            Task.Delay(100).Wait();
-            SetColor(_primaryColor);
-            Task.Delay(100).Wait();
-            TurnOff();
+            _devices = new Dictionary<string, GoveeDevice>();
         }
 
         ~GoveeDeviceController() {
-            TurnOff();
+            TurnOff(null);
         }
+
 
         public void SetPrimaryColor(Color color) {
             _primaryColor = color ?? throw new ArgumentNullException(nameof(color));
         }
 
         public void ActivatePrimaryColor(bool ignoreThread = true) {
-            SetColor(_primaryColor, ignoreThread);
+            SetColor(_primaryColor, null, ignoreThread);
         }
 
-        public void TurnOn(bool ignoreThread = false) {
+        public void TurnOn(List<string> ips = null, bool ignoreThread = false) {
             if(!ignoreThread)
                 StopEffectThread();
-            foreach(var device in _devices.Values) {
-                device.TurnOn();
+
+            AddNonExistingDevices(ips);
+
+            List<string> ipsToUse = ips??_devices.Keys.ToList();
+            foreach(var ip in ipsToUse) {
+                _devices[ip].TurnOn();
             }
         }
 
-        public void TurnOff(bool ignoreThread = false) {
+        public void TurnOff(List<string> ips = null, bool ignoreThread = false) {
             if(!ignoreThread)
                 StopEffectThread();
-            foreach(var device in _devices.Values) {
-                device.TurnOff();
+
+            AddNonExistingDevices(ips);
+
+            List<string> ipsToUse = ips ?? _devices.Keys.ToList();
+            foreach(var ip in ipsToUse) {
+                _devices[ip].TurnOff();
             }
         }
 
-        public void SetBrightness(int brightness, bool ignoreThread = false) {
+        public void SetBrightness(int brightness, List<string> ips = null,  bool ignoreThread = false) {
             if(!ignoreThread)
                 StopEffectThread();
-            foreach(var device in _devices.Values) {
-                device.SetBrightness(brightness);
+
+            AddNonExistingDevices(ips);
+
+            List<string> ipsToUse = ips ?? _devices.Keys.ToList();
+            foreach(var ip in ipsToUse) {
+                _devices[ip].SetBrightness(brightness);
             }
         }
 
-        public void SetColor(Color color, bool ignoreThread = false) {
+        public void SetColor(Color color, List<string> ips = null, bool ignoreThread = false) {
             if(color == null)
                 throw new ArgumentNullException(nameof(color));
             if(!ignoreThread)
                 StopEffectThread();
-            foreach(var device in _devices.Values) {
-                device.SetColor(color);
+
+            AddNonExistingDevices(ips);
+
+            List<string> ipsToUse = ips ?? _devices.Keys.ToList();
+            foreach(var ip in ipsToUse) {
+                _devices[ip].SetColor(color);
             }
         }
 
+        #region supportive functions
+
+        private void AddNonExistingDevices(List<string> ips) {
+            if(ips == null || ips.Count == 0) {
+                return;
+            }
+
+            foreach(string ip in ips) {
+                if(!_devices.ContainsKey(ip)) {
+                    _devices.Add(ip, new GoveeDevice(ip, null, null));
+                }
+            }
+        }
+        #endregion
+
+        #region Threading Section
         public void Pulse(Color color, int numOfPulses, double onTime, double offTime, bool turnOffAfterFunction = false, bool switchToPrimaryColorAfterFunction = false) {
             if(color == null)
                 throw new ArgumentNullException(nameof(color));
@@ -123,10 +136,10 @@ namespace GoveeLightController {
             if(_devices.Count <= 0)
                 return;
 
-            TurnOn(true);
-            SetColor(color, true);
+            TurnOn(null, true);
+            SetColor(color, null, true);
             Task.Delay(100).Wait();
-            SetBrightness(_highlightBrightness, true);
+            SetBrightness(_highlightBrightness, null, true);
 
             Task.Delay(TimeSpan.FromSeconds(onTime)).Wait();
 
@@ -134,17 +147,17 @@ namespace GoveeLightController {
                 if(_terminateEffect)
                     return;
 
-                TurnOff(true);
+                TurnOff(null, true);
                 Task.Delay(TimeSpan.FromSeconds(offTime)).Wait();
 
                 if(_terminateEffect)
                     return;
 
-                TurnOn(true);
+                TurnOn(null,true);
                 Task.Delay(TimeSpan.FromSeconds(onTime)).Wait();
             }
 
-            SetBrightness(_standardBrightness, true);
+            SetBrightness(_standardBrightness, null, true);
 
             if(switchToPrimaryColorAfterFunction && !_terminateEffect) {
                 Task.Delay(100).Wait();
@@ -153,8 +166,9 @@ namespace GoveeLightController {
 
             if(turnOffAfterFunction && !_terminateEffect) {
                 Task.Delay(100).Wait();
-                TurnOff(true);
+                TurnOff(null,true);
             }
         }
+        #endregion
     }
 }

@@ -71,8 +71,10 @@
     <Compile Include="GoveeDeviceController.cs" />
     <Compile Include="DeviceListSettings.cs" />
     <Compile Include="GlobalSettingsAction.cs" />
+    <Compile Include="SetBrightnessAction.cs" />
+    <Compile Include="TurnOnAction.cs" />
+    <Compile Include="SetColorAction.cs" />
     <Compile Include="TurnOffAction.cs" />
-    <Compile Include="KeyAction.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -112,16 +114,16 @@
     <Content Include="Images\pluginIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PropertyInspector\DialActionPI.html">
+    <Content Include="PropertyInspector\SetBrightnessAction.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PropertyInspector\GlobalSettings.html">
+    <Content Include="PropertyInspector\SetColorAction.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PropertyInspector\PluginActionPI.html">
+    <Content Include="PropertyInspector\TurnOnOffAction.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PropertyInspector\PluginActionPI.js">
+    <Content Include="PropertyInspector\GlobalSettingsAction.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

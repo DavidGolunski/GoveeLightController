@@ -2,21 +2,6 @@
   "Actions": [
     {
       "Icon": "Images/icon",
-      "Name": "This is a keyaction",
-      "States": [
-        {
-          "Image": "Images/pluginAction",
-          "TitleAlignment": "middle",
-          "FontSize": "12"
-        }
-      ],
-      "SupportedInMultiActions": false,
-      "Tooltip": "This is a tooltip",
-      "UUID": "com.davidgolunski.goveelightcontroller.keyaction",
-      "PropertyInspectorPath": "PropertyInspector/PluginActionPI.html"
-    },
-    {
-      "Icon": "Images/icon",
       "Name": "Global Settings",
       "States": [
         {
@@ -28,7 +13,7 @@
       "SupportedInMultiActions": false,
       "Tooltip": "Change the settings for all plugin actions",
       "UUID": "com.davidgolunski.goveelightcontroller.globalsettingsaction",
-      "PropertyInspectorPath": "PropertyInspector/GlobalSettings.html"
+      "PropertyInspectorPath": "PropertyInspector/GlobalSettingsAction.html"
     },
     {
       "Icon": "Images/icon",
@@ -40,10 +25,55 @@
           "FontSize": "12"
         }
       ],
-      "SupportedInMultiActions": false,
-      "Tooltip": "Turn off one or more devices",
+      "SupportedInMultiActions": true,
+      "Tooltip": "Turn off one or more lights",
       "UUID": "com.davidgolunski.goveelightcontroller.turnoffaction",
-      "PropertyInspectorPath": "PropertyInspector/GlobalSettings.html"
+      "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Turn On",
+      "States": [
+        {
+          "Image": "Images/pluginAction",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Turn on one or more lights",
+      "UUID": "com.davidgolunski.goveelightcontroller.turnonaction",
+      "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Change Color",
+      "States": [
+        {
+          "Image": "Images/pluginAction",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Changes the color of one or more lights",
+      "UUID": "com.davidgolunski.goveelightcontroller.setcoloraction",
+      "PropertyInspectorPath": "PropertyInspector/SetColorAction.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "Change Brightness",
+      "States": [
+        {
+          "Image": "Images/pluginAction",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Changes the brightness of one or more lights",
+      "UUID": "com.davidgolunski.goveelightcontroller.setbrightnessaction",
+      "PropertyInspectorPath": "PropertyInspector/SetBrightnessAction.html"
     }
   ],
   "Author": "David Golunski",

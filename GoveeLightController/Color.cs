@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BarRaider.SdTools;
+using System;
 
 namespace GoveeLightController {
 
@@ -31,6 +32,20 @@ namespace GoveeLightController {
         public int B {
             get => _rgb[2];
             set => _rgb[2] = ValidateValue(value);
+        }
+
+        public Color(string hexString) {
+            hexString = hexString.TrimStart('#');
+            if(hexString.Length != 6) {
+                this.R = 0;
+                this.G = 0;
+                this.B = 0;
+            }
+            else {
+                this.R = Convert.ToInt32(hexString.Substring(0, 2), 16);
+                this.G = Convert.ToInt32(hexString.Substring(2, 2), 16);
+                this.B = Convert.ToInt32(hexString.Substring(4, 2), 16);
+            }
         }
 
         public Color(int r, int g, int b) {

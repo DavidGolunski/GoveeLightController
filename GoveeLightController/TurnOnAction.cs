@@ -14,16 +14,15 @@ using System.Threading.Tasks;
 using System.Transactions;
 
 namespace GoveeLightController {
-    [PluginActionId("com.davidgolunski.goveelightcontroller.turnoffaction")]
+    [PluginActionId("com.davidgolunski.goveelightcontroller.turnonaction")]
 
-    public class TurnOffAction : KeypadBase {
+    public class TurnOnAction : KeypadBase {
 
         private DeviceListSettings localSettings;
         private DeviceListSettings globalSettings;
-        
 
 
-        public TurnOffAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
+        public TurnOnAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
                 this.localSettings = new DeviceListSettings();
                 SaveSettings();
@@ -38,17 +37,17 @@ namespace GoveeLightController {
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"TurnOffAction: Destructor called");
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"TurnOnAction: Destructor called");
         }
 
         public override void KeyPressed(KeyPayload payload) {
             if(localSettings.useGlobalSettings) {
-                GoveeDeviceController.Instance.TurnOff(globalSettings.deviceIpList);
+                GoveeDeviceController.Instance.TurnOn(globalSettings.deviceIpList);
             }
             else {
-                GoveeDeviceController.Instance.TurnOff(localSettings.deviceIpList);
+                GoveeDeviceController.Instance.TurnOn(localSettings.deviceIpList);
             }
-            
+
         }
 
         public override void KeyReleased(KeyPayload payload) { }

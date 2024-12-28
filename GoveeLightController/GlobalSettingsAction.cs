@@ -1,4 +1,6 @@
 ﻿using BarRaider.SdTools;
+using BarRaider.SdTools.Events;
+using BarRaider.SdTools.Wrappers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -25,9 +27,11 @@ namespace GoveeLightController {
             else {
                 this.settings = payload.Settings.ToObject<DeviceListSettings>();
             }
+            Connection.OnPropertyInspectorDidAppear += OnPropertyInspectorOpened;
         }
 
         public override void Dispose() {
+            Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
             Logger.Instance.LogMessage(TracingLevel.DEBUG, $"GlobalSettingsAction Destructor called");
         }
 
@@ -53,9 +57,14 @@ namespace GoveeLightController {
                     isFirst = false;
                 }
                 deviceIpListString += deviceEntry.Value.Ip;
+                Logger.Instance.LogMessage(TracingLevel.INFO, "Found Device with IP: " + deviceEntry.Value.Ip);
             }
 
-            this.settings._deviceIpListString = deviceIpListString;
+            // update the list in the property inspector, but don't update the settings. The user has to click the save button to apply the new settings
+            string oldIpListString = settings._deviceIpListString;
+            settings._deviceIpListString = deviceIpListString;
+            Connection.SetSettingsAsync(JObject.FromObject(settings));
+            settings._deviceIpListString = oldIpListString;
         }
 
         public override void KeyReleased(KeyPayload payload) { }
@@ -68,16 +77,16 @@ namespace GoveeLightController {
             
         }
 
-        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) {
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "GlobalSettingsAction: Received Global Settings");
-            Tools.AutoPopulateSettings(settings, payload.Settings);
-            SaveSettings();
-        }
+        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) { }
 
 
         private Task SaveSettings() {
             GlobalSettingsManager.Instance.SetGlobalSettings(JObject.FromObject(settings));
             return Connection.SetSettingsAsync(JObject.FromObject(settings));
+        }
+
+        private void OnPropertyInspectorOpened(object sender, SDEventReceivedEventArgs<PropertyInspectorDidAppear> e) {
+            Connection.SetSettingsAsync(JObject.FromObject(settings));
         }
     }
 }

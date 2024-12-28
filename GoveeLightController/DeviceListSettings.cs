@@ -29,9 +29,20 @@ namespace GoveeLightController {
 
         public List<String> deviceIpList { get; private set; }
 
-        
+
+
+        [JsonProperty(PropertyName = "useGlobalSettingsOption")]
+        public string useGlobalSettingsOption { get; set; }
+
+        public bool useGlobalSettings {
+            get => useGlobalSettingsOption == "global";
+        }
+
+
+
         public DeviceListSettings(){
             _deviceIpListString = "";
+            useGlobalSettingsOption = "global";
         }
 
 
