@@ -1,11 +1,11 @@
 {
   "Actions": [
     {
-      "Icon": "Images/icon",
+      "Icon": "Images/Setting",
       "Name": "Global Settings",
       "States": [
         {
-          "Image": "Images/pluginAction",
+          "Image": "Images/Setting",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -16,11 +16,11 @@
       "PropertyInspectorPath": "PropertyInspector/GlobalSettingsAction.html"
     },
     {
-      "Icon": "Images/icon",
+      "Icon": "Images/IconLightbulbOff",
       "Name": "Turn Off",
       "States": [
         {
-          "Image": "Images/pluginAction",
+          "Image": "Images/IconLightbulbOff",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -31,11 +31,11 @@
       "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
     },
     {
-      "Icon": "Images/icon",
+      "Icon": "Images/IconLightbulbOn",
       "Name": "Turn On",
       "States": [
         {
-          "Image": "Images/pluginAction",
+          "Image": "Images/IconLightbulbOn",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -50,7 +50,7 @@
       "Name": "Change Color",
       "States": [
         {
-          "Image": "Images/pluginAction",
+          "Image": "Images/Lightbulb",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -61,11 +61,11 @@
       "PropertyInspectorPath": "PropertyInspector/SetColorAction.html"
     },
     {
-      "Icon": "Images/icon",
+      "Icon": "Images/IconLightbulbBrightness",
       "Name": "Change Brightness",
       "States": [
         {
-          "Image": "Images/pluginAction",
+          "Image": "Images/IconLightbulbBrightness",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -74,13 +74,37 @@
       "Tooltip": "Changes the brightness of one or more lights",
       "UUID": "com.davidgolunski.goveelightcontroller.setbrightnessaction",
       "PropertyInspectorPath": "PropertyInspector/SetBrightnessAction.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "League Of Legends Game Effects",
+      "States": [
+        {
+          "Image": "Images/pluginAction",
+          "TitleAlignment": "middle",
+          "Title": "Off",
+          "ShowTitle": "true",
+          "FontSize": "12"
+        },
+        {
+          "Image": "Images/pluginAction",
+          "TitleAlignment": "middle",
+          "Title": "Running",
+          "ShowTitle": "true",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Provides you with a light show when you play League of Legends",
+      "UUID": "com.davidgolunski.goveelightcontroller.leagueeffectsaction",
+      "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
     }
   ],
   "Author": "David Golunski",
   "Name": "GoveeLightContoller",
   "Description": "TODO_ENTER_PLUGIN_DESCRIPTION",
   "Icon": "Images/pluginIcon",
-  "URL": "https://TODO_ENTER_YOUR_HOMEPAGE.com",
+  "URL": "https://github.com/DavidGolunski/GoveeLightController",
   "Version": "1.0",
   "CodePath": "com.davidgolunski.goveelightcontroller",
   "Category": "GoveeLightController",

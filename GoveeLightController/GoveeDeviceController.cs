@@ -38,8 +38,8 @@ namespace GoveeLightController {
             _primaryColor = color ?? throw new ArgumentNullException(nameof(color));
         }
 
-        public void ActivatePrimaryColor(bool ignoreThread = true) {
-            SetColor(_primaryColor, null, ignoreThread);
+        public void ActivatePrimaryColor(List<string> ips = null, bool ignoreThread = true) {
+            SetColor(_primaryColor, ips, ignoreThread);
         }
 
         public void TurnOn(List<string> ips = null, bool ignoreThread = false) {
@@ -161,7 +161,7 @@ namespace GoveeLightController {
 
             if(switchToPrimaryColorAfterFunction && !_terminateEffect) {
                 Task.Delay(100).Wait();
-                ActivatePrimaryColor(true);
+                ActivatePrimaryColor(null, true);
             }
 
             if(turnOffAfterFunction && !_terminateEffect) {

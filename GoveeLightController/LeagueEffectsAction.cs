@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime;
@@ -15,55 +15,50 @@ using System.Threading.Tasks;
 using System.Transactions;
 
 namespace GoveeLightController {
-    [PluginActionId("com.davidgolunski.goveelightcontroller.setcoloraction")]
+    [PluginActionId("com.davidgolunski.goveelightcontroller.leagueeffectsaction")]
 
-    public class SetColorAction : KeypadBase {
+    public class LeagueEffectsAction : KeypadBase {
 
-        private class SetColorSettings : DeviceListSettings {
-
-            [JsonProperty(PropertyName = "selectedColorHex")]
-            public string selectedColorHex { get; set; }
-
-            public Color selectedColor {
-                get => new Color(selectedColorHex);
-            }
-
-            public SetColorSettings() : base() {
-                selectedColorHex = "#ffffff";
-            }
-        }
-
-
-        private SetColorSettings localSettings;
+        private DeviceListSettings localSettings;
         private DeviceListSettings globalSettings;
 
-
-        public SetColorAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
+        public LeagueEffectsAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
-                this.localSettings = new SetColorSettings();
+                this.localSettings = new DeviceListSettings();
                 SaveSettings();
             }
             else {
-                this.localSettings = payload.Settings.ToObject<SetColorSettings>();
+                this.localSettings = payload.Settings.ToObject<DeviceListSettings>();
             }
             this.globalSettings = new DeviceListSettings();
             GlobalSettingsManager.Instance.RequestGlobalSettings();
             Connection.OnPropertyInspectorDidAppear += OnPropertyInspectorOpened;
+            Connection.SetStateAsync(0).GetAwaiter().GetResult();
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Set State to 0");
         }
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"SetColorAction: Destructor called");
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"TurnOnAction: Destructor called");
         }
 
         public override void KeyPressed(KeyPayload payload) {
-            if(localSettings.useGlobalSettings) {
-                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, globalSettings.deviceIpList);
+            if(LeagueEffectManager.Instance.isRunning) {
+                LeagueEffectManager.Instance.Stop();
+                Connection.SetStateAsync(1).GetAwaiter().GetResult();
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Set State to 1");
             }
             else {
-                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, localSettings.deviceIpList);
+                if(localSettings.useGlobalSettings) {
+                    LeagueEffectManager.Instance.Start(globalSettings.deviceIpList);
+                }
+                else {
+                    LeagueEffectManager.Instance.Start(localSettings.deviceIpList);
+                }
+                Connection.SetStateAsync(0).GetAwaiter().GetResult();
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Set State to 0");
             }
-
+            
         }
 
         public override void KeyReleased(KeyPayload payload) { }
@@ -77,10 +72,6 @@ namespace GoveeLightController {
 
         public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) {
             Tools.AutoPopulateSettings(globalSettings, payload.Settings);
-
-
-
-            SetImageFromFile("./Images/LightbulbOn.png");
         }
 
         #region Private Methods
@@ -91,17 +82,6 @@ namespace GoveeLightController {
 
         private void OnPropertyInspectorOpened(object sender, SDEventReceivedEventArgs<PropertyInspectorDidAppear> e) {
             Connection.SetSettingsAsync(JObject.FromObject(localSettings));
-        }
-
-        private void SetImageFromFile(string filePath) {
-            if(!File.Exists(filePath)) {
-                Logger.Instance.LogMessage(TracingLevel.ERROR, $"File not found: {filePath}");
-                return;
-            }
-
-            using(Bitmap img = new Bitmap(filePath)) {
-                Connection.SetImageAsync(img).GetAwaiter().GetResult(); // Synchronous call
-            }
         }
 
         #endregion

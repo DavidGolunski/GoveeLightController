@@ -47,16 +47,18 @@ namespace GoveeLightController {
         public void TurnOn() {
             var message = new Dictionary<string, object>
             {
-            { "msg", new { cmd = "turn", data = new { value = 1 } } }
-        };
+                { "msg", new { cmd = "turn", data = new { value = 1 } } }
+            };
+            //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Turning On: " + Ip);
             SendMessage(message);
         }
 
         public void TurnOff() {
             var message = new Dictionary<string, object>
             {
-            { "msg", new { cmd = "turn", data = new { value = 0 } } }
-        };
+                { "msg", new { cmd = "turn", data = new { value = 0 } } }
+            };
+            //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Turning Off: " + Ip);
             SendMessage(message);
         }
 
@@ -70,7 +72,8 @@ namespace GoveeLightController {
         };
             SendMessage(message);
             CurrentBrightness = brightness;
-        }
+            //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Setting Brightness to " + CurrentBrightness + ": " + Ip);
+        } 
 
         public void SetColor(Color color) {
             if(color == null)
@@ -92,8 +95,12 @@ namespace GoveeLightController {
         };
             SendMessage(message);
             CurrentColor = color;
+            //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Setting Color to " + CurrentColor.ToString() + ": " + Ip);
         }
 
+
+
+        #region static functions
 
         public static Dictionary<string, GoveeDevice> GetDevices(int timeout) {
             var devices = new Dictionary<string, GoveeDevice>();
@@ -170,6 +177,8 @@ namespace GoveeLightController {
             }
             return null;
         }
+
+        #endregion
     }
 
 }
