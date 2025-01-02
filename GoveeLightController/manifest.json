@@ -16,41 +16,32 @@
       "PropertyInspectorPath": "PropertyInspector/GlobalSettingsAction.html"
     },
     {
-      "Icon": "Images/IconLightbulbOff",
-      "Name": "Turn Off",
+      "Icon": "Images/IconLightbulbOn",
+      "Name": "Turn On/Off",
       "States": [
+        {
+          "Image": "Images/IconLightbulbOn",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        },
         {
           "Image": "Images/IconLightbulbOff",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
       ],
+      "DisableAutomaticStates": true,
       "SupportedInMultiActions": true,
-      "Tooltip": "Turn off one or more lights",
-      "UUID": "com.davidgolunski.goveelightcontroller.turnoffaction",
+      "Tooltip": "Turn on or off one or more lights",
+      "UUID": "com.davidgolunski.goveelightcontroller.turnonoffaction",
       "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
     },
     {
-      "Icon": "Images/IconLightbulbOn",
-      "Name": "Turn On",
-      "States": [
-        {
-          "Image": "Images/IconLightbulbOn",
-          "TitleAlignment": "middle",
-          "FontSize": "12"
-        }
-      ],
-      "SupportedInMultiActions": true,
-      "Tooltip": "Turn on one or more lights",
-      "UUID": "com.davidgolunski.goveelightcontroller.turnonaction",
-      "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
-    },
-    {
-      "Icon": "Images/icon",
+      "Icon": "Images/IconLightbulbColor",
       "Name": "Change Color",
       "States": [
         {
-          "Image": "Images/Lightbulb",
+          "Image": "Images/IconLightbulbColor",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -83,17 +74,18 @@
           "Image": "Images/pluginAction",
           "TitleAlignment": "middle",
           "Title": "Off",
-          "ShowTitle": "true",
+          "ShowTitle": true,
           "FontSize": "12"
         },
         {
           "Image": "Images/pluginAction",
           "TitleAlignment": "middle",
           "Title": "Running",
-          "ShowTitle": "true",
+          "ShowTitle": true,
           "FontSize": "12"
         }
       ],
+      "DisableAutomaticStates": true,
       "SupportedInMultiActions": true,
       "Tooltip": "Provides you with a light show when you play League of Legends",
       "UUID": "com.davidgolunski.goveelightcontroller.leagueeffectsaction",

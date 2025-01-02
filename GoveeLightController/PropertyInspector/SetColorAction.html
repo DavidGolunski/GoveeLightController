@@ -9,6 +9,32 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdpi.css">
     <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdtools.common.js"></script>
     <script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
+    <script>
+        // Ensure the script runs after the DOM is loaded
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get references to the dropdown and the div
+            const dropdown = document.getElementById('useGlobalSettingsOption');
+            const deviceIpListDiv = document.getElementById('dvDeviceIpList');
+
+            // Function to toggle visibility
+            function toggleDeviceIpList() {
+                console.log(`Dropdown value: ${dropdown.value}`); // Debugging log
+                if (dropdown.value === 'global') {
+                    deviceIpListDiv.style.display = 'none'; // Hide the div
+                    console.log("Hiding dvDeviceIpList"); // Debugging log
+                } else {
+                    deviceIpListDiv.style.display = 'block'; // Show the div
+                    console.log("Showing dvDeviceIpList"); // Debugging log
+                }
+            }
+
+            // Add event listener to the dropdown
+            dropdown.addEventListener('change', toggleDeviceIpList);
+
+            // Initialize visibility based on the default selected value
+            toggleDeviceIpList();
+        });
+    </script>
 </head>
 <body>
     <div class="sdpi-wrapper">
@@ -21,11 +47,18 @@
             <sdpi-color class="sdpi-item-value sdProperty" setting="selectedColorHex" id="selectedColorHex" default="#ffffff"></sdpi-color>
         </div>
         <div class="sdpi-item">
+            <div class="sdpi-item-label">Icon Style</div>
+            <select class="sdpi-item-value sdProperty" setting="useDynamicIconOption" id="useDynamicIconOption">
+                <option value="dynamic">Dynamic</option>
+                <option value="static">Static</option>
+            </select>
+        </div>
+        <div class="sdpi-item">
             <div class="sdpi-item-label">Device Selection</div>
-            <sdpi-select class="sdpi-item-value sdProperty" setting="useGlobalSettingsOption" id="useGlobalSettingsOption">
+            <select class="sdpi-item-value sdProperty" setting="useGlobalSettingsOption" id="useGlobalSettingsOption">
                 <option value="global">From Global Settings</option>
                 <option value="local">From Device IP List</option>
-            </sdpi-select>
+            </select>
         </div>
         <div class="sdpi-item" id="dvDeviceIpList">
             <div class="sdpi-item-label">Device IP List</div>

@@ -14,6 +14,12 @@ using System.Threading.Tasks;
 namespace GoveeLightController {
     [PluginActionId("com.davidgolunski.goveelightcontroller.globalsettingsaction")]
 
+    /*
+     * This class represents an action where the user can define global settings for the plugin.
+     * The Settings are a device list, which can be used by all other actions by default.
+     * OnKeyPressed:
+     * When the key is pressed it will look for all compatible Govee Devices in the network and populates the Device List automatically
+     */
     public class GlobalSettingsAction : KeypadBase {
 
         private DeviceListSettings settings;
@@ -79,7 +85,7 @@ namespace GoveeLightController {
 
         public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) { }
 
-
+        // Save the current settings and send a "GlobalSettingsReceived" message to all other actions
         private Task SaveSettings() {
             GlobalSettingsManager.Instance.SetGlobalSettings(JObject.FromObject(settings));
             return Connection.SetSettingsAsync(JObject.FromObject(settings));

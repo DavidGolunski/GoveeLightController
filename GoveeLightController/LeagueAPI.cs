@@ -148,7 +148,7 @@ public class LeagueAPI {
             lastUpdateSuccessful = true;
             return true;        
         }
-        catch(Exception e) {
+        catch(Exception) {
             Reset();
             return false;
         }

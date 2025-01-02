@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using BarRaider.SdTools;
-
+using System.Drawing;
 
 namespace GoveeLightController {
     public class GoveeDeviceController {
@@ -18,7 +18,7 @@ namespace GoveeLightController {
         private int _standardBrightness;
         private int _highlightBrightness;
         private Dictionary<string, GoveeDevice> _devices;
-        private Color _primaryColor = Color.BLACK;
+        private Color _primaryColor = Color.Black;
         private bool _terminateEffect = false; // Flag to stop special effects
         private Thread _effectThread;          // Placeholder for effect thread
 
@@ -35,7 +35,7 @@ namespace GoveeLightController {
 
 
         public void SetPrimaryColor(Color color) {
-            _primaryColor = color ?? throw new ArgumentNullException(nameof(color));
+            _primaryColor = color;
         }
 
         public void ActivatePrimaryColor(List<string> ips = null, bool ignoreThread = true) {

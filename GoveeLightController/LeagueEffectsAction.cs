@@ -34,7 +34,6 @@ namespace GoveeLightController {
             GlobalSettingsManager.Instance.RequestGlobalSettings();
             Connection.OnPropertyInspectorDidAppear += OnPropertyInspectorOpened;
             Connection.SetStateAsync(0).GetAwaiter().GetResult();
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Set State to 0");
         }
 
         public override void Dispose() {
@@ -45,8 +44,7 @@ namespace GoveeLightController {
         public override void KeyPressed(KeyPayload payload) {
             if(LeagueEffectManager.Instance.isRunning) {
                 LeagueEffectManager.Instance.Stop();
-                Connection.SetStateAsync(1).GetAwaiter().GetResult();
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Set State to 1");
+                Connection.SetStateAsync(0).GetAwaiter().GetResult();
             }
             else {
                 if(localSettings.useGlobalSettings) {
@@ -55,8 +53,7 @@ namespace GoveeLightController {
                 else {
                     LeagueEffectManager.Instance.Start(localSettings.deviceIpList);
                 }
-                Connection.SetStateAsync(0).GetAwaiter().GetResult();
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Set State to 0");
+                Connection.SetStateAsync(1).GetAwaiter().GetResult();
             }
             
         }

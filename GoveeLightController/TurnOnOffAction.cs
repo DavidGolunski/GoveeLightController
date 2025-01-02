@@ -9,20 +9,23 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 
 namespace GoveeLightController {
-    [PluginActionId("com.davidgolunski.goveelightcontroller.turnonaction")]
+    [PluginActionId("com.davidgolunski.goveelightcontroller.turnonoffaction")]
 
-    public class TurnOnAction : KeypadBase {
+    public class TurnOnOffAction : KeypadBase {
 
         private DeviceListSettings localSettings;
         private DeviceListSettings globalSettings;
 
 
-        public TurnOnAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
+        private bool IsOn = false;
+
+        public TurnOnOffAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
                 this.localSettings = new DeviceListSettings();
                 SaveSettings();
@@ -33,6 +36,8 @@ namespace GoveeLightController {
             this.globalSettings = new DeviceListSettings();
             GlobalSettingsManager.Instance.RequestGlobalSettings();
             Connection.OnPropertyInspectorDidAppear += OnPropertyInspectorOpened;
+
+            Connection.SetStateAsync(0).GetAwaiter().GetResult();
         }
 
         public override void Dispose() {
@@ -41,12 +46,25 @@ namespace GoveeLightController {
         }
 
         public override void KeyPressed(KeyPayload payload) {
+            List<string> deviceIpList = null;
             if(localSettings.useGlobalSettings) {
-                GoveeDeviceController.Instance.TurnOn(globalSettings.deviceIpList);
+                deviceIpList = globalSettings.deviceIpList;
             }
             else {
-                GoveeDeviceController.Instance.TurnOn(localSettings.deviceIpList);
+                deviceIpList = localSettings.deviceIpList;
             }
+            if(IsOn) {
+
+                GoveeDeviceController.Instance.TurnOff(deviceIpList);
+                IsOn = false;
+                Connection.SetStateAsync(0).GetAwaiter().GetResult();
+            }
+            else {
+                GoveeDeviceController.Instance.TurnOn(deviceIpList);
+                IsOn = true;
+                Connection.SetStateAsync(1).GetAwaiter().GetResult();
+            }
+
 
         }
 

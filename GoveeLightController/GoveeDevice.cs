@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.ServiceModel.Channels;
 using System.ServiceModel.MsmqIntegration;
 using System.Text;
+using System.Drawing;
 
 namespace GoveeLightController {
 
@@ -15,7 +16,7 @@ namespace GoveeLightController {
         public string Ip { get; }
         public string DeviceId { get; }
         public string Sku { get; }
-        public Color CurrentColor { get; private set; } = Color.BLACK; // Placeholder for color tracking
+        public Color CurrentColor { get; private set; } = Color.Black; // Placeholder for color tracking
         public int CurrentBrightness { get; private set; } = 100;
         private UdpClient _udpClient;
 
