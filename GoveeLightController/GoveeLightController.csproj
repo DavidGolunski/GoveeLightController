@@ -66,18 +66,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GoveeDevice.cs" />
-    <Compile Include="GoveeDeviceController.cs" />
-    <Compile Include="DeviceListSettings.cs" />
-    <Compile Include="GlobalSettingsAction.cs" />
-    <Compile Include="ImageTools.cs" />
-    <Compile Include="LeagueAPI.cs" />
-    <Compile Include="LeagueEffectManager.cs" />
-    <Compile Include="SetBrightnessAction.cs" />
-    <Compile Include="LeagueEffectsAction.cs" />
-    <Compile Include="TurnOnOffAction.cs" />
-    <Compile Include="SetColorAction.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Actions\ScriptAction.cs" />
+    <Compile Include="Classes\GoveeDevice.cs" />
+    <Compile Include="Classes\GoveeDeviceController.cs" />
+    <Compile Include="Classes\DeviceListSettings.cs" />
+    <Compile Include="Actions\GlobalSettingsAction.cs" />
+    <Compile Include="Classes\ImageTools.cs" />
+    <Compile Include="Classes\LeagueAPI.cs" />
+    <Compile Include="Classes\LeagueEffectManager.cs" />
+    <Compile Include="Actions\SetBrightnessAction.cs" />
+    <Compile Include="Actions\LeagueEffectsAction.cs" />
+    <Compile Include="Actions\TurnOnOffAction.cs" />
+    <Compile Include="Actions\SetColorAction.cs" />
+    <Compile Include="Classes\Program.cs" />
+    <Compile Include="Classes\ScriptCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +91,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="scripts\LeagueEffects.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="!!README!!.txt" />

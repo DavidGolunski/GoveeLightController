@@ -19,7 +19,7 @@ namespace GoveeLightController {
         private int _highlightBrightness;
         private Dictionary<string, GoveeDevice> _devices;
         private Color _primaryColor = Color.Black;
-        private bool _terminateEffect = false; // Flag to stop special effects
+        private bool terminateEffect = false; // Flag to stop special effects
         private Thread _effectThread;          // Placeholder for effect thread
 
         private GoveeDeviceController(int standardBrightness = 40, int highlightBrightness = 100) {
@@ -116,7 +116,7 @@ namespace GoveeLightController {
 
             StopEffectThread();
 
-            _terminateEffect = false;
+            terminateEffect = false;
             _effectThread = new Thread(() =>
                 RunPulse(color, numOfPulses, onTime, offTime, turnOffAfterFunction, switchToPrimaryColorAfterFunction)
             );
@@ -125,10 +125,10 @@ namespace GoveeLightController {
 
         private void StopEffectThread() {
             if(_effectThread != null && _effectThread.IsAlive) {
-                _terminateEffect = true;
+                terminateEffect = true;
                 _effectThread.Join(); // Wait for the thread to terminate
             }
-            _terminateEffect = false;
+            terminateEffect = false;
             _effectThread = null;
         }
 
@@ -144,13 +144,13 @@ namespace GoveeLightController {
             Task.Delay(TimeSpan.FromSeconds(onTime)).Wait();
 
             for(int i = 0; i < numOfPulses - 1; i++) {
-                if(_terminateEffect)
+                if(terminateEffect)
                     return;
 
                 TurnOff(null, true);
                 Task.Delay(TimeSpan.FromSeconds(offTime)).Wait();
 
-                if(_terminateEffect)
+                if(terminateEffect)
                     return;
 
                 TurnOn(null,true);
@@ -159,12 +159,12 @@ namespace GoveeLightController {
 
             SetBrightness(_standardBrightness, null, true);
 
-            if(switchToPrimaryColorAfterFunction && !_terminateEffect) {
+            if(switchToPrimaryColorAfterFunction && !terminateEffect) {
                 Task.Delay(100).Wait();
                 ActivatePrimaryColor(null, true);
             }
 
-            if(turnOffAfterFunction && !_terminateEffect) {
+            if(turnOffAfterFunction && !terminateEffect) {
                 Task.Delay(100).Wait();
                 TurnOff(null,true);
             }

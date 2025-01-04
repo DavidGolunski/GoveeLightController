@@ -107,11 +107,9 @@ namespace GoveeLightController {
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, "Setting Static Icon for Color");
                 return;
             }
-            
+         
             Bitmap img = ImageTools.GetBitmapFromFilePath("./Images/IconLightbulbColorDynamic.png");
             img = ImageTools.ReplaceColor(img, Color.Black, localSettings.selectedColor);
-            img = ImageTools.ReplaceColor(img, Color.FromArgb(221, 221, 221), ImageTools.GetComplementaryColor(localSettings.selectedColor));
-
             Connection.SetImageAsync(img).GetAwaiter().GetResult();
             img.Dispose();
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "Setting Dynamic Icon for Color");

@@ -5,24 +5,19 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
-using System.Transactions;
 
-namespace GoveeLightController {
-    [PluginActionId("com.davidgolunski.goveelightcontroller.leagueeffectsaction")]
+namespace GoveeLightController.Actions {
+    [PluginActionId("com.davidgolunski.goveelightcontroller.scriptaction")]
 
-    public class LeagueEffectsAction : KeypadBase {
+    public class ScriptAction : KeypadBase {
 
         private DeviceListSettings localSettings;
         private DeviceListSettings globalSettings;
 
-        public LeagueEffectsAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
+        public ScriptAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
                 this.localSettings = new DeviceListSettings();
                 SaveSettings();
@@ -42,20 +37,38 @@ namespace GoveeLightController {
         }
 
         public override void KeyPressed(KeyPayload payload) {
-            if(LeagueEffectManager.Instance.isRunning) {
-                LeagueEffectManager.Instance.Stop();
-                Connection.SetStateAsync(0).GetAwaiter().GetResult();
+            List<string> fileNames = ScriptCommand.GetScriptFileNames();
+            if(fileNames.Count == 0) {
+                Logger.Instance.LogMessage(TracingLevel.INFO, "No Files found");
+                return;
             }
-            else {
-                if(localSettings.useGlobalSettings) {
-                    LeagueEffectManager.Instance.Start(globalSettings.deviceIpList);
-                }
-                else {
-                    LeagueEffectManager.Instance.Start(localSettings.deviceIpList);
-                }
-                Connection.SetStateAsync(1).GetAwaiter().GetResult();
+            foreach(string fileName in fileNames) {
+                Logger.Instance.LogMessage(TracingLevel.INFO, "FileName: " + fileName);
             }
-            
+
+            List<string> actionNames = ScriptCommand.GetListOfActions();
+            if(actionNames.Count == 0) {
+                Logger.Instance.LogMessage(TracingLevel.INFO, "No Actions found");
+                return;
+            }
+
+            foreach(string actionName in actionNames) {
+                Logger.Instance.LogMessage(TracingLevel.INFO, "ActionName: " + actionName);
+            }
+
+            List<ScriptCommand> commands = ScriptCommand.GetAction("GAME_WON");
+            if(commands == null || commands.Count == 0) {
+                Logger.Instance.LogMessage(TracingLevel.INFO, "The action \"GAME_WON\" was not found");
+                return;
+            }
+            foreach(var command in commands) {
+                Logger.Instance.LogMessage(TracingLevel.INFO, command.ToString());
+            }
+
+            ScriptCommand.StartScriptAction("GAME_WON", globalSettings.deviceIpList);
+
+
+
         }
 
         public override void KeyReleased(KeyPayload payload) { }

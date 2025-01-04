@@ -1,0 +1,28 @@
+{
+  "GAME_LOST": [
+    { "command": "TurnOn" },
+    { "command": "Wait", "delay": 1000 },
+    { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
+    { "command": "Wait", "delay": 1000 },
+    { "command": "SetBrightness", "value": 75 },
+    { "command": "Wait", "delay": 1000 },
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 1000 },
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 2000 },
+    { "command": "TurnOff" }
+  ],
+  "GAME_WON": [
+    { "command": "TurnOn" },
+    { "command": "Wait", "delay": 1000 },
+    { "command": "SetColor", "r": 255, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 1000 },
+    { "command": "SetBrightness", "value": 75 },
+    { "command": "Wait", "delay": 1000 },
+    { "command": "SetColor", "r": 0, "g": 255, "b": 255 },
+    { "command": "Wait", "delay": 1000 },
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 2000 },
+    { "command": "TurnOff" }
+  ]
+}

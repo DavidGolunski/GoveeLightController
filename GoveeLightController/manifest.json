@@ -68,6 +68,21 @@
     },
     {
       "Icon": "Images/icon",
+      "Name": "Script Action",
+      "States": [
+        {
+          "Image": "Images/pluginAction",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Executes a Script for Govee lights",
+      "UUID": "com.davidgolunski.goveelightcontroller.scriptaction",
+      "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
+    },
+    {
+      "Icon": "Images/icon",
       "Name": "League Of Legends Game Effects",
       "States": [
         {
@@ -94,7 +109,7 @@
   ],
   "Author": "David Golunski",
   "Name": "GoveeLightContoller",
-  "Description": "TODO_ENTER_PLUGIN_DESCRIPTION",
+  "Description": "This plugin allows you to control your Govee lights using LAN Control (without an API key).\nThis also includes custom lightshow scripts and light effects for some games.\nHere you can find a full list of devices that support LAN Control:\nhttps://app-h5.govee.com/user-manual/wlan-guide",
   "Icon": "Images/pluginIcon",
   "URL": "https://github.com/DavidGolunski/GoveeLightController",
   "Version": "1.0",
