@@ -17,6 +17,8 @@ namespace GoveeLightController {
         TurnOff,
         SetColor,
         SetBrightness,
+        SetPrimaryColor,
+        ActivatePrimaryColor,
         Wait,
         Unknown // For unrecognized commands
     }
@@ -25,15 +27,22 @@ namespace GoveeLightController {
         private const string ScriptsDirectory = "./scripts/";
 
         public Commands Command { get; set; }
-        public int? R { get; set; }
-        public int? G { get; set; }
-        public int? B { get; set; }
-        public int? Value { get; set; }
-        public int? Delay { get; set; }
+        public int R { get; set; }
+        public int G { get; set; }
+        public int B { get; set; }
+        public int Value { get; set; }
+        public int Delay { get; set; }
+        public string IfCondition { get; set; }
 
 
         public ScriptCommand(Commands command) {
             Command = command;
+            R = -1;
+            G = -1;
+            B = -1;
+            Value = -1;
+            Delay = -1;
+            IfCondition = null;
         }
 
         public static ScriptCommand FromDictionary(Commands command, Dictionary<string, object> parameters) {
@@ -49,6 +58,8 @@ namespace GoveeLightController {
                 commandInfo.Value = Convert.ToInt32(value);
             if(parameters.TryGetValue("delay", out var delay))
                 commandInfo.Delay = Convert.ToInt32(delay);
+            if(parameters.TryGetValue("if", out var ifCondition))
+                commandInfo.IfCondition = ifCondition.ToString();
 
             if(!commandInfo.IsValid()) {
                 return null;
@@ -57,6 +68,16 @@ namespace GoveeLightController {
         }
 
         public bool IsValid() {
+            switch(IfCondition) {
+                case null:
+                case "IsLeaguePlayerDead":
+                case "IsLeaguePlayerNotDead":
+                    break;
+                default:
+                    Logger.Instance.LogMessage(TracingLevel.ERROR, "The given if condition was not valid: \"" + IfCondition + "\"");
+                    return false;
+            }
+
             switch(Command) {
                 case Commands.Wait:
                     if(Delay <= 0) {
@@ -70,14 +91,15 @@ namespace GoveeLightController {
                         return false;
                     }
                     break;
+                case Commands.SetPrimaryColor:
                 case Commands.SetColor:
                     if(R < 0 || R > 255 ||  G < 0 || G > 255 || B < 0 || B > 255) {
                         Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid value. RGB values need to be between 0 and 255");
                         return false;
                     }
                     break;
+                case Commands.ActivatePrimaryColor:
                 case Commands.TurnOn:
-                    return true;
                 case Commands.TurnOff:
                     return true;
                 case Commands.Unknown:
@@ -89,21 +111,29 @@ namespace GoveeLightController {
 
         public void Execute(List<string> ips = null) {
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "Executing: " +  this.ToString());
+            
+            
             switch(Command) {
                 case Commands.Wait:
-                    Task.Delay(Delay??1).Wait();
+                    Task.Delay(Delay).Wait();
                     break;
                 case Commands.SetBrightness:
-                    GoveeDeviceController.Instance.SetBrightness(Value??0, ips);
+                    GoveeDeviceController.Instance.SetBrightness(Value, ips);
                     break;
                 case Commands.SetColor:
-                    GoveeDeviceController.Instance.SetColor(Color.FromArgb(255, R??0, G??0, B??0), ips);
+                    GoveeDeviceController.Instance.SetColor(Color.FromArgb(255, R, G, B), ips);
                     break;
                 case Commands.TurnOn:
                     GoveeDeviceController.Instance.TurnOn(ips);
                     break;
                 case Commands.TurnOff:
                     GoveeDeviceController.Instance.TurnOff(ips);
+                    break;
+                case Commands.SetPrimaryColor:
+                    GoveeDeviceController.Instance.SetPrimaryColor(Color.FromArgb(255, R, G, B));
+                    break;
+                case Commands.ActivatePrimaryColor:
+                    GoveeDeviceController.Instance.ActivatePrimaryColor();
                     break;
                 case Commands.Unknown:
                 default:
@@ -117,13 +147,15 @@ namespace GoveeLightController {
                     return $"{Command}, Delay({Delay})";
                 case Commands.SetBrightness:
                     return $"{Command}, Value({Value})";
+                case Commands.SetPrimaryColor:
                 case Commands.SetColor:
                     return $"{Command}, R({R}), G({G}), B({B})";
                 case Commands.TurnOn:
                 case Commands.TurnOff:
+                case Commands.ActivatePrimaryColor:
                 case Commands.Unknown:
                 default:
-                    return Command.ToString();
+                    return Command.ToString() + " ifCondition: \"" + IfCondition + "\"";
             }
         }
 
@@ -153,13 +185,13 @@ namespace GoveeLightController {
 
         }
 
-        public static void StartScriptAction(string action, List<string> ips = null) {
-            StartScriptAction(GetAction(action), ips);
+        public static bool StartScriptAction(string action, List<string> ips = null) {
+            return StartScriptAction(GetAction(action), ips);
         }
 
-        public static void StartScriptAction(List<ScriptCommand> commands, List<string> ips = null) {
+        public static bool StartScriptAction(List<ScriptCommand> commands, List<string> ips = null) {
             if(commands == null)
-                return;
+                return false;
             StopThread();
             terminateScriptAction = false;
             isRunning = true;
@@ -171,6 +203,7 @@ namespace GoveeLightController {
             };
 
             scriptThread.Start();
+            return true;
         }
 
 
@@ -208,7 +241,6 @@ namespace GoveeLightController {
                 Logger.Instance.LogMessage(TracingLevel.ERROR, "The file at \"" + fileName + "\" does not exist");
                 return false;
             }
-               
 
             try {
                 string jsonContent = File.ReadAllText(fileName);
@@ -228,7 +260,15 @@ namespace GoveeLightController {
                             return false;
                         }
 
-
+                        var parameters = new Dictionary<string, object>(command);
+                        parameters.Remove("command");
+                        ScriptCommand scriptCommand = ScriptCommand.FromDictionary(parsedCommand, parameters);
+                        if(scriptCommand == null || !scriptCommand.IsValid()) {
+                            Logger.Instance.LogMessage(TracingLevel.ERROR, "The Command " + scriptCommand + " could not be parsed");
+                            return false;
+                        }
+                        
+                        /*
                         switch(parsedCommand) {
                             case Commands.SetColor:
                                 if(!command.ContainsKey("r") || !command.ContainsKey("g") || !command.ContainsKey("b"))
@@ -247,8 +287,10 @@ namespace GoveeLightController {
                         switch(commandName) {
                             case "TurnOn":
                             case "TurnOff":
+                            case "ActivatePrimaryColor":
                                 // No additional parameters expected
                                 break;
+                            case "SetPrimaryColor":
                             case "SetColor":
                                 if(!command.ContainsKey("r") || !command.ContainsKey("g") || !command.ContainsKey("b")) {
                                     Logger.Instance.LogMessage(TracingLevel.ERROR, "Parsing Error: " + fileName + " had a \"SetColor\" command without a \"r\", \"g\" or \"b\"");
@@ -268,9 +310,8 @@ namespace GoveeLightController {
                                 }
                                 break;
                             default:
-                               
                                 return false; // Unknown command
-                        }
+                        }*/
                     }
                 }
                 return true;
@@ -292,6 +333,9 @@ namespace GoveeLightController {
                     string jsonContent = File.ReadAllText(fileName);
                     var json = JsonConvert.DeserializeObject<Dictionary<string, List<Dictionary<string, object>>>>(jsonContent);
                     actions.AddRange(json.Keys);
+                }
+                else {
+                    Logger.Instance.LogMessage(TracingLevel.WARN, "The file " + fileName + " was not valid");
                 }
             }
 

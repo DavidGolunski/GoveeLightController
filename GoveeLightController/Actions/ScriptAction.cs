@@ -12,18 +12,50 @@ using System.Threading.Tasks;
 namespace GoveeLightController.Actions {
     [PluginActionId("com.davidgolunski.goveelightcontroller.scriptaction")]
 
+
     public class ScriptAction : KeypadBase {
 
-        private DeviceListSettings localSettings;
+        private class ActionItem {
+            [JsonProperty("text")]
+            public string Text { get; set; }
+
+            [JsonProperty("value")]
+            public string Value { get; set; }
+
+            public ActionItem(string text, string value) {
+                Text = text;
+                Value = value;
+            }
+        }
+
+        private class ScriptActionSettings : DeviceListSettings {
+
+            [JsonProperty("actionDropDown")]
+            public List<ActionItem> ActionDropDown { get; set; }
+
+            [JsonProperty("selectedAction")]
+            public string SelectedAction { get; set; }
+
+
+            public ScriptActionSettings() : base() {
+                ActionDropDown = new List<ActionItem> {
+                    new ActionItem("-", "-")
+                };
+                SelectedAction = "-";
+            }
+        }
+
+
+        private ScriptActionSettings localSettings;
         private DeviceListSettings globalSettings;
 
         public ScriptAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
-                this.localSettings = new DeviceListSettings();
+                this.localSettings = new ScriptActionSettings();
                 SaveSettings();
             }
             else {
-                this.localSettings = payload.Settings.ToObject<DeviceListSettings>();
+                this.localSettings = payload.Settings.ToObject<ScriptActionSettings>();
             }
             this.globalSettings = new DeviceListSettings();
             GlobalSettingsManager.Instance.RequestGlobalSettings();
@@ -37,6 +69,17 @@ namespace GoveeLightController.Actions {
         }
 
         public override void KeyPressed(KeyPayload payload) {
+            
+            string actionString = localSettings.SelectedAction;
+            bool actionSuccess = ScriptCommand.StartScriptAction(actionString, globalSettings.deviceIpList);
+
+
+            if(!actionSuccess) {
+                Logger.Instance.LogMessage(TracingLevel.WARN, $"The Action {actionString} does not exist");
+                return;
+            }
+            return;
+
             List<string> fileNames = ScriptCommand.GetScriptFileNames();
             if(fileNames.Count == 0) {
                 Logger.Instance.LogMessage(TracingLevel.INFO, "No Files found");
@@ -56,19 +99,16 @@ namespace GoveeLightController.Actions {
                 Logger.Instance.LogMessage(TracingLevel.INFO, "ActionName: " + actionName);
             }
 
-            List<ScriptCommand> commands = ScriptCommand.GetAction("GAME_WON");
+            List<ScriptCommand> commands = ScriptCommand.GetAction("PRIMARY_COLOR_TEST");
             if(commands == null || commands.Count == 0) {
-                Logger.Instance.LogMessage(TracingLevel.INFO, "The action \"GAME_WON\" was not found");
+                Logger.Instance.LogMessage(TracingLevel.INFO, "The action \"PRIMARY_COLOR_TEST\" was not found");
                 return;
             }
             foreach(var command in commands) {
                 Logger.Instance.LogMessage(TracingLevel.INFO, command.ToString());
             }
 
-            ScriptCommand.StartScriptAction("GAME_WON", globalSettings.deviceIpList);
-
-
-
+            ScriptCommand.StartScriptAction("PRIMARY_COLOR_TEST", globalSettings.deviceIpList);
         }
 
         public override void KeyReleased(KeyPayload payload) { }
@@ -91,6 +131,17 @@ namespace GoveeLightController.Actions {
         }
 
         private void OnPropertyInspectorOpened(object sender, SDEventReceivedEventArgs<PropertyInspectorDidAppear> e) {
+
+            List<string> actionNames = ScriptCommand.GetListOfActions();
+            actionNames.Sort();
+
+            List<ActionItem> actions = new List<ActionItem>();
+            foreach(var action in actionNames) {
+                actions.Add(new ActionItem(action, action));
+            }
+            localSettings.ActionDropDown = actions;
+
+
             Connection.SetSettingsAsync(JObject.FromObject(localSettings));
         }
 

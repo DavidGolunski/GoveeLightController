@@ -79,7 +79,7 @@
       "SupportedInMultiActions": true,
       "Tooltip": "Executes a Script for Govee lights",
       "UUID": "com.davidgolunski.goveelightcontroller.scriptaction",
-      "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
+      "PropertyInspectorPath": "PropertyInspector/ScriptAction.html"
     },
     {
       "Icon": "Images/icon",

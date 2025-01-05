@@ -1,7 +1,7 @@
 # Light Scripts
 ## General
 1. Scripts are special JSON files that the user can modify
-2. Scripts need to be inside the "%appdata%/elgato/com.davidgolunski.goveelightcontroller/scripts" folder
+2. Scripts need to be inside the "%appdata%/Elgato/StreamDeck/com.davidgolunski.goveelightcontroller/scripts" folder
 3. Before modifying any scripts save a copy of the original Scripts as a backup
 4. If something goes wrong you can find information about it in the "pluginlog.log" file (inside the plugin folder)
 5. Only one script can be active at the same time. If you start another script, it will abort the original script
@@ -11,6 +11,7 @@
 1. The JSON is a collection of "Actions" (String)
 2. Each Action is an array of commands that can be executed
 3. A Command might need to have additional parameters to be valid
+4. You can add some selected if statements using "if" and one of the predefined variables
 
 
 ## Commands
@@ -48,10 +49,9 @@ __Parameters:__
 
 
 ## Example
+```
 {  
-"GAME_LOST": [  
-    { "command": "TurnOn" },  
-    { "command": "Wait", "delay": 1000 },  
+"ColorSwitch1": [  
     { "command": "SetColor", "r": 255, "g": 0, "b": 0 },  
     { "command": "Wait", "delay": 1000 },  
     { "command": "SetBrightness", "value": 75 },  
@@ -62,9 +62,7 @@ __Parameters:__
     { "command": "Wait", "delay": 2000 },  
     { "command": "TurnOff" }  
   ],  
-  "GAME_WON": [  
-    { "command": "TurnOn" },  
-    { "command": "Wait", "delay": 1000 },  
+  "ColorSwitch2": [    
     { "command": "SetColor", "r": 255, "g": 255, "b": 0 },  
     { "command": "Wait", "delay": 1000 },  
     { "command": "SetBrightness", "value": 75 },  
@@ -76,3 +74,16 @@ __Parameters:__
     { "command": "TurnOff" }  
   ]
 }
+```
+
+### If Conditions
+You have access to some selected variables. You can add one of the varibles inside an "if" parameters.  
+The command will only be executed when the "if-statement" is true.  
+The variables are:  
+- "IsLeaguePlayerDead"
+- "IsLeaguePlayerNotDead"
+
+__Example:__
+```
+{ "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+```

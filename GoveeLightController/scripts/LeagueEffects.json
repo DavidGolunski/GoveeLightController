@@ -1,28 +1,335 @@
 {
-  "GAME_LOST": [
+  "LOL@GAME_STARTED_DOMINATION": [
+    { "command": "SetPrimaryColor", "r": 255, "g": 0, "b": 0 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "Wait", "delay": 200 },
+    { "command": "SetBrightness",  "value": 50 }
+  ],
+  "LOL@GAME_STARTED_INSPIRATION": [
+    { "command": "SetPrimaryColor", "r": 0, "g": 255, "b": 255 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "Wait", "delay": 200 },
+    { "command": "SetBrightness",  "value": 50 }
+  ],
+  "LOL@GAME_STARTED_RESOLVE": [
+    { "command": "SetPrimaryColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "Wait", "delay": 200 },
+    { "command": "SetBrightness",  "value": 50 }
+  ],
+  "LOL@GAME_STARTED_SORCERY": [
+    { "command": "SetPrimaryColor", "r": 0, "g": 0, "b": 255 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "Wait", "delay": 200 },
+    { "command": "SetBrightness",  "value": 50 }
+  ],
+  "LOL@GAME_STARTED_PRECISION": [
+    { "command": "SetPrimaryColor", "r": 255, "g": 255, "b": 0 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "Wait", "delay": 200 },
+    { "command": "SetBrightness",  "value": 50 }
+  ],
+  "LOL@HAS_KILLED": [
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 2000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@HAS_PENTAKILLED": [
+    { "command": "SetColor", "r": 255, "g": 255, "b": 0 },
+    { "command": "SetBrightness", "value": 100 },
+
+    { "command": "Wait", "delay": 700 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 700 },
+    { "command": "TurnOn"},
+
+    { "command": "Wait", "delay": 700 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 700 },
+    { "command": "TurnOn"},
+
+    { "command": "Wait", "delay": 700 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 700 },
+    { "command": "TurnOn"},
+
+    { "command": "Wait", "delay": 700 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 700 },
+    { "command": "TurnOn"},
+
+    { "command": "Wait", "delay": 700 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 700 },
+    { "command": "TurnOn"},
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetBrightness", "value": 50 },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@HAS_ASSISTED": [
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 1000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@HAS_DIED": [
+    { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 2000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@HAS_REVIVED": [
+    { "command": "ActivatePrimaryColor" },
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetBrightness", "value": 50 }
+  ],
+  "LOL@HAS_KILLED_TURRET": [
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 4000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@HAS_ASSISTED_TURRET": [
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 2000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@GAME_WON": [
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "SetBrightness", "value": 100 },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn"},
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "SetBrightness", "value": 50 },
+    { "command": "Wait", "delay": 100 },
+    { "command": "TurnOff" }
+  ],
+  "LOL@GAME_LOST": [
+    { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
+    { "command": "SetBrightness", "value": 100 },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn"},
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "SetBrightness", "value": 50 },
+    { "command": "Wait", "delay": 100 },
+    { "command": "TurnOff" }
+  ],
+  "LOL@VOID_GRUBS_KILLED": [
+    { "command": "SetColor", "r": 255, "g": 0, "b": 255 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 1000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@HERALD_KILLED": [
+    { "command": "SetColor", "r": 255, "g": 0, "b": 255 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 3000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@BARON_KILLED": [
+    { "command": "SetColor", "r": 255, "g": 0, "b": 255 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 5000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@AIR_DRAGON_KILLED": [
+    { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 3000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@FIRE_DRAGON_KILLED": [
+    { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 3000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@WATER_DRAGON_KILLED": [
+    { "command": "SetColor", "r": 0, "g": 0, "b": 255 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 3000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@EARTH_DRAGON_KILLED": [
+    { "command": "SetColor", "r": 127, "g": 51, "b": 0 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 3000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@HEXTECH_DRAGON_KILLED": [
+    { "command": "SetColor", "r": 0, "g": 255, "b": 255 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 3000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@CHEMTECH_DRAGON_KILLED": [
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 3000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@ELDER_DRAGON_KILLED": [
+    { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetColor", "r": 0, "g": 255, "b": 255 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetBrightness", "value": 50 },
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@PRIMARY_COLOR_TEST": [
     { "command": "TurnOn" },
     { "command": "Wait", "delay": 1000 },
     { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
-    { "command": "Wait", "delay": 1000 },
-    { "command": "SetBrightness", "value": 75 },
-    { "command": "Wait", "delay": 1000 },
-    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
-    { "command": "Wait", "delay": 1000 },
-    { "command": "SetBrightness", "value": 100 },
-    { "command": "Wait", "delay": 2000 },
-    { "command": "TurnOff" }
-  ],
-  "GAME_WON": [
-    { "command": "TurnOn" },
-    { "command": "Wait", "delay": 1000 },
-    { "command": "SetColor", "r": 255, "g": 255, "b": 0 },
-    { "command": "Wait", "delay": 1000 },
-    { "command": "SetBrightness", "value": 75 },
-    { "command": "Wait", "delay": 1000 },
-    { "command": "SetColor", "r": 0, "g": 255, "b": 255 },
-    { "command": "Wait", "delay": 1000 },
-    { "command": "SetBrightness", "value": 100 },
-    { "command": "Wait", "delay": 2000 },
+    { "command": "Wait", "delay": 3000 },
+    { "command": "SetPrimaryColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "Wait", "delay": 3000 },
+    { "command": "SetPrimaryColor", "r": 0, "g": 0, "b": 255 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "Wait", "delay": 3000 },
     { "command": "TurnOff" }
   ]
 }
