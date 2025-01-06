@@ -42,7 +42,7 @@ namespace GoveeLightController {
             B = -1;
             Value = -1;
             Delay = -1;
-            IfCondition = null;
+            IfCondition = "";
         }
 
         public static ScriptCommand FromDictionary(Commands command, Dictionary<string, object> parameters) {
@@ -69,7 +69,7 @@ namespace GoveeLightController {
 
         public bool IsValid() {
             switch(IfCondition) {
-                case null:
+                case "":
                 case "IsLeaguePlayerDead":
                 case "IsLeaguePlayerNotDead":
                     break;
@@ -109,10 +109,16 @@ namespace GoveeLightController {
             return true;
         }
 
-        public void Execute(List<string> ips = null) {
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Executing: " +  this.ToString());
-            
-            
+        private void Execute(List<string> ips = null) {
+            //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Executing: " +  this.ToString());
+
+            if(IfCondition == "IsLeaguePlayerNotDead" && LeagueAPI.Instance.IsDead) {
+                return;
+            }
+            if(IfCondition == "IsLeaguePlayerDead" && !LeagueAPI.Instance.IsDead) {
+                return;
+            }
+
             switch(Command) {
                 case Commands.Wait:
                     Task.Delay(Delay).Wait();
@@ -162,6 +168,8 @@ namespace GoveeLightController {
 
         #region static functions
 
+        private static GoveeDeviceController GoveeDeviceController = new GoveeDeviceController();
+
 
         #region thread management
 
@@ -208,7 +216,7 @@ namespace GoveeLightController {
 
 
         private static void RunScriptAction(List<ScriptCommand> commands, List<string> ips) {
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Script Thread Started");
+            //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Script Thread Started");
             foreach(ScriptCommand command in commands) {
                 if(terminateScriptAction)
                     return;

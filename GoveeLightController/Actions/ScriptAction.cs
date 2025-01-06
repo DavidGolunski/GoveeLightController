@@ -76,39 +76,7 @@ namespace GoveeLightController.Actions {
 
             if(!actionSuccess) {
                 Logger.Instance.LogMessage(TracingLevel.WARN, $"The Action {actionString} does not exist");
-                return;
             }
-            return;
-
-            List<string> fileNames = ScriptCommand.GetScriptFileNames();
-            if(fileNames.Count == 0) {
-                Logger.Instance.LogMessage(TracingLevel.INFO, "No Files found");
-                return;
-            }
-            foreach(string fileName in fileNames) {
-                Logger.Instance.LogMessage(TracingLevel.INFO, "FileName: " + fileName);
-            }
-
-            List<string> actionNames = ScriptCommand.GetListOfActions();
-            if(actionNames.Count == 0) {
-                Logger.Instance.LogMessage(TracingLevel.INFO, "No Actions found");
-                return;
-            }
-
-            foreach(string actionName in actionNames) {
-                Logger.Instance.LogMessage(TracingLevel.INFO, "ActionName: " + actionName);
-            }
-
-            List<ScriptCommand> commands = ScriptCommand.GetAction("PRIMARY_COLOR_TEST");
-            if(commands == null || commands.Count == 0) {
-                Logger.Instance.LogMessage(TracingLevel.INFO, "The action \"PRIMARY_COLOR_TEST\" was not found");
-                return;
-            }
-            foreach(var command in commands) {
-                Logger.Instance.LogMessage(TracingLevel.INFO, command.ToString());
-            }
-
-            ScriptCommand.StartScriptAction("PRIMARY_COLOR_TEST", globalSettings.deviceIpList);
         }
 
         public override void KeyReleased(KeyPayload payload) { }

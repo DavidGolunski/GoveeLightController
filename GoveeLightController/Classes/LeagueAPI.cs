@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using BarRaider.SdTools;
 using Newtonsoft.Json;
@@ -49,6 +50,9 @@ public enum RuneTreeTypes {
 }
 
 public class LeagueAPI {
+
+    public static readonly LeagueAPI Instance = new LeagueAPI();
+
     private double minSuccessfulUpdateDelay;
     private double minUnsuccessfulUpdateDelay;
 
@@ -60,6 +64,8 @@ public class LeagueAPI {
     private string activePlayerName;
     private RuneTreeTypes? primaryRuneTree;
     private bool playerWasDead;
+
+    public bool IsDead { get => playerWasDead; }
 
 
     private static readonly HttpClient client;
@@ -75,7 +81,7 @@ public class LeagueAPI {
     }
 
 
-    public LeagueAPI(double minSuccessfulUpdateDelay = 200, double minUnsuccessfulUpdateDelay = 1000) {
+    private LeagueAPI(double minSuccessfulUpdateDelay = 200, double minUnsuccessfulUpdateDelay = 1000) {
         this.minSuccessfulUpdateDelay = minSuccessfulUpdateDelay;
         this.minUnsuccessfulUpdateDelay = minUnsuccessfulUpdateDelay;
 
@@ -92,6 +98,7 @@ public class LeagueAPI {
         activePlayerName = null;
         primaryRuneTree = null;
         playerWasDead = false;
+        Logger.Instance.LogMessage(TracingLevel.DEBUG, "Resetting League API");
     }
 
     private bool RetrieveData() {
@@ -122,6 +129,7 @@ public class LeagueAPI {
 
                 if(activePlayer == null) {
                     Reset();
+                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "Resseting because active Player was null");
                     return false;
                 }
 
@@ -153,7 +161,8 @@ public class LeagueAPI {
             lastUpdateSuccessful = true;
             return true;        
         }
-        catch(Exception) {
+        catch(Exception e) {
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Resseting because there was an exception\n" + e.StackTrace);
             Reset();
             return false;
         }
@@ -179,7 +188,21 @@ public class LeagueAPI {
         // Check for LeagueEventTypes.GAME_STARTED
         foreach(var eventObj in eventsJson) {
             if(eventObj["EventName"].ToString() == "GameStart") {
-                _event = LeagueEventTypes.GAME_STARTED;
+                if(primaryRuneTree == RuneTreeTypes.DOMINATION) {
+                    _event = LeagueEventTypes.GAME_STARTED_DOMINATION;
+                }
+                else if(primaryRuneTree == RuneTreeTypes.INSPIRATION) {
+                    _event = LeagueEventTypes.GAME_STARTED_INSPIRATION;
+                }
+                else if(primaryRuneTree == RuneTreeTypes.RESOLVE) {
+                    _event = LeagueEventTypes.GAME_STARTED_RESOLVE;
+                }
+                else if(primaryRuneTree == RuneTreeTypes.SORCERY) {
+                    _event = LeagueEventTypes.GAME_STARTED_SORCERY;
+                }
+                else if(primaryRuneTree == RuneTreeTypes.PRECISION) {
+                    _event = LeagueEventTypes.GAME_STARTED_PRECISION;
+                }
                 return;
             }
         }
@@ -281,7 +304,7 @@ public class LeagueAPI {
                 return;
             }
 
-            var assistList = eventObj["Assisters"] as List<object>;
+            List<string> assistList = ((JArray) eventObj["Assisters"]).ToObject<List<string>>();
             if(assistList == null) {
                 continue;
             }
@@ -323,15 +346,6 @@ public class LeagueAPI {
     public bool IsInGame() {
         RetrieveData();
         return activePlayerName != null;
-    }
-
-    public bool IsDead() {
-        RetrieveData();
-        return playerWasDead;
-    }
-
-    public RuneTreeTypes? GetPrimaryRuneTree() {
-        return primaryRuneTree;
     }
 
     public LeagueEventTypes GetEvent(bool popEvent = true) {

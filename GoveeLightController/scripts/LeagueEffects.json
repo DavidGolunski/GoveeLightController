@@ -94,7 +94,7 @@
     { "command": "SetBrightness", "value": 50 },
 
     { "command": "Wait", "delay": 100 },
-    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+    { "command": "TurnOff" }
   ],
   "LOL@HAS_REVIVED": [
     { "command": "ActivatePrimaryColor" },
@@ -318,18 +318,5 @@
     { "command": "Wait", "delay": 100 },
     { "command": "ActivatePrimaryColor" },
     { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
-  ],
-  "LOL@PRIMARY_COLOR_TEST": [
-    { "command": "TurnOn" },
-    { "command": "Wait", "delay": 1000 },
-    { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
-    { "command": "Wait", "delay": 3000 },
-    { "command": "SetPrimaryColor", "r": 0, "g": 255, "b": 0 },
-    { "command": "ActivatePrimaryColor" },
-    { "command": "Wait", "delay": 3000 },
-    { "command": "SetPrimaryColor", "r": 0, "g": 0, "b": 255 },
-    { "command": "ActivatePrimaryColor" },
-    { "command": "Wait", "delay": 3000 },
-    { "command": "TurnOff" }
   ]
 }

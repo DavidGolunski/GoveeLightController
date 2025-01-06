@@ -11,20 +11,14 @@ namespace GoveeLightController {
 
         private static GoveeDeviceController instance;
         public static GoveeDeviceController Instance { 
-            get => instance ?? (instance = new GoveeDeviceController(40, 60));
+            get => instance ?? (instance = new GoveeDeviceController());
             private set => instance = value;
         }
 
-        private int _standardBrightness;
-        private int _highlightBrightness;
         private Dictionary<string, GoveeDevice> _devices;
         private Color _primaryColor = Color.Black;
-        private bool terminateEffect = false; // Flag to stop special effects
-        private Thread _effectThread;          // Placeholder for effect thread
 
-        private GoveeDeviceController(int standardBrightness = 40, int highlightBrightness = 100) {
-            _standardBrightness = standardBrightness;
-            _highlightBrightness = highlightBrightness;
+        public GoveeDeviceController() {
 
             _devices = new Dictionary<string, GoveeDevice>();
         }
@@ -38,14 +32,11 @@ namespace GoveeLightController {
             _primaryColor = color;
         }
 
-        public void ActivatePrimaryColor(List<string> ips = null, bool ignoreThread = true) {
-            SetColor(_primaryColor, ips, ignoreThread);
+        public void ActivatePrimaryColor(List<string> ips = null) {
+            SetColor(_primaryColor, ips);
         }
 
-        public void TurnOn(List<string> ips = null, bool ignoreThread = false) {
-            if(!ignoreThread)
-                StopEffectThread();
-
+        public void TurnOn(List<string> ips = null) {
             AddNonExistingDevices(ips);
 
             List<string> ipsToUse = ips??_devices.Keys.ToList();
@@ -54,10 +45,7 @@ namespace GoveeLightController {
             }
         }
 
-        public void TurnOff(List<string> ips = null, bool ignoreThread = false) {
-            if(!ignoreThread)
-                StopEffectThread();
-
+        public void TurnOff(List<string> ips = null) {
             AddNonExistingDevices(ips);
 
             List<string> ipsToUse = ips ?? _devices.Keys.ToList();
@@ -66,10 +54,7 @@ namespace GoveeLightController {
             }
         }
 
-        public void SetBrightness(int brightness, List<string> ips = null,  bool ignoreThread = false) {
-            if(!ignoreThread)
-                StopEffectThread();
-
+        public void SetBrightness(int brightness, List<string> ips = null) {
             AddNonExistingDevices(ips);
 
             List<string> ipsToUse = ips ?? _devices.Keys.ToList();
@@ -78,11 +63,9 @@ namespace GoveeLightController {
             }
         }
 
-        public void SetColor(Color color, List<string> ips = null, bool ignoreThread = false) {
+        public void SetColor(Color color, List<string> ips = null) {
             if(color == null)
                 throw new ArgumentNullException(nameof(color));
-            if(!ignoreThread)
-                StopEffectThread();
 
             AddNonExistingDevices(ips);
 
@@ -107,68 +90,5 @@ namespace GoveeLightController {
         }
         #endregion
 
-        #region Threading Section
-        public void Pulse(Color color, int numOfPulses, double onTime, double offTime, bool turnOffAfterFunction = false, bool switchToPrimaryColorAfterFunction = false) {
-            if(color == null)
-                throw new ArgumentNullException(nameof(color));
-            if(numOfPulses <= 0 || onTime <= 0 || offTime <= 0)
-                throw new ArgumentException("Invalid pulse parameters");
-
-            StopEffectThread();
-
-            terminateEffect = false;
-            _effectThread = new Thread(() =>
-                RunPulse(color, numOfPulses, onTime, offTime, turnOffAfterFunction, switchToPrimaryColorAfterFunction)
-            );
-            _effectThread.Start();
-        }
-
-        private void StopEffectThread() {
-            if(_effectThread != null && _effectThread.IsAlive) {
-                terminateEffect = true;
-                _effectThread.Join(); // Wait for the thread to terminate
-            }
-            terminateEffect = false;
-            _effectThread = null;
-        }
-
-        private void RunPulse(Color color, int numOfPulses, double onTime, double offTime, bool turnOffAfterFunction, bool switchToPrimaryColorAfterFunction) {
-            if(_devices.Count <= 0)
-                return;
-
-            TurnOn(null, true);
-            SetColor(color, null, true);
-            Task.Delay(100).Wait();
-            SetBrightness(_highlightBrightness, null, true);
-
-            Task.Delay(TimeSpan.FromSeconds(onTime)).Wait();
-
-            for(int i = 0; i < numOfPulses - 1; i++) {
-                if(terminateEffect)
-                    return;
-
-                TurnOff(null, true);
-                Task.Delay(TimeSpan.FromSeconds(offTime)).Wait();
-
-                if(terminateEffect)
-                    return;
-
-                TurnOn(null,true);
-                Task.Delay(TimeSpan.FromSeconds(onTime)).Wait();
-            }
-
-            SetBrightness(_standardBrightness, null, true);
-
-            if(switchToPrimaryColorAfterFunction && !terminateEffect) {
-                Task.Delay(100).Wait();
-                ActivatePrimaryColor(null, true);
-            }
-
-            if(turnOffAfterFunction && !terminateEffect) {
-                Task.Delay(100).Wait();
-                TurnOff(null,true);
-            }
-        }
-        #endregion
     }
 }
