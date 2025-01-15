@@ -17,6 +17,10 @@ namespace GoveeLightController {
     [PluginActionId("com.davidgolunski.goveelightcontroller.setbrightnessaction")]
 
     public class SetBrightnessAction : KeypadBase {
+        /*
+         * This class represents an action on the Stream Deck.
+         * The Action sets the brightsness of the lights
+         */
 
         private class SetBrightnessSettings : DeviceListSettings {
 

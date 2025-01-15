@@ -24,6 +24,11 @@ namespace GoveeLightController {
     }
 
     public class ScriptCommand {
+        /*
+         * This class allows the execution of "Scripts" for Govee Devices.
+         * "Scripts" are special JSON Files that contain a series of instructions for the lights.
+         * An object of this class represents a single executable line in the JSON
+         */
         private const string ScriptsDirectory = "./scripts/";
 
         public Commands Command { get; set; }
@@ -67,6 +72,7 @@ namespace GoveeLightController {
             return commandInfo;
         }
 
+        // checks if the command and the parameters given are ok/within bounds
         public bool IsValid() {
             switch(IfCondition) {
                 case "":
@@ -80,8 +86,8 @@ namespace GoveeLightController {
 
             switch(Command) {
                 case Commands.Wait:
-                    if(Delay <= 0) {
-                        Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid delay.");
+                    if(Delay <= 0 || Delay > 10000) {
+                        Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid delay. Delays need to be above 0 an lower than 10001");
                         return false;
                     }
                     break;
@@ -109,15 +115,18 @@ namespace GoveeLightController {
             return true;
         }
 
+        // executes this command
         private void Execute(List<string> ips = null) {
-            //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Executing: " +  this.ToString());
-
+          
             if(IfCondition == "IsLeaguePlayerNotDead" && LeagueAPI.Instance.IsDead) {
                 return;
             }
             if(IfCondition == "IsLeaguePlayerDead" && !LeagueAPI.Instance.IsDead) {
                 return;
             }
+
+            //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Executing: " + this.ToString());
+           Console.WriteLine("Executing: " + this.ToString());
 
             switch(Command) {
                 case Commands.Wait:
@@ -139,7 +148,7 @@ namespace GoveeLightController {
                     GoveeDeviceController.Instance.SetPrimaryColor(Color.FromArgb(255, R, G, B));
                     break;
                 case Commands.ActivatePrimaryColor:
-                    GoveeDeviceController.Instance.ActivatePrimaryColor();
+                    GoveeDeviceController.Instance.ActivatePrimaryColor(ips);
                     break;
                 case Commands.Unknown:
                 default:
@@ -150,12 +159,12 @@ namespace GoveeLightController {
         public override string ToString() {
             switch(Command) {
                 case Commands.Wait:
-                    return $"{Command}, Delay({Delay})";
+                    return $"{Command}, Delay({Delay})" + " ifCondition: \"" + IfCondition + "\"";
                 case Commands.SetBrightness:
-                    return $"{Command}, Value({Value})";
+                    return $"{Command}, Value({Value})" + " ifCondition: \"" + IfCondition + "\"";
                 case Commands.SetPrimaryColor:
                 case Commands.SetColor:
-                    return $"{Command}, R({R}), G({G}), B({B})";
+                    return $"{Command}, R({R}), G({G}), B({B})" + " ifCondition: \"" + IfCondition + "\"";
                 case Commands.TurnOn:
                 case Commands.TurnOff:
                 case Commands.ActivatePrimaryColor:
@@ -168,8 +177,6 @@ namespace GoveeLightController {
 
         #region static functions
 
-        private static GoveeDeviceController GoveeDeviceController = new GoveeDeviceController();
-
 
         #region thread management
 
@@ -180,6 +187,7 @@ namespace GoveeLightController {
             get => isRunning;
         }
         
+        // stops the execution of the current script list
         private static void StopThread() {
             if(!isRunning)
                 return;
@@ -193,6 +201,8 @@ namespace GoveeLightController {
 
         }
 
+        // starts executing a list of script commands
+        // this is done in a seperate thread, as to not disturb the rest of the program 
         public static bool StartScriptAction(string action, List<string> ips = null) {
             return StartScriptAction(GetAction(action), ips);
         }
@@ -229,9 +239,7 @@ namespace GoveeLightController {
 
         #endregion
 
-        /// <summary>
-        /// Returns a list of all filenames found in "./scripts/" that have the ".json" file type.
-        /// </summary>
+        // Returns a list of all filenames found in "./scripts/" that have the ".json" file type.
         public static List<string> GetScriptFileNames() {
             if(!Directory.Exists(ScriptsDirectory)) {
                 Directory.CreateDirectory(ScriptsDirectory);
@@ -239,11 +247,7 @@ namespace GoveeLightController {
             return new List<string>(Directory.GetFiles(ScriptsDirectory, "*.json"));
         }
 
-        /// <summary>
-        /// Validates if a file follows the JSON rules as specified.
-        /// </summary>
-        /// <param name="fileName">The name of the file to validate.</param>
-        /// <returns>True if the file is valid, false otherwise.</returns>
+        // Checks if a file and all actions inside are valid 
         public static bool IsValidFile(string fileName) {
             if(!File.Exists(fileName)) {
                 Logger.Instance.LogMessage(TracingLevel.ERROR, "The file at \"" + fileName + "\" does not exist");
@@ -275,51 +279,6 @@ namespace GoveeLightController {
                             Logger.Instance.LogMessage(TracingLevel.ERROR, "The Command " + scriptCommand + " could not be parsed");
                             return false;
                         }
-                        
-                        /*
-                        switch(parsedCommand) {
-                            case Commands.SetColor:
-                                if(!command.ContainsKey("r") || !command.ContainsKey("g") || !command.ContainsKey("b"))
-                                    return false;
-                                break;
-                            case Commands.SetBrightness:
-                                if(!command.ContainsKey("value"))
-                                    return false;
-                                break;
-                            case Commands.Wait:
-                                if(!command.ContainsKey("delay"))
-                                    return false;
-                                break;
-                        }
-
-                        switch(commandName) {
-                            case "TurnOn":
-                            case "TurnOff":
-                            case "ActivatePrimaryColor":
-                                // No additional parameters expected
-                                break;
-                            case "SetPrimaryColor":
-                            case "SetColor":
-                                if(!command.ContainsKey("r") || !command.ContainsKey("g") || !command.ContainsKey("b")) {
-                                    Logger.Instance.LogMessage(TracingLevel.ERROR, "Parsing Error: " + fileName + " had a \"SetColor\" command without a \"r\", \"g\" or \"b\"");
-                                    return false;
-                                }
-                                break;
-                            case "SetBrightness":
-                                if(!command.ContainsKey("value")) {
-                                    Logger.Instance.LogMessage(TracingLevel.ERROR, "Parsing Error: " + fileName + " had a \"SetBrightness\" command without a \"value\"");
-                                    return false;
-                                }
-                                break;
-                            case "Wait":
-                                if(!command.ContainsKey("delay")) {
-                                    Logger.Instance.LogMessage(TracingLevel.ERROR, "Parsing Error: " + fileName + " had a \"Wait\" command without a \"delay\"");
-                                    return false;
-                                }
-                                break;
-                            default:
-                                return false; // Unknown command
-                        }*/
                     }
                 }
                 return true;
@@ -330,9 +289,7 @@ namespace GoveeLightController {
             }
         }
 
-        /// <summary>
-        /// Returns a list of all valid actions inside the ".json" files in "./scripts/".
-        /// </summary>
+        // Returns a list of all valid actions inside the ".json" files in "./scripts/".
         public static List<string> GetListOfActions() {
             var actions = new List<string>();
 
@@ -350,9 +307,7 @@ namespace GoveeLightController {
             return actions;
         }
 
-        /// <summary>
-        /// Returns the list of ScriptCommandInfo objects for a specific action name.
-        /// </summary>
+        // returns a list of ScriptCommands, based on an actions name
         public static List<ScriptCommand> GetAction(string actionName) {
             foreach(var fileName in GetScriptFileNames()) {
                 if(IsValidFile(fileName)) {

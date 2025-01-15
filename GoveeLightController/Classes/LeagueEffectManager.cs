@@ -12,6 +12,11 @@ using System.Drawing.Text;
 namespace GoveeLightController {
     public class LeagueEffectManager {
 
+        /*
+         * A class that creates a seperate Thread to control GoveeLights based on
+         * League of Legends game Events. The Class LeagueAPI is providing the Events
+         */
+
         private static LeagueEffectManager instance;
         public static LeagueEffectManager Instance {
             get => instance ?? (instance = new LeagueEffectManager());
@@ -31,15 +36,15 @@ namespace GoveeLightController {
         }
 
 
+        // starts the thread that reads the League API and controls the lights
         public void Start(List<string> deviceIpList) {
             if (isRunning) return;
             isRunning = true;
 
             actionDict = GetActionDict();
+            LeagueAPI.Instance.Reset();
 
-            //ToDo: Read all league Effects from file
-
-            Logger.Instance.LogMessage(TracingLevel.INFO, "Started Thread");
+            Logger.Instance.LogMessage(TracingLevel.INFO, "Started League Effects Manager Thread");
             updateThread = new Thread(() => {
                 while(isRunning) {
                     Update(deviceIpList);
@@ -65,7 +70,7 @@ namespace GoveeLightController {
             }
         }
 
-
+        // update function called by the thread every 0.1 seconds until the thread is closed
         private void Update(List<string> deviceIpList) {
             if(!LeagueAPI.Instance.IsInGame())
                 return;
@@ -76,8 +81,10 @@ namespace GoveeLightController {
 
             if(!actionDict.ContainsKey(leagueEvent.ToString()))
                 return;
+
             List<ScriptCommand> currentAction = actionDict[leagueEvent.ToString()];
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "LeagueEvent animation starting: " + leagueEvent.ToString());
+            //Logger.Instance.LogMessage(TracingLevel.DEBUG, "LeagueEvent animation starting: " + leagueEvent.ToString());
+            Console.WriteLine("LeagueEvent animation starting: " + leagueEvent.ToString());
             ScriptCommand.StartScriptAction(currentAction, deviceIpList);
         }
 

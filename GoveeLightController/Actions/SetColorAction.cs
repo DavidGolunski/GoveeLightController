@@ -10,6 +10,11 @@ namespace GoveeLightController {
     [PluginActionId("com.davidgolunski.goveelightcontroller.setcoloraction")]
 
     public class SetColorAction : KeypadBase {
+        /*
+         * This class represents an action on the Stream Deck.
+         * The Action sets the color of the lights
+         */
+
 
         private class SetColorSettings : DeviceListSettings {
 
@@ -108,7 +113,7 @@ namespace GoveeLightController {
                 return;
             }
          
-            Bitmap img = ImageTools.GetBitmapFromFilePath("./Images/IconLightbulbColorDynamic.png");
+            Bitmap img = ImageTools.GetBitmapFromFilePath("./Images/LightbulbColorDynamic.png");
             img = ImageTools.ReplaceColor(img, Color.Black, localSettings.selectedColor);
             Connection.SetImageAsync(img).GetAwaiter().GetResult();
             img.Dispose();

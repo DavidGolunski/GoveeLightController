@@ -18,6 +18,10 @@ namespace GoveeLightController {
     [PluginActionId("com.davidgolunski.goveelightcontroller.turnonoffaction")]
 
     public class TurnOnOffAction : KeypadBase {
+        /*
+         * This class represents an action on the Stream Deck.
+         * The Action toggles between turning lights on and off
+         */
 
         private DeviceListSettings localSettings;
         private DeviceListSettings globalSettings;
@@ -42,7 +46,7 @@ namespace GoveeLightController {
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"TurnOnAction: Destructor called");
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"TurnOnOffAction: Destructor called");
         }
 
         public override void KeyPressed(KeyPayload payload) {

@@ -25,7 +25,7 @@ namespace GoveeLightController {
             DeviceId = deviceId;
             Sku = sku;
             _udpClient = new UdpClient { Client = { ReceiveTimeout = 2000 } }; // Timeout for operations
-            Console.WriteLine($"Device Created: {ip} {sku} {deviceId}");
+            Logger.Instance.LogMessage(TracingLevel.INFO, $"Device Created: {ip} {sku} {deviceId}");
         }
 
         ~GoveeDevice() {

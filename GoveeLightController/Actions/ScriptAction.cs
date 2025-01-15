@@ -14,6 +14,10 @@ namespace GoveeLightController.Actions {
 
 
     public class ScriptAction : KeypadBase {
+        /*
+         * This class represents an action on the Stream Deck.
+         * The Action runs through a given action (special JSON files) which controls Govee Lights
+         */
 
         private class ActionItem {
             [JsonProperty("text")]
@@ -65,7 +69,7 @@ namespace GoveeLightController.Actions {
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"TurnOnAction: Destructor called");
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"ScriptAction: Destructor called");
         }
 
         public override void KeyPressed(KeyPayload payload) {

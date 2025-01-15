@@ -77,7 +77,6 @@ namespace GoveeLightController {
         public override void OnTick() { }
 
         public override void ReceivedSettings(ReceivedSettingsPayload payload) {
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "GlobalSettingsAction: Received Settings");
             Tools.AutoPopulateSettings(settings, payload.Settings);
             SaveSettings();
             

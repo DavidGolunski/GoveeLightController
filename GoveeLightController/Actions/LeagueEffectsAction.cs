@@ -18,6 +18,10 @@ namespace GoveeLightController {
     [PluginActionId("com.davidgolunski.goveelightcontroller.leagueeffectsaction")]
 
     public class LeagueEffectsAction : KeypadBase {
+        /*
+         * This class represents an action on the Stream Deck.
+         * The Action enables/disables the League Effects Manager, which controls GoveeLights based on League Of Legends Events
+         */
 
         private DeviceListSettings localSettings;
         private DeviceListSettings globalSettings;
@@ -38,7 +42,7 @@ namespace GoveeLightController {
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"TurnOnAction: Destructor called");
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"LeagueEffectsAction: Destructor called");
         }
 
         public override void KeyPressed(KeyPayload payload) {

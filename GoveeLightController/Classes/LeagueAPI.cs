@@ -51,10 +51,16 @@ public enum RuneTreeTypes {
 
 public class LeagueAPI {
 
+    /*
+     * A Class that tries to fetch data from the League Client.
+     * It stores the most recent event in a variable, to be retrieved and interpreted by other classes
+     */
+
     public static readonly LeagueAPI Instance = new LeagueAPI();
 
-    private double minSuccessfulUpdateDelay;
-    private double minUnsuccessfulUpdateDelay;
+    // we do not want to spam the client API. These delays ensure that
+    private readonly double minSuccessfulUpdateDelay;
+    private readonly double minUnsuccessfulUpdateDelay;
 
     private long latestEventId;
     private DateTime lastUpdate;
@@ -62,10 +68,8 @@ public class LeagueAPI {
     private LeagueEventTypes _event;
 
     private string activePlayerName;
-    private RuneTreeTypes? primaryRuneTree;
-    private bool playerWasDead;
-
-    public bool IsDead { get => playerWasDead; }
+    public RuneTreeTypes? PrimaryRuneTree { get; private set; }
+    public bool IsDead { get; private set; }
 
 
     private static readonly HttpClient client;
@@ -90,17 +94,20 @@ public class LeagueAPI {
         lastUpdateSuccessful = true;
     }
 
+    // resets the League API. Getting ready for a new Game
     public void Reset() {
         lastUpdate = DateTime.Now;
         lastUpdateSuccessful = false;
         _event = LeagueEventTypes.NO_EVENT;
 
         activePlayerName = null;
-        primaryRuneTree = null;
-        playerWasDead = false;
+        PrimaryRuneTree = null;
+        IsDead = false;
         Logger.Instance.LogMessage(TracingLevel.DEBUG, "Resetting League API");
     }
 
+    // Retrieve data from the client. Returns true if successfull.
+    // Fetched Data is stored in the classes attributes
     private bool RetrieveData() {
         DateTime now = DateTime.Now;
         double timeDiff = (now - lastUpdate).TotalMilliseconds;
@@ -111,17 +118,20 @@ public class LeagueAPI {
             return false;
 
         try {
+            // if the name is null, it means that a new game has started
             if(activePlayerName == null) {
                 var responsePlayerData = client.GetStringAsync("https://127.0.0.1:2999/liveclientdata/activeplayer").Result;
 
                 dynamic playerData = JsonConvert.DeserializeObject(responsePlayerData);
 
                 activePlayerName = playerData.riotIdGameName;
-                primaryRuneTree = (RuneTreeTypes) playerData.fullRunes.primaryRuneTree.id;
+                PrimaryRuneTree = (RuneTreeTypes) playerData.fullRunes.primaryRuneTree.id;
+
                 latestEventId = -1;
             }
 
-            if(playerWasDead) {
+            // there is no "player revived" event. This code simulates the event
+            if(IsDead) {
                 var responsePlayerList = client.GetStringAsync("https://127.0.0.1:2999/liveclientdata/playerlist").Result;
 
                 var playerList = JsonConvert.DeserializeObject<List<dynamic>>(responsePlayerList);
@@ -129,12 +139,11 @@ public class LeagueAPI {
 
                 if(activePlayer == null) {
                     Reset();
-                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "Resseting because active Player was null");
                     return false;
                 }
 
                 if(activePlayer.isDead == false) {
-                    playerWasDead = false;
+                    IsDead = false;
                     _event = LeagueEventTypes.HAS_REVIVED;
                     lastUpdateSuccessful = true;
                     lastUpdate = now;
@@ -149,25 +158,37 @@ public class LeagueAPI {
             var events = ((JArray) eventData["Events"])
                 .Select(eventObj => eventObj.ToObject<Dictionary<string, object>>())
                 .ToList();
-            // Filter events based on EventID
+            // Filter events based on EventID. We do not want outdated events to be interpreted
             var newEventData = events.FindAll(eventObj => (long) eventObj["EventID"] > latestEventId);
 
             if(newEventData.Count > 0) {
                 latestEventId = (long) newEventData[newEventData.Count - 1]["EventID"];
+                Console.WriteLine("Latest Event ID: " + latestEventId);
+
+                // Debug Code
+                foreach(var eventObj in newEventData) {
+                    string json = JsonConvert.SerializeObject(eventObj, Formatting.Indented);
+                    Console.WriteLine(json);
+                    Logger.Instance.LogMessage(TracingLevel.DEBUG, json);
+                }
             }
 
+            // process events in seperate function
             ProcessEvents(newEventData);
             lastUpdate = now;
             lastUpdateSuccessful = true;
             return true;        
         }
         catch(Exception e) {
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Resseting because there was an exception\n" + e.StackTrace);
+            // this exception is expected if there is no active League game (timeout)
+            Console.WriteLine(e.StackTrace);
             Reset();
             return false;
         }
     }
-
+    
+    // interprets a list of new events
+    // it will pick the most "relevant" of the events to be storent in the "_event" variable
     private void ProcessEvents(List<Dictionary<string, object>> eventsJson) {
 
         // check for LeagueEventTypes.GAME_WON and LeagueEventTypes.GAME_LOST
@@ -187,24 +208,29 @@ public class LeagueAPI {
 
         // Check for LeagueEventTypes.GAME_STARTED
         foreach(var eventObj in eventsJson) {
-            if(eventObj["EventName"].ToString() == "GameStart") {
-                if(primaryRuneTree == RuneTreeTypes.DOMINATION) {
-                    _event = LeagueEventTypes.GAME_STARTED_DOMINATION;
-                }
-                else if(primaryRuneTree == RuneTreeTypes.INSPIRATION) {
-                    _event = LeagueEventTypes.GAME_STARTED_INSPIRATION;
-                }
-                else if(primaryRuneTree == RuneTreeTypes.RESOLVE) {
-                    _event = LeagueEventTypes.GAME_STARTED_RESOLVE;
-                }
-                else if(primaryRuneTree == RuneTreeTypes.SORCERY) {
-                    _event = LeagueEventTypes.GAME_STARTED_SORCERY;
-                }
-                else if(primaryRuneTree == RuneTreeTypes.PRECISION) {
-                    _event = LeagueEventTypes.GAME_STARTED_PRECISION;
-                }
-                return;
+            if(eventObj["EventName"].ToString() != "GameStart") {
+                continue;
             }
+            if(PrimaryRuneTree == RuneTreeTypes.DOMINATION) {
+                _event = LeagueEventTypes.GAME_STARTED_DOMINATION;
+            }
+            else if(PrimaryRuneTree == RuneTreeTypes.INSPIRATION) {
+                _event = LeagueEventTypes.GAME_STARTED_INSPIRATION;
+            }
+            else if(PrimaryRuneTree == RuneTreeTypes.RESOLVE) {
+                _event = LeagueEventTypes.GAME_STARTED_RESOLVE;
+            }
+            else if(PrimaryRuneTree == RuneTreeTypes.SORCERY) {
+                _event = LeagueEventTypes.GAME_STARTED_SORCERY;
+            }
+            else if(PrimaryRuneTree == RuneTreeTypes.PRECISION) {
+                _event = LeagueEventTypes.GAME_STARTED_PRECISION;
+            }
+            else {
+                Logger.Instance.LogMessage(TracingLevel.WARN, "No Rune Tree Type was detected");
+                Console.WriteLine("No Rune Tree Type was detected");
+            }
+            return;
         }
 
         // check for LeagueEventTypes.BARON_KILLED
@@ -295,7 +321,7 @@ public class LeagueAPI {
 
             if(eventObj["VictimName"].ToString() == activePlayerName) {
                 _event = LeagueEventTypes.HAS_DIED;
-                playerWasDead = true;
+                IsDead = true;
                 return;
             }
 
@@ -342,12 +368,15 @@ public class LeagueAPI {
 
         _event = LeagueEventTypes.NO_EVENT;
     }
-
+    
+    // function to retrieve information if the player is currently in a game
     public bool IsInGame() {
         RetrieveData();
         return activePlayerName != null;
     }
 
+    // function to retrieve information about the latest event.
+    // if "popEvent" is true, it will set it to "NO_EVENT" aferwards, ensuring no double usage of the same event
     public LeagueEventTypes GetEvent(bool popEvent = true) {
         RetrieveData();
         if(!popEvent || _event == LeagueEventTypes.NO_EVENT) 

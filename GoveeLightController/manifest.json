@@ -1,7 +1,7 @@
 {
   "Actions": [
     {
-      "Icon": "Images/Setting",
+      "Icon": "Images/SettingIcon",
       "Name": "Global Settings",
       "States": [
         {
@@ -16,16 +16,16 @@
       "PropertyInspectorPath": "PropertyInspector/GlobalSettingsAction.html"
     },
     {
-      "Icon": "Images/IconLightbulbOn",
+      "Icon": "Images/OnOffIcon",
       "Name": "Turn On/Off",
       "States": [
         {
-          "Image": "Images/IconLightbulbOn",
+          "Image": "Images/LightbulbOn",
           "TitleAlignment": "middle",
           "FontSize": "12"
         },
         {
-          "Image": "Images/IconLightbulbOff",
+          "Image": "Images/LightbulbOff",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -37,11 +37,11 @@
       "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
     },
     {
-      "Icon": "Images/IconLightbulbColor",
+      "Icon": "Images/ColorIcon",
       "Name": "Change Color",
       "States": [
         {
-          "Image": "Images/IconLightbulbColor",
+          "Image": "Images/LightbulbColor",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -52,11 +52,11 @@
       "PropertyInspectorPath": "PropertyInspector/SetColorAction.html"
     },
     {
-      "Icon": "Images/IconLightbulbBrightness",
+      "Icon": "Images/BrightnessIcon",
       "Name": "Change Brightness",
       "States": [
         {
-          "Image": "Images/IconLightbulbBrightness",
+          "Image": "Images/LightbulbBrightness",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -67,11 +67,11 @@
       "PropertyInspectorPath": "PropertyInspector/SetBrightnessAction.html"
     },
     {
-      "Icon": "Images/icon",
+      "Icon": "Images/CodeIcon",
       "Name": "Script Action",
       "States": [
         {
-          "Image": "Images/pluginAction",
+          "Image": "Images/LightbulbCode",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -82,20 +82,18 @@
       "PropertyInspectorPath": "PropertyInspector/ScriptAction.html"
     },
     {
-      "Icon": "Images/icon",
+      "Icon": "Images/LeagueIcon",
       "Name": "League Of Legends Game Effects",
       "States": [
         {
-          "Image": "Images/pluginAction",
+          "Image": "Images/League",
           "TitleAlignment": "middle",
-          "Title": "Off",
           "ShowTitle": true,
           "FontSize": "12"
         },
         {
-          "Image": "Images/pluginAction",
+          "Image": "Images/LeagueRunning",
           "TitleAlignment": "middle",
-          "Title": "Running",
           "ShowTitle": true,
           "FontSize": "12"
         }
