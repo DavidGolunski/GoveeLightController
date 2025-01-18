@@ -44,15 +44,15 @@
     <Reference Include="NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.5.3.4\lib\net46\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="StreamDeckTools, Version=6.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\StreamDeck-Tools.6.2.0\lib\netstandard2.0\StreamDeckTools.dll</HintPath>
+    <Reference Include="StreamDeckTools, Version=6.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StreamDeck-Tools.6.3.1\lib\netstandard2.0\StreamDeckTools.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Common, Version=9.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Drawing.Common.9.0.0\lib\net462\System.Drawing.Common.dll</HintPath>
+      <HintPath>..\packages\System.Drawing.Common.9.0.1\lib\net462\System.Drawing.Common.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
@@ -66,20 +66,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\ScriptAction.cs" />
+    <Compile Include="Actions\CounterStrikeEffectsAction\CounterStrikeEffectsAction.cs" />
+    <Compile Include="Actions\CounterStrikeEffectsAction\GameState.cs" />
+    <Compile Include="Actions\ScriptAction\ScriptAction.cs" />
+    <Compile Include="Actions\CounterStrikeEffectsAction\CounterStrikeAPI.cs" />
+    <Compile Include="Actions\CounterStrikeEffectsAction\CounterStrikeEffectsManager.cs" />
     <Compile Include="Classes\GoveeDevice.cs" />
     <Compile Include="Classes\GoveeDeviceController.cs" />
     <Compile Include="Classes\DeviceListSettings.cs" />
-    <Compile Include="Actions\GlobalSettingsAction.cs" />
+    <Compile Include="Actions\GlobalSettingsAction\GlobalSettingsAction.cs" />
     <Compile Include="Classes\ImageTools.cs" />
-    <Compile Include="Classes\LeagueAPI.cs" />
-    <Compile Include="Classes\LeagueEffectManager.cs" />
-    <Compile Include="Actions\SetBrightnessAction.cs" />
-    <Compile Include="Actions\LeagueEffectsAction.cs" />
-    <Compile Include="Actions\TurnOnOffAction.cs" />
-    <Compile Include="Actions\SetColorAction.cs" />
+    <Compile Include="Actions\LeagueEffectsAction\LeagueAPI.cs" />
+    <Compile Include="Actions\LeagueEffectsAction\LeagueEffectManager.cs" />
+    <Compile Include="Actions\SetBrightnessAction\SetBrightnessAction.cs" />
+    <Compile Include="Actions\LeagueEffectsAction\LeagueEffectsAction.cs" />
+    <Compile Include="Actions\TurnOnOffAction\TurnOnOffAction.cs" />
+    <Compile Include="Actions\SetColorAction\SetColorAction.cs" />
     <Compile Include="Classes\Program.cs" />
-    <Compile Include="Classes\ScriptCommand.cs" />
+    <Compile Include="Actions\ScriptAction\ScriptCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +95,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="scripts\CounterStrikeEffects.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="scripts\LeagueEffects.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -101,61 +108,109 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="!!README!!.txt" />
-    <Content Include="Images\BrightnessIcon%402x.png">
+    <Content Include="Actions\CounterStrikeEffectsAction\CounterStrike%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\BrightnessIcon.png">
+    <Content Include="Actions\CounterStrikeEffectsAction\CounterStrike.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\CodeIcon%402x.png">
+    <Content Include="Actions\CounterStrikeEffectsAction\CounterStrikeIcon%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\CodeIcon.png">
+    <Content Include="Actions\CounterStrikeEffectsAction\CounterStrikeIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\ColorIcon%402x.png">
+    <Content Include="Actions\CounterStrikeEffectsAction\CounterStrikeRunning%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\ColorIcon.png">
+    <Content Include="Actions\CounterStrikeEffectsAction\CounterStrikeRunning.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\League%402x.png">
+    <Content Include="Actions\GlobalSettingsAction\Setting%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\League.png">
+    <Content Include="Actions\GlobalSettingsAction\Setting.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\LeagueIcon%402x.png">
+    <Content Include="Actions\GlobalSettingsAction\SettingIcon%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\LeagueIcon.png">
+    <Content Include="Actions\GlobalSettingsAction\SettingIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\LeagueRunning%402x.png">
+    <Content Include="Actions\LeagueEffectsAction\League%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\LeagueRunning.png">
+    <Content Include="Actions\LeagueEffectsAction\League.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\LightbulbBrightness%402x.png">
+    <Content Include="Actions\LeagueEffectsAction\LeagueIcon%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\LightbulbBrightness.png">
+    <Content Include="Actions\LeagueEffectsAction\LeagueIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\LightbulbCode%402x.png">
+    <Content Include="Actions\LeagueEffectsAction\LeagueRunning%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\LightbulbCode.png">
+    <Content Include="Actions\LeagueEffectsAction\LeagueRunning.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\LightbulbColor%402x.png">
+    <Content Include="Actions\ScriptAction\CodeIcon%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\LightbulbColor.png">
+    <Content Include="Actions\ScriptAction\CodeIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\LightbulbColorDynamic.png">
+    <Content Include="Actions\ScriptAction\LightbulbCode%402x.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\ScriptAction\LightbulbCode.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\SetBrightnessAction\BrightnessIcon%402x.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\SetBrightnessAction\BrightnessIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\SetBrightnessAction\LightbulbBrightness%402x.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\SetBrightnessAction\LightbulbBrightness.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\SetColorAction\ColorIcon%402x.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\SetColorAction\ColorIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\SetColorAction\LightbulbColor%402x.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\SetColorAction\LightbulbColor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\SetColorAction\LightbulbColorDynamic.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\TurnOnOffAction\LightbulbOff%402x.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\TurnOnOffAction\LightbulbOff.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\TurnOnOffAction\LightbulbOn%402x.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\TurnOnOffAction\LightbulbOn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\TurnOnOffAction\OnOffIcon%402x.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\TurnOnOffAction\OnOffIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\LightbulbGovee%402x.png">
@@ -168,36 +223,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\LightbulbGoveeIcon.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\LightbulbOff%402x.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\LightbulbOff.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\LightbulbOn%402x.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\LightbulbOn.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\OnOffIcon%402x.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\OnOffIcon.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\Setting%402x.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\Setting.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\SettingIcon%402x.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\SettingIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PropertyInspector\SetBrightnessAction.html">

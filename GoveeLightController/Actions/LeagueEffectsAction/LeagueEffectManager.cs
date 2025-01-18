@@ -50,9 +50,8 @@ namespace GoveeLightController {
                     Update(deviceIpList);
                     Thread.Sleep(100); // Wait for 0.1 second
                 }
-            }) {
-                IsBackground = true // Ensure the thread does not block application exit
-            };
+            });
+            updateThread.IsBackground = true;
 
             updateThread.Start();
         }
@@ -87,6 +86,7 @@ namespace GoveeLightController {
             Console.WriteLine("LeagueEvent animation starting: " + leagueEvent.ToString());
             ScriptCommand.StartScriptAction(currentAction, deviceIpList);
         }
+
 
         private Dictionary<string, List<ScriptCommand>> GetActionDict() {
             Dictionary<string, List<ScriptCommand>> actions = new Dictionary<string, List<ScriptCommand>>();

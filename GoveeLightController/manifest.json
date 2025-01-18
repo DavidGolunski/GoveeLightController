@@ -1,11 +1,11 @@
 {
   "Actions": [
     {
-      "Icon": "Images/SettingIcon",
+      "Icon": "Actions/GlobalSettingsAction/SettingIcon",
       "Name": "Global Settings",
       "States": [
         {
-          "Image": "Images/Setting",
+          "Image": "Actions/GlobalSettingsAction/Setting",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -16,16 +16,16 @@
       "PropertyInspectorPath": "PropertyInspector/GlobalSettingsAction.html"
     },
     {
-      "Icon": "Images/OnOffIcon",
+      "Icon": "Actions/TurnOnOffAction/OnOffIcon",
       "Name": "Turn On/Off",
       "States": [
         {
-          "Image": "Images/LightbulbOn",
+          "Image": "Actions/TurnOnOffAction/LightbulbOn",
           "TitleAlignment": "middle",
           "FontSize": "12"
         },
         {
-          "Image": "Images/LightbulbOff",
+          "Image": "Actions/TurnOnOffAction/LightbulbOff",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -37,11 +37,11 @@
       "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
     },
     {
-      "Icon": "Images/ColorIcon",
+      "Icon": "Actions/SetColorAction/ColorIcon",
       "Name": "Change Color",
       "States": [
         {
-          "Image": "Images/LightbulbColor",
+          "Image": "Actions/SetColorAction/LightbulbColor",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -52,11 +52,11 @@
       "PropertyInspectorPath": "PropertyInspector/SetColorAction.html"
     },
     {
-      "Icon": "Images/BrightnessIcon",
+      "Icon": "Actions/SetBrightnessAction/BrightnessIcon",
       "Name": "Change Brightness",
       "States": [
         {
-          "Image": "Images/LightbulbBrightness",
+          "Image": "Actions/SetBrightnessAction/LightbulbBrightness",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -67,11 +67,11 @@
       "PropertyInspectorPath": "PropertyInspector/SetBrightnessAction.html"
     },
     {
-      "Icon": "Images/CodeIcon",
+      "Icon": "Actions/ScriptAction/CodeIcon",
       "Name": "Script Action",
       "States": [
         {
-          "Image": "Images/LightbulbCode",
+          "Image": "Actions/ScriptAction/LightbulbCode",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
@@ -82,17 +82,17 @@
       "PropertyInspectorPath": "PropertyInspector/ScriptAction.html"
     },
     {
-      "Icon": "Images/LeagueIcon",
+      "Icon": "Actions/LeagueEffectsAction/LeagueIcon",
       "Name": "League Of Legends Game Effects",
       "States": [
         {
-          "Image": "Images/League",
+          "Image": "Actions/LeagueEffectsAction/League",
           "TitleAlignment": "middle",
           "ShowTitle": true,
           "FontSize": "12"
         },
         {
-          "Image": "Images/LeagueRunning",
+          "Image": "Actions/LeagueEffectsAction/LeagueRunning",
           "TitleAlignment": "middle",
           "ShowTitle": true,
           "FontSize": "12"
@@ -102,6 +102,29 @@
       "SupportedInMultiActions": true,
       "Tooltip": "Provides you with a light show when you play League of Legends",
       "UUID": "com.davidgolunski.goveelightcontroller.leagueeffectsaction",
+      "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
+    },
+    {
+      "Icon": "Actions/CounterStrikeEffectsAction/CounterStrikeIcon",
+      "Name": "Counter Strike Game Effects",
+      "States": [
+        {
+          "Image": "Actions/CounterStrikeEffectsAction/CounterStrike",
+          "TitleAlignment": "middle",
+          "ShowTitle": true,
+          "FontSize": "12"
+        },
+        {
+          "Image": "Actions/CounterStrikeEffectsAction/CounterStrikeRunning",
+          "TitleAlignment": "middle",
+          "ShowTitle": true,
+          "FontSize": "12"
+        }
+      ],
+      "DisableAutomaticStates": true,
+      "SupportedInMultiActions": true,
+      "Tooltip": "Provides you with a light show when you play Counter Strike",
+      "UUID": "com.davidgolunski.goveelightcontroller.counterstrikeeffectssaction",
       "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
     }
   ],

@@ -113,7 +113,7 @@ namespace GoveeLightController {
                 return;
             }
          
-            Bitmap img = ImageTools.GetBitmapFromFilePath("./Images/LightbulbColorDynamic.png");
+            Bitmap img = ImageTools.GetBitmapFromFilePath("./Actions/SetColorAction/LightbulbColorDynamic.png");
             img = ImageTools.ReplaceColor(img, Color.Black, localSettings.selectedColor);
             Connection.SetImageAsync(img).GetAwaiter().GetResult();
             img.Dispose();

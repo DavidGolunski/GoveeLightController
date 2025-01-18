@@ -1,0 +1,169 @@
+{
+  "CS@ROUND_STARTED_T": [
+    { "command": "TurnOn" },
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetPrimaryColor", "r": 255, "g": 106, "b": 0 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "Wait", "delay": 200 },
+    { "command": "SetBrightness",  "value": 50 }
+  ],
+  "CS@ROUND_STARTED_CT": [
+    { "command": "TurnOn" },
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetPrimaryColor", "r": 0, "g": 0, "b": 255 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "Wait", "delay": 200 },
+    { "command": "SetBrightness",  "value": 50 }
+  ],
+  "CS@ROUND_WON": [
+    { "command": "TurnOn"},
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 3000 },
+    { "command": "TurnOff" }
+  ],
+  "CS@ROUND_LOST": [
+    { "command": "TurnOn"},
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 3000 },
+    { "command": "TurnOff" }
+  ],
+  "CS@GAME_WON": [
+    { "command": "TurnOn" },
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "SetBrightness", "value": 100 },
+
+    { "command": "Wait", "delay": 1000 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn"},
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "SetBrightness", "value": 50 },
+    { "command": "Wait", "delay": 100 },
+    { "command": "TurnOff" }
+  ],
+  "CS@GAME_LOST": [
+    { "command": "TurnOn" },
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
+    { "command": "SetBrightness", "value": 100 },
+
+    { "command": "Wait", "delay": 1000 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn" },
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOff"},
+    { "command": "Wait", "delay": 500 },
+    { "command": "TurnOn"},
+
+    { "command": "Wait", "delay": 500 },
+    { "command": "SetBrightness", "value": 50 },
+    { "command": "Wait", "delay": 100 },
+    { "command": "TurnOff" }
+  ],
+  "CS@HAS_KILLED": [
+    { "command": "TurnOn"},
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 700 },
+    { "command":  "SetBrightness", "value": 100},
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" }
+  ],
+  "CS@HAS_DIED": [
+    { "command": "TurnOn" },
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 2000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "TurnOff" }
+  ],
+  "CS@ENTERRED_MAIN_MENU": [
+    { "command": "TurnOn"},
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetBrightness", "value": 50 }
+  ],
+  "CS@ELDER_DRAGON_KILLED": [
+    { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
+    { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
+    { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetColor", "r": 0, "g": 255, "b": 255 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetBrightness", "value": 50 },
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ]
+}
