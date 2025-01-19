@@ -144,26 +144,5 @@
     { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
     { "command": "Wait", "delay": 100 },
     { "command": "SetBrightness", "value": 50 }
-  ],
-  "CS@ELDER_DRAGON_KILLED": [
-    { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
-    { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
-    { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
-    { "command": "SetBrightness", "value": 100 },
-    { "command": "Wait", "delay": 700 },
-
-    { "command": "SetColor", "r": 0, "g": 255, "b": 255 },
-    { "command": "Wait", "delay": 700 },
-
-    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
-    { "command": "Wait", "delay": 700 },
-
-    { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
-    { "command": "Wait", "delay": 700 },
-
-    { "command": "SetBrightness", "value": 50 },
-    { "command": "Wait", "delay": 100 },
-    { "command": "ActivatePrimaryColor" },
-    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
   ]
 }

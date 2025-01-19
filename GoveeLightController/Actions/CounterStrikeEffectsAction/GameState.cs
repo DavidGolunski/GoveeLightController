@@ -72,8 +72,10 @@ namespace GoveeLightController {
         public CsTeam PlayerTeam { get; private set; }
         public CsActivities PlayerActivity { get; private set; }
 
-        // this field is actually not sent by the game. It is needed to store the players team, as the "player informatoin" is about the player that is being spectated
+        // this field is actually not sent by the game. It is needed to store the players team, as the "player information" is about the player that is being spectated
         public CsTeam ProviderTeam { get; private set; }
+        // this field is also not sent by the game. It is needed for the "if" statements in the effects. Is only updated in the "GetEvent" function
+        public bool IsProviderDead { get; private set; }
 
 
         // player state information
@@ -111,6 +113,7 @@ namespace GoveeLightController {
             PlayerActivity = CsActivities.UNAVAILABLE;
 
             ProviderTeam = CsTeam.UNAVAILABLE;
+            IsProviderDead = true;
 
             HasPlayerStateInformation = false;
             PlayerHealth = -1;
@@ -446,14 +449,16 @@ namespace GoveeLightController {
                 && HasPlayerInformation
                 && RoundPhase == CsRoundPhases.FREEZETIME && previousGameState.RoundPhase != CsRoundPhases.FREEZETIME) {
                 if(PlayerTeam == CsTeam.T) {
+                    IsProviderDead = false;
                     return CsEventTypes.ROUND_STARTED_T;
                 }
                 else {
+                    IsProviderDead = false;
                     return CsEventTypes.ROUND_STARTED_CT;
                 }
             }
             else {
-                string message = "Round Freezetime Event failed because: ";
+                string message = "Round Started Event failed because: ";
                 if(!HasRoundInformation)
                     message += "[HasRoundInformation was False]";
                 if(!previousGameState.HasRoundInformation)
@@ -466,17 +471,45 @@ namespace GoveeLightController {
                     message += "[previousGameState.RoundPhase was FREEZETIME (" + previousGameState.RoundPhase + ")]";
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
             }
-            // warmup
-            // -> mapphase: "warmup" (round does not seem to exist"
 
             // team select events
-            
+            if(!IsObserving && !previousGameState.IsObserving
+                && HasPlayerInformation
+                && ProviderTeam != previousGameState.ProviderTeam) {
+
+                if(ProviderTeam == CsTeam.T) {
+                    IsProviderDead = true;
+                    return CsEventTypes.ROUND_STARTED_T;
+                }
+                if(ProviderTeam == CsTeam.CT) {
+                    IsProviderDead = true;
+                    return CsEventTypes.ROUND_STARTED_CT;
+                }
+                    
+            }
+            else {
+                string message = "Team Select Event failed because: ";
+                if(IsObserving)
+                    message += "[IsObserving was True]";
+                if(previousGameState.IsObserving)
+                    message += "[previousGameState.IsObserving was True]";
+                if(!HasPlayerInformation)
+                    message += "[HasPlayerInformation was False]";
+                if(ProviderTeam == previousGameState.ProviderTeam)
+                    message += "[ProviderTeam was not different from previousGameState.ProviderTeam (ProviderTeam: " + ProviderTeam + ", previousGameState.ProviderTeam: " + previousGameState.ProviderTeam + ")]";
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
+
+            }
+
+
 
             // kill events
-            if(HasPlayerStateInformation && previousGameState.HasPlayerInformation && RoundKills > previousGameState.RoundKills)
+            if(!IsObserving && HasPlayerStateInformation && previousGameState.HasPlayerInformation && RoundKills > previousGameState.RoundKills)
                 return CsEventTypes.HAS_KILLED;
             else {
                 string message = "Player Kill Event failed because: ";
+                if(IsObserving)
+                    message += "[IsObserving was True]";
                 if(!HasPlayerStateInformation)
                     message += "[HasPlayerStateInformation was False]";
                 if(!previousGameState.HasPlayerInformation)
@@ -540,6 +573,7 @@ namespace GoveeLightController {
                 && this.PlayerTeam == otherGameState.PlayerTeam
                 && this.PlayerActivity == otherGameState.PlayerActivity
                 && this.ProviderTeam == otherGameState.ProviderTeam
+                && this.IsProviderDead == otherGameState.IsProviderDead
                 && this.HasPlayerStateInformation == otherGameState.HasPlayerStateInformation
                 && this.PlayerHealth == otherGameState.PlayerHealth
                 && this.PlayerFlashed == otherGameState.PlayerFlashed
@@ -558,6 +592,7 @@ namespace GoveeLightController {
             output += "\n\tProviderSteamID: " + ProviderSteamID;
             output += "\n\tTimesStamp: " + TimeStamp;
             output += "\n\tProviderTeam: " + ProviderTeam;
+            output += "\n\tIsProviderDead: " + IsProviderDead; 
 
             output += "\nHasPlayerInformation: " + HasPlayerInformation;
             if(HasPlayerInformation) {
