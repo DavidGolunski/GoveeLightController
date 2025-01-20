@@ -5,9 +5,13 @@
     <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
     <meta name=apple-mobile-web-app-capable content=yes>
     <meta name=apple-mobile-web-app-status-bar-style content=black>
-    <title>GoveeLightController Turn Off</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdpi.css">
-    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdtools.common.js"></script>
+    <title>GoveeLightController Script Action</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdpi.css">
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdtools.common.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/rangeTooltip.css">
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/rangeTooltip.js"></script>
+
     <script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
     <script>
         // Ensure the script runs after the DOM is loaded
@@ -38,9 +42,20 @@
 </head>
 <body>
     <div class="sdpi-wrapper">
-        <div>
-            Turns one or more lights specified in the device list below on/off.<br />
-            Don't forget to click the "Save" button after editing.
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Description</div>
+            <div class="sdpi-item-value">
+                Enables you to create a custom lightshow based on a script. Script files can be found in:<br/>
+                "%appdata%/Elgato/StreamDeck/Plugins/<br/>
+                com.davidgolunski.goveelightcontroller.sdPlugin<br/>
+                /scripts"
+            </div>
+        </div>
+        <br/>
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Action Selection</div>
+            <select class="sdpi-item-value sdProperty sdList" sdListTextProperty="text" sdListValueProperty="value" sdValueField="selectedAction" id="actionDropDown">
+            </select>
         </div>
         <div class="sdpi-item">
             <div class="sdpi-item-label">Device Selection</div>
@@ -57,6 +72,7 @@
         <div class="sdpi-item">
             <div class="sdpi-item-label">Save Settings</div>
             <button class="sdpi-item-value" onclick="setSettings()">Save</button>
+            <div class="sdpi-item-value">Always "Save" after editing</div>
         </div>
     </div>
 </body>

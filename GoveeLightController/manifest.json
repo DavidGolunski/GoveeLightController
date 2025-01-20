@@ -34,7 +34,7 @@
       "SupportedInMultiActions": true,
       "Tooltip": "Turn on or off one or more lights",
       "UUID": "com.davidgolunski.goveelightcontroller.turnonoffaction",
-      "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
+      "PropertyInspectorPath": "Actions/TurnOnOffAction/TurnOnOffAction.html"
     },
     {
       "Icon": "Actions/SetColorAction/ColorIcon",
@@ -49,7 +49,7 @@
       "SupportedInMultiActions": true,
       "Tooltip": "Changes the color of one or more lights",
       "UUID": "com.davidgolunski.goveelightcontroller.setcoloraction",
-      "PropertyInspectorPath": "PropertyInspector/SetColorAction.html"
+      "PropertyInspectorPath": "Actions/SetColorAction/SetColorAction.html"
     },
     {
       "Icon": "Actions/SetBrightnessAction/BrightnessIcon",
@@ -64,7 +64,7 @@
       "SupportedInMultiActions": true,
       "Tooltip": "Changes the brightness of one or more lights",
       "UUID": "com.davidgolunski.goveelightcontroller.setbrightnessaction",
-      "PropertyInspectorPath": "PropertyInspector/SetBrightnessAction.html"
+      "PropertyInspectorPath": "Actions/SetBrightnessAction/SetBrightnessAction.html"
     },
     {
       "Icon": "Actions/SetBrightnessAction/BrightnessIcon",
@@ -105,7 +105,7 @@
       "SupportedInMultiActions": true,
       "Tooltip": "Executes a Script for Govee lights",
       "UUID": "com.davidgolunski.goveelightcontroller.scriptaction",
-      "PropertyInspectorPath": "PropertyInspector/ScriptAction.html"
+      "PropertyInspectorPath": "Actions/ScriptAction/ScriptAction.html"
     },
     {
       "Icon": "Actions/LeagueEffectsAction/LeagueIcon",
@@ -128,7 +128,7 @@
       "SupportedInMultiActions": true,
       "Tooltip": "Provides you with a light show when you play League of Legends",
       "UUID": "com.davidgolunski.goveelightcontroller.leagueeffectsaction",
-      "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
+      "PropertyInspectorPath": "Actions/LeagueEffectsAction/LeagueEffectsAction.html"
     },
     {
       "Icon": "Actions/CounterStrikeEffectsAction/CounterStrikeIcon",
@@ -151,7 +151,7 @@
       "SupportedInMultiActions": true,
       "Tooltip": "Provides you with a light show when you play Counter Strike",
       "UUID": "com.davidgolunski.goveelightcontroller.counterstrikeeffectssaction",
-      "PropertyInspectorPath": "PropertyInspector/TurnOnOffAction.html"
+      "PropertyInspectorPath": "Actions/CounterStrikeEffectsAction/CounterStrikeEffectsAction.html"
     }
   ],
   "Author": "David Golunski",

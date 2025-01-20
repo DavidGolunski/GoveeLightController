@@ -5,7 +5,7 @@
     <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
     <meta name=apple-mobile-web-app-capable content=yes>
     <meta name=apple-mobile-web-app-status-bar-style content=black>
-    <title>GoveeLightController Set Brightness Dial</title>
+    <title>GoveeLightController Set Color</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdpi.css">
     <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdtools.common.js"></script>
 
@@ -45,10 +45,21 @@
         <div class="sdpi-item">
             <div class="sdpi-item-label">Description</div>
             <div class="sdpi-item-value">
-                Sets the brightness of one or more lights specified in the device list below.
+                Changes the color for one or more lights specified in the device list below.
             </div>
         </div>
         <br/>
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Color</div>
+            <sdpi-color class="sdpi-item-value sdProperty" setting="selectedColorHex" id="selectedColorHex" default="#ffffff"></sdpi-color>
+        </div>
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Icon Style</div>
+            <select class="sdpi-item-value sdProperty" setting="useDynamicIconOption" id="useDynamicIconOption">
+                <option value="dynamic">Dynamic</option>
+                <option value="static">Static</option>
+            </select>
+        </div>
         <div class="sdpi-item">
             <div class="sdpi-item-label">Device Selection</div>
             <select class="sdpi-item-value sdProperty" setting="useGlobalSettingsOption" id="useGlobalSettingsOption">
