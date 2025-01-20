@@ -16,37 +16,6 @@ namespace GoveeLightController {
          */
 
 
-        private class SetColorSettings : DeviceListSettings {
-
-            [JsonProperty(PropertyName = "useDynamicIconOption")]
-            public string useDynamicIconOption { get; set; }
-
-            public bool useDynamicIcon {
-                get => useDynamicIconOption == "dynamic";
-            }
-
-
-            [JsonProperty(PropertyName = "selectedColorHex")]
-            public string selectedColorHex { get; set; }
-
-            public Color selectedColor {
-                get {
-                    // remove the "#" at the beginning
-                    string modifiedColorHex = selectedColorHex.Remove(0, 1);
-                    // add the alpha channel
-                    modifiedColorHex = "ff" + modifiedColorHex;
-                    int colorInt = int.Parse(modifiedColorHex, System.Globalization.NumberStyles.HexNumber);
-                    return Color.FromArgb(colorInt);
-                }
-            }
-
-            public SetColorSettings() : base() {
-                useDynamicIconOption = "dynamic";
-                selectedColorHex = "#ffffff";
-            }
-        }
-
-
         private SetColorSettings localSettings;
         private DeviceListSettings globalSettings;
 
@@ -117,7 +86,6 @@ namespace GoveeLightController {
             img = ImageTools.ReplaceColor(img, Color.Black, localSettings.selectedColor);
             Connection.SetImageAsync(img).GetAwaiter().GetResult();
             img.Dispose();
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Setting Dynamic Icon for Color");
         }
 
         #endregion

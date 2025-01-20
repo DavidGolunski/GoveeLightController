@@ -52,6 +52,32 @@
       "PropertyInspectorPath": "Actions/SetColorAction/SetColorAction.html"
     },
     {
+      "Icon": "Actions/SetColorAction/ColorIcon",
+      "Name": "Color Control",
+      "States": [
+        {
+          "Image": "Actions/SetColorAction/ColorIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "13"
+        }
+      ],
+      "Controllers": [ "Encoder" ],
+      "Encoder": {
+        "layout": "Actions/SetColorAction/colorDialLayout.json",
+        "TriggerDescription": {
+          "Rotate": "Increase/Decrease",
+          "Push": "Increase Rotate Stepsize",
+          "Touch": "Set Current Color"
+        }
+      },
+      "SupportedInMultiActions": false,
+      "DisableCaching": true,
+      "UserTitleEnabled": true,
+      "Tooltip": "A Dial action that scrolls through colors",
+      "UUID": "com.davidgolunski.goveelightcontroller.setcolordialaction",
+      "PropertyInspectorPath": "Actions/SetColorAction/SetColorDialAction.html"
+    },
+    {
       "Icon": "Actions/SetBrightnessAction/BrightnessIcon",
       "Name": "Change Brightness",
       "States": [

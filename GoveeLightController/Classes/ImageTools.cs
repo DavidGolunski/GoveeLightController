@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using BarRaider.SdTools;
 using System.IO;
-using System.ServiceModel.Configuration;
 
 namespace GoveeLightController {
 
@@ -70,6 +65,14 @@ namespace GoveeLightController {
                         pixels[position] = replacementB;     // Blue
                         pixels[position + 1] = replacementG; // Green
                         pixels[position + 2] = replacementR; // Red
+
+                        if(targetR == 255 && targetG == 255 && targetB == 255) {
+                            Logger.Instance.LogMessage(TracingLevel.DEBUG, "White pixel found. Replacing Pixel with: " + replacementR + " " + replacementG + " " + replacementB);
+                        }
+                    }
+
+                    if(targetR == 255 && targetG == 255 && targetB == 255) {
+                        Logger.Instance.LogMessage(TracingLevel.DEBUG, "Searching for White Color " + pixels[position] + " " + pixels[position + 1] + " " + pixels[position + 2]);
                     }
                 }
             }
@@ -81,6 +84,57 @@ namespace GoveeLightController {
             original.UnlockBits(bmpData);
 
             return original;
+        }
+
+        public static Color FromHSB(float hue, float saturation, float brightness) {
+            // Ensure values are in range
+            hue = Math.Max(0, Math.Min(360, hue));
+            saturation = Math.Max(0, Math.Min(1, saturation));
+            brightness = Math.Max(0, Math.Min(1, brightness));
+
+            float chroma = brightness * saturation;
+            float x = chroma * (1 - Math.Abs((hue / 60) % 2 - 1));
+            float m = brightness - chroma;
+
+            float r = 0, g = 0, b = 0;
+
+            if(hue >= 0 && hue < 60) {
+                r = chroma;
+                g = x;
+                b = 0;
+            }
+            else if(hue >= 60 && hue < 120) {
+                r = x;
+                g = chroma;
+                b = 0;
+            }
+            else if(hue >= 120 && hue < 180) {
+                r = 0;
+                g = chroma;
+                b = x;
+            }
+            else if(hue >= 180 && hue < 240) {
+                r = 0;
+                g = x;
+                b = chroma;
+            }
+            else if(hue >= 240 && hue < 300) {
+                r = x;
+                g = 0;
+                b = chroma;
+            }
+            else if(hue >= 300 && hue < 360) {
+                r = chroma;
+                g = 0;
+                b = x;
+            }
+
+            // Convert to 0-255 range
+            int red = (int) ((r + m) * 255);
+            int green = (int) ((g + m) * 255);
+            int blue = (int) ((b + m) * 255);
+
+            return Color.FromArgb(red, green, blue);
         }
 
     }

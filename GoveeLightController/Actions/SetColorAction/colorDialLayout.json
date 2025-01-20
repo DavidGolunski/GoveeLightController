@@ -1,10 +1,10 @@
 {
-  "id": "sampleDial",
+  "id": "brightnessDialLayout",
   "items": [
     {
       "key": "title",
       "type": "text",
-      "rect": [ 16, 10, 136, 24 ],
+      "rect": [ 16, 10, 168, 24 ],
       "font": {
         "size": 16,
         "weight": 600
@@ -17,9 +17,14 @@
       "rect": [ 16, 40, 48, 48 ]
     },
     {
+      "key": "colorIcon",
+      "type": "pixmap",
+      "rect": [ 76, 40, 32, 32 ]
+    },
+    {
       "key": "value",
       "type": "text",
-      "rect": [ 76, 40, 108, 32 ],
+      "rect": [ 108, 40, 76, 32 ],
       "font": {
         "size": 24,
         "weight": 600
@@ -28,13 +33,15 @@
     },
     {
       "key": "indicator",
-      "type": "gbar",
-      "rect": [ 76, 74, 108, 20 ],
+      "type": "bar",
+      "rect": [ 76, 74, 108, 12 ],
       "value": 0,
       "subtype": 4,
-      "bar_h": 12,
       "border_w": 0,
-      "bar_bg_c": "0:#427018,0.75:#705B1C,0.90:#702735,1:#702735"
+      "range": {
+        "min": "0",
+        "max": "359"
+      }
     }
   ]
 }
