@@ -66,29 +66,64 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\CounterStrikeEffectsAction\CounterStrikeEffectsAction.cs" />
-    <Compile Include="Actions\CounterStrikeEffectsAction\GameState.cs" />
-    <Compile Include="Actions\ScriptAction\ScriptAction.cs" />
-    <Compile Include="Actions\CounterStrikeEffectsAction\CounterStrikeAPI.cs" />
-    <Compile Include="Actions\CounterStrikeEffectsAction\CounterStrikeEffectsManager.cs" />
+    <Compile Include="Actions\CounterStrikeEffectsAction\CounterStrikeEffectsAction.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Actions\CounterStrikeEffectsAction\GameState.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Actions\ScriptAction\ScriptAction.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Actions\CounterStrikeEffectsAction\CounterStrikeAPI.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Actions\CounterStrikeEffectsAction\CounterStrikeEffectsManager.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Actions\SetBrightnessAction\SetBrightnessDialAction.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Actions\SetBrightnessAction\SetBrightnessSettings.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Classes\GoveeDevice.cs" />
     <Compile Include="Classes\GoveeDeviceController.cs" />
     <Compile Include="Classes\DeviceListSettings.cs" />
-    <Compile Include="Actions\GlobalSettingsAction\GlobalSettingsAction.cs" />
+    <Compile Include="Actions\GlobalSettingsAction\GlobalSettingsAction.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Classes\ImageTools.cs" />
-    <Compile Include="Actions\LeagueEffectsAction\LeagueAPI.cs" />
-    <Compile Include="Actions\LeagueEffectsAction\LeagueEffectManager.cs" />
-    <Compile Include="Actions\SetBrightnessAction\SetBrightnessAction.cs" />
-    <Compile Include="Actions\LeagueEffectsAction\LeagueEffectsAction.cs" />
-    <Compile Include="Actions\TurnOnOffAction\TurnOnOffAction.cs" />
-    <Compile Include="Actions\SetColorAction\SetColorAction.cs" />
+    <Compile Include="Actions\LeagueEffectsAction\LeagueAPI.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Actions\LeagueEffectsAction\LeagueEffectManager.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Actions\SetBrightnessAction\SetBrightnessAction.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Actions\LeagueEffectsAction\LeagueEffectsAction.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Actions\TurnOnOffAction\TurnOnOffAction.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Actions\SetColorAction\SetColorAction.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Classes\Program.cs" />
-    <Compile Include="Actions\ScriptAction\ScriptCommand.cs" />
+    <Compile Include="Actions\ScriptAction\ScriptCommand.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="DialLayout.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Actions\SetBrightnessAction\brightnessDialLayout.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="manifest.json">
@@ -101,13 +136,17 @@
     <None Include="scripts\LeagueEffects.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="scripts\ReadMe.md" />
+    <None Include="scripts\ReadMe.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StartStandaloneLeagueEffects.bat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="!!README!!.txt" />
+    <Content Include="!!README!!.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Actions\CounterStrikeEffectsAction\CounterStrike%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -124,6 +163,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Actions\CounterStrikeEffectsAction\CounterStrikeRunning.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\GlobalSettingsAction\GlobalSettingsAction.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Actions\GlobalSettingsAction\Setting%402x.png">
@@ -178,6 +220,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Actions\SetBrightnessAction\LightbulbBrightness.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Actions\SetBrightnessAction\SetBrightnessDialAction.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Actions\SetColorAction\ColorIcon%402x.png">

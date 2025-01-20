@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <title>GoveeLightController Turn Off</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdpi.css">
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdtools.common.js"></script>
+    <script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
+    <script>
+        // Ensure the script runs after the DOM is loaded
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get references to the dropdown and the div
+            const dropdown = document.getElementById('useGlobalSettingsOption');
+            const deviceIpListDiv = document.getElementById('dvDeviceIpList');
+
+            // Function to toggle visibility
+            function toggleDeviceIpList() {
+                console.log(`Dropdown value: ${dropdown.value}`); // Debugging log
+                if (dropdown.value === 'global') {
+                    deviceIpListDiv.style.display = 'none'; // Hide the div
+                    console.log("Hiding dvDeviceIpList"); // Debugging log
+                } else {
+                    deviceIpListDiv.style.display = 'block'; // Show the div
+                    console.log("Showing dvDeviceIpList"); // Debugging log
+                }
+            }
+
+            // Add event listener to the dropdown
+            dropdown.addEventListener('change', toggleDeviceIpList);
+
+            // Initialize visibility based on the default selected value
+            toggleDeviceIpList();
+        });
+    </script>
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Info</div>
+            <div class="sdpi-item-value">
+                Sets the brightness of one or more lights specified in the device list below.<br/><br/>
+            </div>
+        </div>
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Device Selection</div>
+            <select class="sdpi-item-value sdProperty" setting="useGlobalSettingsOption" id="useGlobalSettingsOption">
+                <option value="global">From Global Settings</option>
+                <option value="local">From Device IP List</option>
+            </select>
+        </div>
+        <div class="sdpi-item" id="dvDeviceIpList">
+            <div class="sdpi-item-label">Device IP List</div>
+            <sdpi-textarea class="sdpi-item-value sdProperty" setting="deviceIpListString" id="deviceIpListString"
+                           rows="6"></sdpi-textarea>
+        </div>
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Save Settings</div>
+            <button class="sdpi-item-value" onclick="setSettings()">Save</button>
+            <div class="sdpi-item-value">Always "Save" after editing</div>
+        </div>
+    </div>
+</body>
+</html>

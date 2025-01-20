@@ -22,17 +22,6 @@ namespace GoveeLightController {
          * The Action sets the brightsness of the lights
          */
 
-        private class SetBrightnessSettings : DeviceListSettings {
-
-            [JsonProperty(PropertyName = "brightness")]
-            public int brightness { get; set; }
-
-            public SetBrightnessSettings() : base() {
-                brightness = 100;
-            }
-        }
-
-
         private SetBrightnessSettings localSettings;
         private DeviceListSettings globalSettings;
 
@@ -57,10 +46,10 @@ namespace GoveeLightController {
 
         public override void KeyPressed(KeyPayload payload) {
             if(localSettings.useGlobalSettings) {
-                GoveeDeviceController.Instance.SetBrightness(localSettings.brightness, globalSettings.deviceIpList);
+                GoveeDeviceController.Instance.SetBrightness(localSettings.Brightness, globalSettings.deviceIpList);
             }
             else {
-                GoveeDeviceController.Instance.SetBrightness(localSettings.brightness, localSettings.deviceIpList);
+                GoveeDeviceController.Instance.SetBrightness(localSettings.Brightness, localSettings.deviceIpList);
             }
 
         }

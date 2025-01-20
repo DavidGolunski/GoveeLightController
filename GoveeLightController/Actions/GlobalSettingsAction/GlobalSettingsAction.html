@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <title>GoveeLightController Global Settings</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdpi.css">
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdtools.common.js"></script>
+    <script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
+</head>
+<body>
+    <div>
+        <div>
+            <h2>Setup Instructions</h2>
+            <strong>Set up the default devices that are controlled by the plugin here:</strong>
+            <ul>
+                <li>Turn on <strong>"LAN Control"</strong> for each light you want to control (you can do this using the Govee App).</li>
+            </ul>
+            <ul>
+                <li>Your Govee devices need to be connected to the same network as the SteamDeck.</li>
+            </ul>
+            <ul>
+                <li>Your devices need to be able to communicate with each other in the network (this is usually the default in the router settings).</li>
+            </ul>
+            <ul>
+                <li><strong>Recommended:</strong> Give your devices a static IP inside the router settings.</li>
+            </ul>
+        </div>
+        <div>
+            <h2>Button Press</h2>
+            <p>Automatically populate this field. Don't forget to save if you want to keep the automatically found addresses</p>
+        </div>
+    </div>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item" id="dvDeviceIpList">
+            <div class="sdpi-item-label">Device IP List</div>
+            <sdpi-textarea class="sdpi-item-value sdProperty" setting="deviceIpListString" id="deviceIpListString"
+                           rows="6"></sdpi-textarea>
+        </div>
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Save Settings</div>
+            <button class="sdpi-item-value" onclick="setSettings()">Save</button>
+        </div>
+    </div>
+</body>
+</html>

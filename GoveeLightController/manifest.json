@@ -13,7 +13,7 @@
       "SupportedInMultiActions": false,
       "Tooltip": "Change the settings for all plugin actions",
       "UUID": "com.davidgolunski.goveelightcontroller.globalsettingsaction",
-      "PropertyInspectorPath": "PropertyInspector/GlobalSettingsAction.html"
+      "PropertyInspectorPath": "Actions/GlobalSettingsAction/GlobalSettingsAction.html"
     },
     {
       "Icon": "Actions/TurnOnOffAction/OnOffIcon",
@@ -65,6 +65,32 @@
       "Tooltip": "Changes the brightness of one or more lights",
       "UUID": "com.davidgolunski.goveelightcontroller.setbrightnessaction",
       "PropertyInspectorPath": "PropertyInspector/SetBrightnessAction.html"
+    },
+    {
+      "Icon": "Actions/SetBrightnessAction/BrightnessIcon",
+      "Name": "Brightness Control",
+      "States": [
+        {
+          "Image": "Actions/SetBrightnessAction/BrightnessIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "13"
+        }
+      ],
+      "Controllers": [ "Encoder" ],
+      "Encoder": {
+        "layout": "Actions/SetBrightnessAction/brightnessDialLayout.json",
+        "TriggerDescription": {
+          "Rotate": "Increase/Decrease",
+          "Push": "Increase Rotate Stepsize",
+          "Touch": "Set Current Brightness"
+        }
+      },
+      "SupportedInMultiActions": false,
+      "DisableCaching": true,
+      "UserTitleEnabled": true,
+      "Tooltip": "A Dial action that adjusts the brightness",
+      "UUID": "com.davidgolunski.goveelightcontroller.setbrightnessdialaction",
+      "PropertyInspectorPath": "Actions/SetBrightnessAction/SetBrightnessDialAction.html"
     },
     {
       "Icon": "Actions/ScriptAction/CodeIcon",
