@@ -421,7 +421,7 @@ namespace GoveeLightController {
                     continue;
                 }
 
-                if(eventObj["AcingTeam"].ToString() == activePlayerTeam.ToString()) {
+                if(eventObj["AcingTeam"].ToString() == activePlayerTeam) {
                     currentEvent = LeagueEventTypes.TEAM_HAS_ACED;
                     return;
                 }

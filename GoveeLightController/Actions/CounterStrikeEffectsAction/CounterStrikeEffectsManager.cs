@@ -22,8 +22,8 @@ namespace GoveeLightController {
         }
 
 
-        private Thread updateThread;
-        public bool isRunning { get; private set; }
+        private CancellationTokenSource _cancellationTokenSource;
+        public bool IsRunning { get => _cancellationTokenSource != null; }
 
         public CounterStrikeEffectsManager() { }
 
@@ -37,46 +37,49 @@ namespace GoveeLightController {
 
         // starts the thread that reads the League API and controls the lights
         public void Start(List<string> deviceIpList) {
-            if(isRunning)
+            if(IsRunning)
                 return;
-            isRunning = true;
+
+            _cancellationTokenSource = new CancellationTokenSource();
 
             actionDict = GetActionDict();
             CounterStrikeAPI.Instance.Reset();
 
-            Logger.Instance.LogMessage(TracingLevel.INFO, "Started Counter Strike Effects Manager Thread");
-            
-            updateThread = new Thread(() => {
+            Logger.Instance.LogMessage(TracingLevel.INFO, "Started Counter Strike Effects Manager Task");
+
+            Task.Run(async () =>
+            {
                 try {
                     CounterStrikeAPI.Instance.StartListening();
                     Logger.Instance.LogMessage(TracingLevel.DEBUG, "Listening for Counter Strike Updates");
 
-                    while(isRunning) {
+                    while(!_cancellationTokenSource.Token.IsCancellationRequested) {
                         Update(deviceIpList);
-                        Thread.Sleep(10); // Wait for 0.01 seconds. The CS Buffer is set to 0.05, so we should not miss any updates. The update method will wait anyways on the next update
+                        await Task.Delay(10, _cancellationTokenSource.Token); // Wait for 0.01 seconds. The CS Buffer is set to 0.05, so we should not miss any updates. The update method will wait anyways on the next update
                     }
-                } catch (Exception ex) {
-                    Logger.Instance.LogMessage(TracingLevel.DEBUG, ex.ToString());
                 }
-            });
-            updateThread.IsBackground = true;
-
-            updateThread.Start();
+                catch(TaskCanceledException) {
+                    // Task was cancelled, which is expected during Stop
+                }
+                catch(Exception ex) {
+                    Logger.Instance.LogMessage(TracingLevel.ERROR, ex.ToString());
+                }
+            }, _cancellationTokenSource.Token);
         }
 
         // Stops the thread
         public void Stop() {
-            if(!isRunning)
+            if(!IsRunning)
                 return;
 
-            isRunning = false;
             CounterStrikeAPI.Instance.StopListening();
-            if(updateThread != null && updateThread.IsAlive) {
-                updateThread.Join(); // Wait for the thread to terminate
-                updateThread = null;
-                CounterStrikeAPI.Instance.Reset();
-                Logger.Instance.LogMessage(TracingLevel.INFO, "Counter Strike Effects Manager Thread has been stopped successfully");
-            }
+
+            _cancellationTokenSource.Cancel(); // Signal the task to stop
+            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = null;
+
+            CounterStrikeAPI.Instance.Reset();
+            Logger.Instance.LogMessage(TracingLevel.INFO, "Counter Strike Effects Manager Task has been stopped successfully");
         }
 
         // update function called by the thread every 0.1 seconds until the thread is closed

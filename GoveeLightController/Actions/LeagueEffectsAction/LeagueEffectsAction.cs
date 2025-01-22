@@ -46,7 +46,7 @@ namespace GoveeLightController {
         }
 
         public override void KeyPressed(KeyPayload payload) {
-            if(LeagueEffectManager.Instance.isRunning) {
+            if(LeagueEffectManager.Instance.IsRunning) {
                 LeagueEffectManager.Instance.Stop();
                 Connection.SetStateAsync(0).GetAwaiter().GetResult();
                 return;

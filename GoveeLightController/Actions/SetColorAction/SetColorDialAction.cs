@@ -98,7 +98,6 @@ namespace GoveeLightController {
             Color selectedColor = localSettings.selectedColor;
 
             Bitmap img = ImageTools.GetBitmapFromFilePath("./Actions/SetColorAction/ColorRect.png");
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, Tools.ImageToBase64(img, true));
             img = ImageTools.ReplaceColor(img, Color.Black, selectedColor);
 
             int hue = (int) selectedColor.GetHue();

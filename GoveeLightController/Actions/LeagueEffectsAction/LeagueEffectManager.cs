@@ -1,13 +1,8 @@
 ﻿using BarRaider.SdTools;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Drawing;
-using System.Drawing.Text;
 
 namespace GoveeLightController {
     public class LeagueEffectManager {
@@ -23,8 +18,9 @@ namespace GoveeLightController {
             private set => instance = value;
         }
 
-        private Thread updateThread;
-        public bool isRunning { get; private set; }
+
+        private CancellationTokenSource _cancellationTokenSource;
+        public bool IsRunning { get => _cancellationTokenSource != null; }
 
         public LeagueEffectManager() {}
 
@@ -38,35 +34,39 @@ namespace GoveeLightController {
 
         // starts the thread that reads the League API and controls the lights
         public void Start(List<string> deviceIpList) {
-            if (isRunning) return;
-            isRunning = true;
+            if(IsRunning)
+                return;
+
+            _cancellationTokenSource = new CancellationTokenSource();
 
             actionDict = GetActionDict();
             LeagueAPI.Instance.Reset();
 
-            Logger.Instance.LogMessage(TracingLevel.INFO, "Started League Effects Manager Thread");
-            updateThread = new Thread(() => {
-                while(isRunning) {
-                    Update(deviceIpList);
-                    Thread.Sleep(100); // Wait for 0.1 second
-                }
-            });
-            updateThread.IsBackground = true;
+            Logger.Instance.LogMessage(TracingLevel.INFO, "Started League Effects Manager Task");
 
-            updateThread.Start();
+            Task.Run(async () =>
+            {
+                try {
+                    while(!_cancellationTokenSource.Token.IsCancellationRequested) {
+                        Update(deviceIpList);
+                        await Task.Delay(100, _cancellationTokenSource.Token); // Wait for 0.1 second
+                    }
+                }
+                catch(TaskCanceledException) {
+                    // Task was cancelled, which is expected during Stop
+                }
+            }, _cancellationTokenSource.Token);
         }
 
         // Stops the thread
         public void Stop() {
-            if(!isRunning) return;
-       
-            isRunning = false;
-            if(updateThread != null && updateThread.IsAlive) {
-                updateThread.Join(); // Wait for the thread to terminate
-                updateThread = null;
-                LeagueAPI.Instance.Reset();
-                Logger.Instance.LogMessage(TracingLevel.INFO, "League Manager Thread has been stopped successfully");
-            }
+            if(!IsRunning) return;
+
+            _cancellationTokenSource.Cancel(); // Signal the task to stop
+            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = null;
+            LeagueAPI.Instance.Reset();
+            Logger.Instance.LogMessage(TracingLevel.INFO, "League Manager Task has been stopped successfully");
         }
 
         // update function called by the thread every 0.1 seconds until the thread is closed

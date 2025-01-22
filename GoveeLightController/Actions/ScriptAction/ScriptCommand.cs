@@ -181,24 +181,29 @@ namespace GoveeLightController {
 
         #region thread management
 
-        private static Thread scriptThread = null;
-        private static bool terminateScriptAction = false;
-        private static bool isRunning = false;
+
+
+        private static Task _scriptTask = null;
+        private static CancellationTokenSource _cancellationTokenSource = null;
+        private static bool _isRunning = false;
         public static bool IsRunning {
-            get => isRunning;
+            get => _isRunning;
         }
         
         // stops the execution of the current script list
-        private static void StopThread() {
-            if(!isRunning)
+        private static void StopTask() {
+            if(!_isRunning)
                 return;
 
-            terminateScriptAction = true;
-            isRunning = false;
-            if(scriptThread != null && scriptThread.IsAlive) {
-                scriptThread.Join(); // Wait for the thread to terminate
-                scriptThread = null;
+            _isRunning = false;
+
+            if(_cancellationTokenSource != null) {
+                _cancellationTokenSource.Cancel(); // Signal cancellation
+                _cancellationTokenSource.Dispose();
+                _cancellationTokenSource = null;
             }
+
+            _scriptTask = null; // Allow garbage collection of the completed task
 
         }
 
@@ -211,29 +216,35 @@ namespace GoveeLightController {
         public static bool StartScriptAction(List<ScriptCommand> commands, List<string> ips = null) {
             if(commands == null)
                 return false;
-            StopThread();
-            terminateScriptAction = false;
-            isRunning = true;
+            StopTask(); // Ensure any running task is stopped
+            _cancellationTokenSource = new CancellationTokenSource();
+            _isRunning = true;
 
-            scriptThread = new Thread(() => {
-                RunScriptAction(commands, ips);
-            }) {
-                IsBackground = true // Ensure the thread does not block application exit
-            };
+            _scriptTask = Task.Run(async () =>
+            {
+                try {
+                    await RunScriptAction(commands, ips, _cancellationTokenSource.Token);
+                }
+                catch(TaskCanceledException) {
+                    // Expected during cancellation
+                }
+                finally {
+                    _isRunning = false;
+                }
+            });
 
-            scriptThread.Start();
             return true;
         }
 
 
-        private static void RunScriptAction(List<ScriptCommand> commands, List<string> ips) {
-            //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Script Thread Started");
+        private static async Task RunScriptAction(List<ScriptCommand> commands, List<string> ips, CancellationToken cancellationToken) {
             foreach(ScriptCommand command in commands) {
-                if(terminateScriptAction)
-                    return;
-                command.Execute(ips);
+                if(cancellationToken.IsCancellationRequested)
+                    break;
+
+                command.Execute(ips); // Execute the command
+                await Task.Yield(); // Allow the task to yield back control to other tasks
             }
-            isRunning = false;
         }
 
 
