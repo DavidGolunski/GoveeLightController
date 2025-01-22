@@ -82,7 +82,7 @@ namespace GoveeLightController {
                 return;
 
             List<ScriptCommand> currentAction = actionDict[leagueEvent.ToString()];
-            //Logger.Instance.LogMessage(TracingLevel.DEBUG, "LeagueEvent animation starting: " + leagueEvent.ToString());
+            Logger.Instance.LogMessage(TracingLevel.INFO, "LeagueEvent animation starting: " + leagueEvent.ToString());
             Console.WriteLine("LeagueEvent animation starting: " + leagueEvent.ToString());
             ScriptCommand.StartScriptAction(currentAction, deviceIpList);
         }

@@ -34,14 +34,19 @@ namespace GoveeLightController {
         HEXTECH_DRAGON_KILLED,
         CHEMTECH_DRAGON_KILLED,
         ELDER_DRAGON_KILLED,
+        ATAKHAN_KILLED,
 
         HAS_REVIVED,
         HAS_DIED,
         HAS_KILLED,
         HAS_PENTAKILLED,
+        TEAM_HAS_ACED,
+        ENEMY_TEAM_HAS_ACED,
         HAS_ASSISTED,
         HAS_KILLED_TURRET,
-        HAS_ASSISTED_TURRET
+        HAS_ASSISTED_TURRET,
+        HAS_KILLED_INHIB,
+        HAS_ASSISTED_INHIB
     }
 
     public enum RuneTreeTypes {
@@ -71,6 +76,7 @@ namespace GoveeLightController {
         private LeagueEventTypes currentEvent;
 
         private string activePlayerName;
+        private string activePlayerTeam;
         public RuneTreeTypes? PrimaryRuneTree { get; private set; }
         public bool IsDead { get; private set; }
 
@@ -104,9 +110,9 @@ namespace GoveeLightController {
             currentEvent = LeagueEventTypes.NO_EVENT;
 
             activePlayerName = null;
+            activePlayerTeam = null;
             PrimaryRuneTree = null;
             IsDead = false;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Resetting League API");
         }
 
         // Retrieve data from the client. Returns true if successfull.
@@ -122,7 +128,7 @@ namespace GoveeLightController {
 
             try {
                 // if the name is null, it means that a new game has started
-                if(activePlayerName == null) {
+                if(activePlayerName == null || activePlayerTeam == null) {
                     var responsePlayerData = client.GetStringAsync("https://127.0.0.1:2999/liveclientdata/activeplayer").Result;
 
                     dynamic playerData = JsonConvert.DeserializeObject(responsePlayerData);
@@ -131,6 +137,17 @@ namespace GoveeLightController {
                     PrimaryRuneTree = (RuneTreeTypes) playerData.fullRunes.primaryRuneTree.id;
 
                     latestEventId = -1;
+
+
+                    var responsePlayerList = client.GetStringAsync("https://127.0.0.1:2999/liveclientdata/playerlist").Result;
+                    var playerList = JsonConvert.DeserializeObject<List<dynamic>>(responsePlayerList);
+                    foreach(var player in playerList) {
+                        if(player.riotIdGameName == activePlayerName) {
+                            activePlayerTeam = player.team;
+                            break;
+                        }
+                    }
+
                 }
 
                 // there is no "player revived" event. This code simulates the event
@@ -166,14 +183,13 @@ namespace GoveeLightController {
 
                 if(newEventData.Count > 0) {
                     latestEventId = (long) newEventData[newEventData.Count - 1]["EventID"];
-                    Console.WriteLine("Latest Event ID: " + latestEventId);
-
+                    /*
                     // Debug Code
                     foreach(var eventObj in newEventData) {
                         string json = JsonConvert.SerializeObject(eventObj, Formatting.Indented);
                         Console.WriteLine(json);
                         Logger.Instance.LogMessage(TracingLevel.DEBUG, json);
-                    }
+                    }*/
                 }
 
                 // process events in seperate function
@@ -182,9 +198,7 @@ namespace GoveeLightController {
                 lastUpdateSuccessful = true;
                 return true;
             }
-            catch(Exception e) {
-                // this exception is expected if there is no active League game (timeout)
-                Console.WriteLine(e.StackTrace);
+            catch(Exception) {
                 Reset();
                 return false;
             }
@@ -301,6 +315,16 @@ namespace GoveeLightController {
                 }
             }
 
+            // Check for LeagueEventTypes.ATAKHAN_KILLED
+            foreach(var eventObj in eventsJson) {
+                if(eventObj["EventName"].ToString() != "AtakhanKill") {
+                    continue;
+                }
+
+                currentEvent = LeagueEventTypes.ATAKHAN_KILLED;
+                return;
+            }
+
             // Check for LeagueEventTypes.HAS_PENTAKILLED
             foreach(var eventObj in eventsJson) {
                 if(eventObj["EventName"].ToString() != "Multikill") {
@@ -368,6 +392,45 @@ namespace GoveeLightController {
                 }
             }
 
+            // Check for LeagueEventTypes.HAS, LeagueEventTypes.HAS_KILLED_TURRET and LeagueEventTypes.HAS_ASSISTED_TURRET
+            foreach(var eventObj in eventsJson) {
+                if(eventObj["EventName"].ToString() != "InhibKilled") {
+                    continue;
+                }
+
+                if(eventObj["KillerName"].ToString() == activePlayerName) {
+                    currentEvent = LeagueEventTypes.HAS_KILLED_INHIB;
+                    return;
+                }
+
+                var assistList = eventObj["Assisters"] as List<object>;
+                if(assistList == null) {
+                    continue;
+                }
+                foreach(var assist in assistList) {
+                    if(assist.ToString() == activePlayerName) {
+                        currentEvent = LeagueEventTypes.HAS_ASSISTED_INHIB;
+                        return;
+                    }
+                }
+            }
+
+            // check for LeagueEventTypes.TEAM_HAS_ACED amd LeagueEventTypes.ENEMY_TEAM_HAS_ACED
+            foreach(var eventObj in eventsJson) {
+                if(eventObj["EventName"].ToString() != "Ace") {
+                    continue;
+                }
+
+                if(eventObj["AcingTeam"].ToString() == activePlayerTeam.ToString()) {
+                    currentEvent = LeagueEventTypes.TEAM_HAS_ACED;
+                    return;
+                }
+                else {
+                    currentEvent = LeagueEventTypes.ENEMY_TEAM_HAS_ACED;
+                    return;
+                }
+
+            }
 
             currentEvent = LeagueEventTypes.NO_EVENT;
         }
@@ -388,7 +451,6 @@ namespace GoveeLightController {
             var eventToReturn = currentEvent;
             currentEvent = LeagueEventTypes.NO_EVENT;
             return eventToReturn;
-
         }
     }
 }

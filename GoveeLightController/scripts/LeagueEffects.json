@@ -121,6 +121,32 @@
     { "command": "Wait", "delay": 100 },
     { "command": "SetBrightness", "value": 50 }
   ],
+  "LOL@TEAM_HAS_ACED": [
+    { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
+    { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 2000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@ENEMY_TEAM_HAS_ACED": [
+    { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
+    { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 2000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
   "LOL@HAS_KILLED_TURRET": [
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
@@ -135,6 +161,32 @@
     { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
   ],
   "LOL@HAS_ASSISTED_TURRET": [
+    { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
+    { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 2000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@HAS_KILLED_INHIB": [
+    { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
+    { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 4000 },
+    { "command": "SetBrightness", "value": 50 },
+
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@HAS_ASSISTED_INHIB": [
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
@@ -358,6 +410,25 @@
 
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
     { "command": "Wait", "delay": 700 },
+
+    { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetBrightness", "value": 50 },
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
+  ],
+  "LOL@ATAKHAN_KILLED": [
+    { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
+    { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
+    { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
+    { "command": "SetBrightness", "value": 100 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetColor", "r": 0, "g": 0, "b": 255 },
+    { "command": "Wait", "delay": 700 },
+
 
     { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
     { "command": "Wait", "delay": 700 },

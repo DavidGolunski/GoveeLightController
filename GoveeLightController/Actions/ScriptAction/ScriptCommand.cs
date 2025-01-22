@@ -29,7 +29,8 @@ namespace GoveeLightController {
          * "Scripts" are special JSON Files that contain a series of instructions for the lights.
          * An object of this class represents a single executable line in the JSON
          */
-        private const string ScriptsDirectory = "./scripts/";
+        private static readonly string ScriptsDirectory = Path.Combine(".", "scripts");
+        private static readonly string UserScriptsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "davidgolunski", "goveelightcontroller");
 
         public Commands Command { get; set; }
         public int R { get; set; }
@@ -239,12 +240,42 @@ namespace GoveeLightController {
 
         #endregion
 
+        // Creates the necessary folders if they do not exists yet and copies predefined script files into them
+        private static void CreateDirectories() {
+            // Check if the target scripts folder exists in the user's Documents folder
+            if(!Directory.Exists(UserScriptsDirectory)) {
+                // Create the folder if it doesn't exist
+                Directory.CreateDirectory(UserScriptsDirectory);
+
+                // Copy all files from the source folder to the target folder
+                if(Directory.Exists(ScriptsDirectory)) {
+                    string[] files = Directory.GetFiles(ScriptsDirectory);
+
+                    foreach(string file in files) {
+                        // Get the file name
+                        string fileName = Path.GetFileName(file);
+
+                        // Define the destination file path
+                        string destFile = Path.Combine(UserScriptsDirectory, fileName);
+
+                        // Copy the file
+                        File.Copy(file, destFile, true);
+                    }
+
+                    Logger.Instance.LogMessage(TracingLevel.INFO, "Scripts folder created and files copied successfully!");
+                    Console.WriteLine("Scripts folder created and files copied successfully!");
+                }
+                else {
+                    Logger.Instance.LogMessage(TracingLevel.INFO, $"Source folder '{ScriptsDirectory}' does not exist. No files were copied.");
+                    Console.WriteLine($"Source folder '{ScriptsDirectory}' does not exist. No files were copied.");
+                }
+            }
+        }
+
         // Returns a list of all filenames found in "./scripts/" that have the ".json" file type.
         public static List<string> GetScriptFileNames() {
-            if(!Directory.Exists(ScriptsDirectory)) {
-                Directory.CreateDirectory(ScriptsDirectory);
-            }
-            return new List<string>(Directory.GetFiles(ScriptsDirectory, "*.json"));
+            CreateDirectories();
+            return new List<string>(Directory.GetFiles(UserScriptsDirectory, "*.json"));
         }
 
         // Checks if a file and all actions inside are valid 
