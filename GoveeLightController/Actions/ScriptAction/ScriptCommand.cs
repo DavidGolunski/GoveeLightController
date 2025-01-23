@@ -180,9 +180,6 @@ namespace GoveeLightController {
 
 
 
-#pragma warning disable IDE0052 // Remove unread private members
-        private static Task _scriptTask = null;
-#pragma warning restore IDE0052 // Remove unread private members
         private static CancellationTokenSource _cancellationTokenSource = null;
         private static bool _isRunning = false;
         public static bool IsRunning {
@@ -202,8 +199,6 @@ namespace GoveeLightController {
                 _cancellationTokenSource = null;
             }
 
-            _scriptTask = null; // Allow garbage collection of the completed task
-
         }
 
         // starts executing a list of script commands
@@ -219,7 +214,7 @@ namespace GoveeLightController {
             _cancellationTokenSource = new CancellationTokenSource();
             _isRunning = true;
 
-            _scriptTask = Task.Run(async () =>
+            Task.Run(async () =>
             {
                 try {
                     await RunScriptAction(commands, ips, _cancellationTokenSource.Token);
