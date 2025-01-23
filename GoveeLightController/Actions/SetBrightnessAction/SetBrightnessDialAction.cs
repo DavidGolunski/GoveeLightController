@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BarRaider.SdTools.Payloads;
+using System.ComponentModel;
 
 namespace GoveeLightController {
     [PluginActionId("com.davidgolunski.goveelightcontroller.setbrightnessdialaction")]
@@ -15,9 +16,11 @@ namespace GoveeLightController {
          * The Action sets the brightsness of the lights
          */
 
-        private SetBrightnessSettings localSettings;
-        private DeviceListSettings globalSettings;
+        private readonly SetBrightnessSettings localSettings;
+        private readonly DeviceListSettings globalSettings;
 
+        // to distinguish between a dial press and a "rotate press"
+        private bool dialWasRotated = false;
 
         public SetBrightnessDialAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
@@ -31,9 +34,10 @@ namespace GoveeLightController {
             GlobalSettingsManager.Instance.RequestGlobalSettings();
             Connection.OnPropertyInspectorDidAppear += OnPropertyInspectorOpened;
 
-            Dictionary<string, string> dkv = new Dictionary<string, string>();
-            dkv["value"] = localSettings.Brightness + "%";
-            dkv["indicator"] = localSettings.Brightness.ToString();
+            Dictionary<string, string> dkv = new Dictionary<string, string> {
+                ["value"] = localSettings.Brightness + "%",
+                ["indicator"] = localSettings.Brightness.ToString()
+            };
             Connection.SetFeedbackAsync(dkv);
         }
 
@@ -43,6 +47,7 @@ namespace GoveeLightController {
         }
 
         public async override void DialRotate(DialRotatePayload payload) {
+            dialWasRotated = true;
             int stepSize = payload.IsDialPressed ? 5 : 1;
 
             localSettings.Brightness += payload.Ticks * stepSize;
@@ -53,17 +58,25 @@ namespace GoveeLightController {
 
             await SaveSettings();
 
-            Dictionary<string, string> dkv = new Dictionary<string, string>();
-            dkv["value"] = localSettings.Brightness + "%";
-            dkv["indicator"] = localSettings.Brightness.ToString();
+            Dictionary<string, string> dkv = new Dictionary<string, string> {
+                ["value"] = localSettings.Brightness + "%",
+                ["indicator"] = localSettings.Brightness.ToString()
+            };
             await Connection.SetFeedbackAsync(dkv);
 
             SetBrightness();
         }
 
-        public override void DialDown(DialPayload payload) { }
+        public override void DialDown(DialPayload payload) {
+            dialWasRotated = false;
+        }
 
-        public override void DialUp(DialPayload payload) { }
+        public override void DialUp(DialPayload payload) {
+            if(dialWasRotated)
+                return;
+
+            SetBrightness();
+        }
 
         public override void TouchPress(TouchpadPressPayload payload) {
             SetBrightness();

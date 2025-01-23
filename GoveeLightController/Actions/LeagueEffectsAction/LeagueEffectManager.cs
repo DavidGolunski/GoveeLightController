@@ -1,6 +1,7 @@
 ﻿using BarRaider.SdTools;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,7 +15,7 @@ namespace GoveeLightController {
 
         private static LeagueEffectManager instance;
         public static LeagueEffectManager Instance {
-            get => instance ?? (instance = new LeagueEffectManager());
+            get => instance ??= new LeagueEffectManager();
             private set => instance = value;
         }
 
@@ -78,11 +79,13 @@ namespace GoveeLightController {
             if(leagueEvent == LeagueEventTypes.NO_EVENT)
                 return;
 
+            Logger.Instance.LogMessage(TracingLevel.INFO, "League Event found: " + leagueEvent.ToString());
+
             if(!actionDict.ContainsKey(leagueEvent.ToString()))
                 return;
 
             List<ScriptCommand> currentAction = actionDict[leagueEvent.ToString()];
-            Logger.Instance.LogMessage(TracingLevel.INFO, "LeagueEvent animation starting: " + leagueEvent.ToString());
+            
             Console.WriteLine("LeagueEvent animation starting: " + leagueEvent.ToString());
             ScriptCommand.StartScriptAction(currentAction, deviceIpList);
         }

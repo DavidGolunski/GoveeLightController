@@ -18,8 +18,11 @@ namespace GoveeLightController {
          */
 
 
-        private SetColorSettings localSettings;
-        private DeviceListSettings globalSettings;
+        private readonly SetColorSettings localSettings;
+        private readonly DeviceListSettings globalSettings;
+
+        // to distinguish between a dial press and a "rotate press"
+        private bool dialWasRotated = false; 
 
 
         public SetColorDialAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
@@ -43,6 +46,8 @@ namespace GoveeLightController {
         }
 
         public async override void DialRotate(DialRotatePayload payload) {
+            dialWasRotated = true;
+
             Color selectedColor = localSettings.selectedColor;
 
             int hue = (int) selectedColor.GetHue();
@@ -64,9 +69,15 @@ namespace GoveeLightController {
 
         }
 
-        public override void DialDown(DialPayload payload) { }
+        public override void DialDown(DialPayload payload) { 
+            dialWasRotated = false; 
+        }
 
-        public override void DialUp(DialPayload payload) { }
+        public override void DialUp(DialPayload payload) {
+            if(dialWasRotated)
+                return;
+            SetColor();
+        }
 
         public override void TouchPress(TouchpadPressPayload payload) {
             SetColor();
@@ -102,12 +113,12 @@ namespace GoveeLightController {
 
             int hue = (int) selectedColor.GetHue();
             string imageString = Tools.ImageToBase64(img, true);
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, imageString);
 
-            Dictionary<string, string> dkv = new Dictionary<string, string>();
-            dkv["value"] = hue + "°";
-            dkv["indicator"] = hue.ToString();
-            dkv["colorIcon"] = imageString;
+            Dictionary<string, string> dkv = new Dictionary<string, string> {
+                ["value"] = hue + "°",
+                ["indicator"] = hue.ToString(),
+                ["colorIcon"] = imageString
+            };
             await Connection.SetFeedbackAsync(dkv);
 
             img.Dispose();

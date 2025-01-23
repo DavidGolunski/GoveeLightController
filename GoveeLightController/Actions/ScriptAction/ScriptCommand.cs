@@ -126,9 +126,6 @@ namespace GoveeLightController {
                 return;
             }
 
-            //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Executing: " + this.ToString());
-           Console.WriteLine("Executing: " + this.ToString());
-
             switch(Command) {
                 case Commands.Wait:
                     Task.Delay(Delay).Wait();
@@ -183,7 +180,9 @@ namespace GoveeLightController {
 
 
 
+#pragma warning disable IDE0052 // Remove unread private members
         private static Task _scriptTask = null;
+#pragma warning restore IDE0052 // Remove unread private members
         private static CancellationTokenSource _cancellationTokenSource = null;
         private static bool _isRunning = false;
         public static bool IsRunning {

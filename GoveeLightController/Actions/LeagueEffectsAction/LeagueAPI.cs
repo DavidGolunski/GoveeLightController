@@ -277,11 +277,20 @@ namespace GoveeLightController {
                     return;
                 }
 
-                var assistList = eventObj["Assisters"] as List<object>;
-                if(assistList != null && assistList.Contains(activePlayerName)) {
+                if(eventObj["Assisters"] is List<object> assistList && assistList.Contains(activePlayerName)) {
                     currentEvent = LeagueEventTypes.VOID_GRUBS_KILLED;
                     return;
                 }
+            }
+
+            // Check for LeagueEventTypes.ATAKHAN_KILLED
+            foreach(var eventObj in eventsJson) {
+                if(eventObj["EventName"].ToString() != "AtakhanKill") {
+                    continue;
+                }
+
+                currentEvent = LeagueEventTypes.ATAKHAN_KILLED;
+                return;
             }
 
             // Check for LeagueEventTypes.[DragonType]_DRAGON_KILL
@@ -313,16 +322,6 @@ namespace GoveeLightController {
                         currentEvent = LeagueEventTypes.ELDER_DRAGON_KILLED;
                         return;
                 }
-            }
-
-            // Check for LeagueEventTypes.ATAKHAN_KILLED
-            foreach(var eventObj in eventsJson) {
-                if(eventObj["EventName"].ToString() != "AtakhanKill") {
-                    continue;
-                }
-
-                currentEvent = LeagueEventTypes.ATAKHAN_KILLED;
-                return;
             }
 
             // Check for LeagueEventTypes.HAS_PENTAKILLED
@@ -380,8 +379,7 @@ namespace GoveeLightController {
                     return;
                 }
 
-                var assistList = eventObj["Assisters"] as List<object>;
-                if(assistList == null) {
+                if(!(eventObj["Assisters"] is List<object> assistList)) {
                     continue;
                 }
                 foreach(var assist in assistList) {
@@ -403,8 +401,7 @@ namespace GoveeLightController {
                     return;
                 }
 
-                var assistList = eventObj["Assisters"] as List<object>;
-                if(assistList == null) {
+                if(!(eventObj["Assisters"] is List<object> assistList)) {
                     continue;
                 }
                 foreach(var assist in assistList) {

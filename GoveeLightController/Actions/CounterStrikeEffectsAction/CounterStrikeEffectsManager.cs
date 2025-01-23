@@ -17,7 +17,7 @@ namespace GoveeLightController {
 
         private static CounterStrikeEffectsManager instance;
         public static CounterStrikeEffectsManager Instance {
-            get => instance ?? (instance = new CounterStrikeEffectsManager());
+            get => instance ??= new CounterStrikeEffectsManager();
             private set => instance = value;
         }
 
@@ -51,7 +51,6 @@ namespace GoveeLightController {
             {
                 try {
                     CounterStrikeAPI.Instance.StartListening();
-                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "Listening for Counter Strike Updates");
 
                     while(!_cancellationTokenSource.Token.IsCancellationRequested) {
                         Update(deviceIpList);
@@ -88,23 +87,23 @@ namespace GoveeLightController {
             bool updateSuccessfull = CounterStrikeAPI.Instance.WaitForUpdate();
 
             if(!updateSuccessfull) {
-                Logger.Instance.LogMessage(TracingLevel.WARN, "CS Update was not successfull");
                 return;
             }
 
             var csEvent = CounterStrikeAPI.Instance.GetEvent();
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Event Found: " + csEvent.ToString());
+           
 
             if(csEvent == CsEventTypes.NO_EVENT)
                 return;
 
+            Logger.Instance.LogMessage(TracingLevel.INFO, "CounterStrike Event Found: " + csEvent.ToString());
+            Console.WriteLine("CounterStrike Effect found: " + csEvent.ToString());
 
             if(!actionDict.ContainsKey(csEvent.ToString()))
                 return;
 
             List<ScriptCommand> currentAction = actionDict[csEvent.ToString()];
 
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "CS animation starting: " + csEvent.ToString());
             ScriptCommand.StartScriptAction(currentAction, deviceIpList);
         }
 

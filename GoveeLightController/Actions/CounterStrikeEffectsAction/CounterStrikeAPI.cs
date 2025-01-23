@@ -16,7 +16,7 @@ namespace GoveeLightController {
 
         private static CounterStrikeAPI instance;
         public static CounterStrikeAPI Instance {
-            get => instance ?? (instance = new CounterStrikeAPI());
+            get => instance ??= new CounterStrikeAPI();
             private set => instance = value;
         }
 
@@ -75,15 +75,14 @@ namespace GoveeLightController {
                 response.OutputStream.Write(buffer, 0, buffer.Length);
                 response.OutputStream.Close();
             }
-            catch(Exception ex) {
-                Logger.Instance.LogMessage(TracingLevel.INFO, "An exception occured in Counter Strike GSI:\n" + ex.StackTrace);
+            catch(Exception) {
             }
 
             return successfull;
         }
 
         public bool HandleMessage(string json) {
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, json);
+            //Logger.Instance.LogMessage(TracingLevel.DEBUG, json);
 
             JObject csUpdates = JObject.Parse(json);
 

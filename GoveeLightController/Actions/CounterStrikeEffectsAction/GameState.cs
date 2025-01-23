@@ -24,7 +24,8 @@ namespace GoveeLightController {
 
         HAS_DIED,
         HAS_KILLED,
-        HAS_ASSISTED
+        HAS_ASSISTED,
+        HAS_REVIVED
     }
 
     public enum CsTeam {
@@ -182,6 +183,7 @@ namespace GoveeLightController {
                 this.PlayerActivity = previousGameState.PlayerActivity;
 
                 this.ProviderTeam = previousGameState.ProviderTeam;
+                this.IsProviderDead = previousGameState.IsProviderDead;
 
                 if(jsonPayload["player"] == null)
                     return true;
@@ -520,8 +522,10 @@ namespace GoveeLightController {
             }
 
             // death events
-            if(!IsObserving && PlayerHealth == 0 && !previousGameState.IsObserving && previousGameState.PlayerHealth > 0) 
+            if(!IsObserving && PlayerHealth == 0 && !previousGameState.IsObserving && previousGameState.PlayerHealth > 0) {
+                IsProviderDead = true;
                 return CsEventTypes.HAS_DIED;
+            }
             else {
                 string message = "Player Death Event failed because: ";
                 if(IsObserving)
@@ -535,9 +539,25 @@ namespace GoveeLightController {
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
             }
 
-            if(IsObserving && !previousGameState.IsObserving) 
+            if(IsObserving && !previousGameState.IsObserving) {
+                IsProviderDead = true;
                 return CsEventTypes.HAS_DIED;
+            }
 
+
+            // revive events
+            if(IsProviderDead && !IsObserving && PlayerHealth > 0) {
+                IsProviderDead = false;
+                return CsEventTypes.HAS_REVIVED;
+            }
+            else {
+                string message = "Provider Revive Event failed because: ";
+                if(!IsProviderDead)
+                    message += "[IsProviderDead was False]";
+                if(IsObserving)
+                    message += "[IsObserving was True]";
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
+            }
 
 
             // main menu switch events
@@ -585,6 +605,36 @@ namespace GoveeLightController {
                 && this.MapPhase == otherGameState.MapPhase
                 && this.Round == otherGameState.Round;
         }
+
+        public override int GetHashCode() {
+            unchecked // Allow overflow, ignore arithmetic overflow/underflow
+            {
+                int hash = 17;
+
+                hash = hash * 23 + (ProviderSteamID.GetHashCode());
+                hash = hash * 23 + HasPlayerInformation.GetHashCode();
+                hash = hash * 23 + (PlayerSteamID.GetHashCode());
+                hash = hash * 23 + (PlayerName?.GetHashCode() ?? 0);
+                hash = hash * 23 + ObserverSlot.GetHashCode();
+                hash = hash * 23 + (PlayerTeam.GetHashCode());
+                hash = hash * 23 + (PlayerActivity.GetHashCode());
+                hash = hash * 23 + (ProviderTeam.GetHashCode());
+                hash = hash * 23 + IsProviderDead.GetHashCode();
+                hash = hash * 23 + HasPlayerStateInformation.GetHashCode();
+                hash = hash * 23 + PlayerHealth.GetHashCode();
+                hash = hash * 23 + PlayerFlashed.GetHashCode();
+                hash = hash * 23 + RoundKills.GetHashCode();
+                hash = hash * 23 + HasRoundInformation.GetHashCode();
+                hash = hash * 23 + (RoundPhase.GetHashCode());
+                hash = hash * 23 + (WinTeam.GetHashCode());
+                hash = hash * 23 + HasMapInformation.GetHashCode();
+                hash = hash * 23 + (MapPhase.GetHashCode());
+                hash = hash * 23 + Round.GetHashCode();
+
+                return hash;
+            }
+        }
+
 
         public override string ToString() {
             string output = "GameState";

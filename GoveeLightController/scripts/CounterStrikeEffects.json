@@ -138,6 +138,13 @@
     { "command": "Wait", "delay": 100 },
     { "command": "TurnOff" }
   ],
+  "CS@HAS_REVIVED": [
+    { "command": "TurnOn" },
+    { "command": "Wait", "delay": 100 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "Wait", "delay": 100 },
+    { "command": "SetBrightness", "value": 50 }
+  ],
   "CS@ENTERRED_MAIN_MENU": [
     { "command": "TurnOn"},
     { "command": "Wait", "delay": 100 },
