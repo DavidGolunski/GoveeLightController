@@ -50,16 +50,19 @@ namespace GoveeLightController {
 
             Color selectedColor = localSettings.selectedColor;
 
-            int hue = (int) selectedColor.GetHue();
+            float hue = selectedColor.GetHue();
             float sat = selectedColor.GetSaturation();
 
             int stepSize = payload.IsDialPressed ? 10 : 1;
 
             // adding 360 so modulo operator can work correctly
             hue += payload.Ticks * stepSize + 360;
-            hue %= 360;
+            if(hue < 0)
+                hue += 360;
+            if(hue >= 360)
+                hue -= 360;
 
-            Color col = ImageTools.FromHSB((float) hue, sat, 1);
+            Color col = ImageTools.FromHSB(hue, sat, 1);
             localSettings.selectedColorHex = col.ToHex();
 
             UpdateLayout();
