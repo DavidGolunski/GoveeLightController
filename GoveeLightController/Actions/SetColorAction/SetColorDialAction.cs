@@ -61,10 +61,11 @@ namespace GoveeLightController {
 
             Color col = ImageTools.FromHSB((float) hue, sat, 1);
             localSettings.selectedColorHex = col.ToHex();
-            
-            await SaveSettings();
+
             UpdateLayout();
             SetColor();
+            await SaveSettings();
+            
            
 
         }
