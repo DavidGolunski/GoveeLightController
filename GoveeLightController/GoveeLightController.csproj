@@ -130,11 +130,17 @@
     <None Include="Actions\SetBrightnessAction\brightnessDialLayout.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="gamestate_integration_goveelightcontroller.cfg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
     <None Include="scripts\CounterStrikeEffects.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="scripts\ExampleEffects.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="scripts\LeagueEffects.json">
@@ -143,12 +149,8 @@
     <None Include="scripts\ReadMe.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="StartStandaloneCounterStrikeEffects.bat">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StartStandaloneLeagueEffects.bat">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="StartStandaloneCounterStrikeEffects.bat" />
+    <None Include="StartStandaloneLeagueEffects.bat" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="!!README!!.txt" />

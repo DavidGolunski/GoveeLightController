@@ -26,6 +26,8 @@ namespace GoveeLightController {
         private GameState previousGameState;
         private GameState currentGameState;
 
+        public bool IsProviderDead { get => currentGameState?.IsProviderDead ?? true; }
+
         public CounterStrikeAPI() {
             listener = new HttpListener();
             listener.Prefixes.Add("http://localhost:3000/");

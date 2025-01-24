@@ -336,6 +336,7 @@ namespace GoveeLightController {
 
             JToken map = jsonPayload["map"];
             string mapPhaseString = map["phase"]?.ToString();
+
             if(mapPhaseString.Equals("live")) {
                 MapPhase = CsMapPhases.LIVE;
             }
@@ -383,7 +384,7 @@ namespace GoveeLightController {
                 && HasPlayerInformation && HasRoundInformation
                 && MapPhase == CsMapPhases.GAME_OVER && previousGameState.MapPhase == CsMapPhases.LIVE) {
 
-
+                
                 if(WinTeam == CsTeam.T && ProviderTeam == CsTeam.T) {
                     return CsEventTypes.GAME_WON;
                 }
@@ -397,10 +398,12 @@ namespace GoveeLightController {
                     return CsEventTypes.GAME_LOST;
                 }
                 else {
+                    Console.WriteLine("The game has concluded, but we were unable to determine who has won!\n" + this.ToString());
                     Logger.Instance.LogMessage(TracingLevel.WARN, "The game has concluded, but we were unable to determine who has won!\n" + this.ToString());
                     return CsEventTypes.NO_EVENT;
                 }
             }
+            /*
             else {
                 string message = "Game Ended Event failed because: ";
                 if(!HasMapInformation)
@@ -416,7 +419,7 @@ namespace GoveeLightController {
                 if(previousGameState.MapPhase != CsMapPhases.LIVE)
                     message += "[previousGameState.MapPhase was not LIVE (" + previousGameState.MapPhase + ")]";
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }
+            }*/
 
             // round ended events
             if(HasRoundInformation && previousGameState.HasRoundInformation
@@ -429,6 +432,7 @@ namespace GoveeLightController {
                     return CsEventTypes.ROUND_LOST;
                 }
             }
+            /*
             else {
                 string message = "Round Ended Event failed because: ";
                 if(!HasRoundInformation)
@@ -444,7 +448,7 @@ namespace GoveeLightController {
                 if(previousGameState.RoundPhase == CsRoundPhases.OVER)
                     message += "[previousGameState.RoundPhase was OVER (" + previousGameState.RoundPhase + ")]";
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }
+            }*/
 
             // round started events
             if(HasRoundInformation && previousGameState.HasRoundInformation
@@ -459,6 +463,7 @@ namespace GoveeLightController {
                     return CsEventTypes.ROUND_STARTED_CT;
                 }
             }
+            /*
             else {
                 string message = "Round Started Event failed because: ";
                 if(!HasRoundInformation)
@@ -472,7 +477,7 @@ namespace GoveeLightController {
                 if(previousGameState.RoundPhase == CsRoundPhases.FREEZETIME)
                     message += "[previousGameState.RoundPhase was FREEZETIME (" + previousGameState.RoundPhase + ")]";
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }
+            }*/
 
             // team select events
             if(!IsObserving && !previousGameState.IsObserving
@@ -488,7 +493,7 @@ namespace GoveeLightController {
                     return CsEventTypes.ROUND_STARTED_CT;
                 }
                     
-            }
+            }/*
             else {
                 string message = "Team Select Event failed because: ";
                 if(IsObserving)
@@ -500,14 +505,14 @@ namespace GoveeLightController {
                 if(ProviderTeam == previousGameState.ProviderTeam)
                     message += "[ProviderTeam was not different from previousGameState.ProviderTeam (ProviderTeam: " + ProviderTeam + ", previousGameState.ProviderTeam: " + previousGameState.ProviderTeam + ")]";
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-
-            }
+            }*/
 
 
 
             // kill events
             if(!IsObserving && HasPlayerStateInformation && previousGameState.HasPlayerInformation && RoundKills > previousGameState.RoundKills)
                 return CsEventTypes.HAS_KILLED;
+            /*
             else {
                 string message = "Player Kill Event failed because: ";
                 if(IsObserving)
@@ -519,13 +524,14 @@ namespace GoveeLightController {
                 if(RoundKills <= previousGameState.RoundKills)
                     message += "[RoundKills was not greater than previousGameState.RoundKills (RoundKills: " + RoundKills + ", previousGameState.RoundKills: " + previousGameState.RoundKills + ")]";
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }
+            }*/
 
             // death events
             if(!IsObserving && PlayerHealth == 0 && !previousGameState.IsObserving && previousGameState.PlayerHealth > 0) {
                 IsProviderDead = true;
                 return CsEventTypes.HAS_DIED;
             }
+            /*
             else {
                 string message = "Player Death Event failed because: ";
                 if(IsObserving)
@@ -537,12 +543,7 @@ namespace GoveeLightController {
                 if(previousGameState.PlayerHealth <= 0)
                     message += "[previousGameState.PlayerHealth was not greater than 0 (" + previousGameState.PlayerHealth + ")]";
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }
-
-            if(IsObserving && !previousGameState.IsObserving) {
-                IsProviderDead = true;
-                return CsEventTypes.HAS_DIED;
-            }
+            }*/
 
 
             // revive events
@@ -550,6 +551,7 @@ namespace GoveeLightController {
                 IsProviderDead = false;
                 return CsEventTypes.HAS_REVIVED;
             }
+            /*
             else {
                 string message = "Provider Revive Event failed because: ";
                 if(!IsProviderDead)
@@ -557,12 +559,13 @@ namespace GoveeLightController {
                 if(IsObserving)
                     message += "[IsObserving was True]";
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }
+            }*/
 
 
             // main menu switch events
             if(HasPlayerInformation && !HasPlayerStateInformation && !HasMapInformation && !HasRoundInformation && PlayerActivity == CsActivities.MENU)
                 return CsEventTypes.ENTERRED_MAIN_MENU;
+            /*
             else {
                 string message = "Player Menu Activity Event failed because: ";
                 if(!HasPlayerInformation)
@@ -576,7 +579,7 @@ namespace GoveeLightController {
                 if(PlayerActivity != CsActivities.MENU)
                     message += "[PlayerActivity was not MENU (" + PlayerActivity + ")]";
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }
+            }*/
 
             return CsEventTypes.NO_EVENT;
         }

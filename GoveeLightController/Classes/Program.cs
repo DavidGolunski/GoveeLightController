@@ -130,9 +130,9 @@ namespace GoveeLightController {
 
             List<string> deviceIpList = new List<string>();
 
-            // if the input is "0.0.0.0"  we want to look for devices in the network automatically
-            if(args.Length == 1 || args[1] == "0.0.0.0") {
-                Dictionary<string, GoveeDevice> devices = GoveeDevice.GetDevices(1000);
+            // if no ips are given, then try to find govee devices inside the network
+            if(args.Length == 1) {
+                Dictionary<string, GoveeDevice> devices = GoveeDevice.GetDevices(2000);
 
                 if(devices.Count == 0) {
                     Console.WriteLine("No Govee Devices have been found. Make sure LAN Control is enabled using the GoveeApp.\n" +

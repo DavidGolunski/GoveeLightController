@@ -1,0 +1,44 @@
+{
+  "An Example Script": [
+    { "command": "TurnOn"},
+    { "command": "Wait", "delay": 100},
+
+    { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
+    { "command": "SetBrightness", "value": 100 },
+
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetColor", "r": 0, "g": 255, "b": 255 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetBrightness", "value": 50 },
+    { "command": "Wait", "delay": 100 },
+    { "command": "TurnOff" }
+  ],
+  "A Second Example Script": [
+    { "command": "TurnOn"},
+    { "command": "Wait", "delay": 100 },
+
+    { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
+    { "command": "SetBrightness", "value": 100 },
+
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetColor", "r": 0, "g": 0, "b": 255 },
+    { "command": "Wait", "delay": 700 },
+
+
+    { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
+    { "command": "Wait", "delay": 700 },
+
+    { "command": "SetBrightness", "value": 50 },
+    { "command": "Wait", "delay": 100 },
+    { "command": "TurnOff"}
+  ]
+}

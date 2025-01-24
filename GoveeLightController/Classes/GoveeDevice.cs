@@ -18,7 +18,7 @@ namespace GoveeLightController {
         public string Sku { get; }
         public Color CurrentColor { get; private set; } = Color.Black; // Placeholder for color tracking
         public int CurrentBrightness { get; private set; } = 100;
-        private UdpClient _udpClient;
+        private readonly UdpClient _udpClient;
 
         public GoveeDevice(string ip, string deviceId, string sku) {
             Ip = ip;
@@ -30,7 +30,6 @@ namespace GoveeLightController {
 
         ~GoveeDevice() {
             // Ensure the socket is closed when the object is deleted
-            TurnOff();
             _udpClient?.Close();
         }
 

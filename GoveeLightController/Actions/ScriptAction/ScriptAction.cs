@@ -50,8 +50,8 @@ namespace GoveeLightController.Actions {
         }
 
 
-        private ScriptActionSettings localSettings;
-        private DeviceListSettings globalSettings;
+        private readonly ScriptActionSettings localSettings;
+        private readonly DeviceListSettings globalSettings;
 
         public ScriptAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {

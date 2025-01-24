@@ -1,9 +1,12 @@
 ﻿using BarRaider.SdTools;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -39,6 +42,25 @@ namespace GoveeLightController {
         public void Start(List<string> deviceIpList) {
             if(IsRunning)
                 return;
+
+
+            string cfgPath = GetConfigurationFileTargetLocation();
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, "cfgPath: " + cfgPath);
+            if(cfgPath != null) {
+                bool successfull = CopyConfigurationFile("gamestate_integration_goveelightcontroller.cfg", cfgPath);
+                if(successfull) {
+                    Console.WriteLine("Copying of configuration file successfull");
+                    Logger.Instance.LogMessage(TracingLevel.INFO, "Copying of configuration file successfull");
+                }
+                else {
+                    Console.WriteLine("Copying of configuration was not file successfull. Please copy the file \\\"gamestate_integration_goveelightcontroller.cfg\\\" to \\\"[Your Steam Folder]/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg\\\"\"");
+                    Logger.Instance.LogMessage(TracingLevel.WARN, "Copying of configuration was not file successfull. Please copy the file \\\"gamestate_integration_goveelightcontroller.cfg\\\" to \\\"[Your Steam Folder]/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg\\\"\"");
+                }
+            }
+            else {
+                Console.WriteLine("Could not find the CounterStrike configuration file folder. Please copy the file \"gamestate_integration_goveelightcontroller.cfg\" to \"[Your Steam Folder]/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg\"");
+                Logger.Instance.LogMessage(TracingLevel.WARN, "Could not find the CounterStrike configuration file folder. Please copy the file \"gamestate_integration_goveelightcontroller.cfg\" to \"[Your Steam Folder]/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg\"");
+            }
 
             _cancellationTokenSource = new CancellationTokenSource();
 
@@ -97,7 +119,6 @@ namespace GoveeLightController {
                 return;
 
             Logger.Instance.LogMessage(TracingLevel.INFO, "CounterStrike Event Found: " + csEvent.ToString());
-            Console.WriteLine("CounterStrike Effect found: " + csEvent.ToString());
 
             if(!actionDict.ContainsKey(csEvent.ToString()))
                 return;
@@ -122,5 +143,44 @@ namespace GoveeLightController {
 
             return actions;
         }
+
+        #region configuration file copying
+
+        private static string GetConfigurationFileTargetLocation() {
+            const string steamRegistryKey = @"HKEY_CURRENT_USER\Software\Valve\Steam";
+            string steamInstallationPath = (string) Microsoft.Win32.Registry.GetValue(steamRegistryKey, "SteamPath", null);
+
+            if(steamInstallationPath == null)
+                return null;
+
+            string[] uncombinedPaths = new string[] { steamInstallationPath, "steamapps", "common", "Counter-Strike Global Offensive", "game", "csgo", "cfg" };
+            string combinedPath = Path.Combine(uncombinedPaths);
+
+            if(!Directory.Exists(combinedPath))
+                return null;
+
+            return combinedPath;
+        }
+
+        private static bool CopyConfigurationFile(string configurationFileLocation, string targetFolder) {
+            if(string.IsNullOrEmpty(configurationFileLocation) || string.IsNullOrEmpty(targetFolder))
+                return false;
+            
+            if(!File.Exists(configurationFileLocation) || !Directory.Exists(targetFolder)) {
+                return false;
+            }
+
+            try {
+                string targetFilePath = Path.Combine(targetFolder, Path.GetFileName(configurationFileLocation));
+                File.Copy(configurationFileLocation, targetFilePath, overwrite: true);
+            }
+            catch(Exception) {
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
     }
 }

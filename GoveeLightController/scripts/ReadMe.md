@@ -82,6 +82,8 @@ The command will only be executed when the "if-statement" is true.
 The variables are:  
 - "IsLeaguePlayerDead"
 - "IsLeaguePlayerNotDead"
+- "IsCounterStrikePlayerDead"
+- "IsCounterStrikePlayerNotDead"
 
 __Example:__
 ```

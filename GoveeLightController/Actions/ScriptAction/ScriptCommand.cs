@@ -79,6 +79,8 @@ namespace GoveeLightController {
                 case "":
                 case "IsLeaguePlayerDead":
                 case "IsLeaguePlayerNotDead":
+                case "IsCounterStrikePlayerDead":
+                case "IsCounterStrikePlayerNotDead":
                     break;
                 default:
                     Logger.Instance.LogMessage(TracingLevel.ERROR, "The given if condition was not valid: \"" + IfCondition + "\"");
@@ -123,6 +125,12 @@ namespace GoveeLightController {
                 return;
             }
             if(IfCondition == "IsLeaguePlayerDead" && !LeagueAPI.Instance.IsDead) {
+                return;
+            }
+            if(IfCondition == "IsCounterStrikePlayerNotDead" && CounterStrikeAPI.Instance.IsProviderDead) {
+                return;
+            }
+            if(IfCondition == "IsCounterStrikePlayerDead" && !CounterStrikeAPI.Instance.IsProviderDead) {
                 return;
             }
 

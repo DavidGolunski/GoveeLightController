@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Runtime;
@@ -22,7 +23,7 @@ namespace GoveeLightController {
      */
     public class GlobalSettingsAction : KeypadBase {
 
-        private DeviceListSettings settings;
+        private readonly DeviceListSettings settings;
 
         public GlobalSettingsAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
@@ -71,9 +72,14 @@ namespace GoveeLightController {
             settings._deviceIpListString = deviceIpListString;
             Connection.SetSettingsAsync(JObject.FromObject(settings));
             settings._deviceIpListString = oldIpListString;
+
+            
         }
 
-        public override void KeyReleased(KeyPayload payload) { }
+        public async override void KeyReleased(KeyPayload payload) {
+            await Connection.ShowOk();
+        }
+
         public override void OnTick() { }
 
         public override void ReceivedSettings(ReceivedSettingsPayload payload) {

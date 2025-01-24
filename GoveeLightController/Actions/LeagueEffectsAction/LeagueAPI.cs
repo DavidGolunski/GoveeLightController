@@ -148,6 +148,8 @@ namespace GoveeLightController {
                         }
                     }
 
+                    Console.Write("PlayerName: " + activePlayerName + " PlayerTeam: " + activePlayerTeam);
+                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "PlayerName: " + activePlayerName + " PlayerTeam: " + activePlayerTeam);
                 }
 
                 // there is no "player revived" event. This code simulates the event
@@ -183,6 +185,7 @@ namespace GoveeLightController {
 
                 if(newEventData.Count > 0) {
                     latestEventId = (long) newEventData[newEventData.Count - 1]["EventID"];
+                    
                     /*
                     // Debug Code
                     foreach(var eventObj in newEventData) {
