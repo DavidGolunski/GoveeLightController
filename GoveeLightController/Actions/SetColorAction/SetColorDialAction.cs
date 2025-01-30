@@ -55,8 +55,7 @@ namespace GoveeLightController {
 
             int stepSize = payload.IsDialPressed ? 10 : 1;
 
-            // adding 360 so modulo operator can work correctly
-            hue += payload.Ticks * stepSize + 360;
+            hue += payload.Ticks * stepSize;
             if(hue < 0)
                 hue += 360;
             if(hue >= 360)
