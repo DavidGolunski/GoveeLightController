@@ -18,39 +18,49 @@ namespace GoveeLightController {
      */
     public class DeviceListSettings {
 
+        // this is the string that the user has input as the ip list
         public string _deviceIpListString;
+
         [JsonProperty(PropertyName = "deviceIpListString")]
-        public string deviceIpListString {
+        public string DeviceIpListString {
             get => _deviceIpListString; 
             set {
-                ValidateAndExtractIPs(value);
+                _deviceIpListString = value;
+                UpdateDeviceIpList(value);
             }
         }
 
-        public List<String> deviceIpList { get; private set; }
+        [JsonProperty(PropertyName = "validatedDeviceIpListString")]
+        public string ValidatedDeviceIpListString {
+            get {
+                string deviceIpListString = String.Join(",\n", this.DeviceIpList.ToArray());
+                return deviceIpListString.Trim();
+            }
+        }
+
+
+        public List<String> DeviceIpList { get; private set; } = new List<String>();
 
 
 
         [JsonProperty(PropertyName = "useGlobalSettingsOption")]
-        public string useGlobalSettingsOption { get; set; }
+        public string UseGlobalSettingsOption { get; set; }
 
-        public bool useGlobalSettings {
-            get => useGlobalSettingsOption == "global";
+        public bool UseGlobalSettings {
+            get => UseGlobalSettingsOption == "global";
         }
 
 
 
         public DeviceListSettings(){
             _deviceIpListString = "";
-            useGlobalSettingsOption = "global";
+            UseGlobalSettingsOption = "global";
         }
 
 
 
-        private void ValidateAndExtractIPs(string input) {
-            if (input == null) { 
-                input = string.Empty;
-            }
+        private void UpdateDeviceIpList(string input) {
+            input ??= string.Empty;
 
             // remove any characters that are not part of an ip
             string filteredInput = Regex.Replace(input, @"[^0-9,.\n]", "");
@@ -60,23 +70,14 @@ namespace GoveeLightController {
                                 .Select(ip => ip.Trim())
                                 .ToArray();
 
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Validating IPs");
-
             List<string> validIPs = new List<string>();
             foreach(var ip in ips) {
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "IP: " + ip);
                 if(IsValidIP(ip)) {
                     validIPs.Add(ip);
                 }
             }
 
-            deviceIpList = validIPs;
-
-            string deviceIpListString = String.Join(",\n", validIPs.ToArray());
-            deviceIpListString.Replace("[", "");
-            deviceIpListString.Replace("]", "");
-
-            this._deviceIpListString = deviceIpListString.Trim();
+            DeviceIpList = validIPs;
         }
 
         private static bool IsValidIP(string ip) {

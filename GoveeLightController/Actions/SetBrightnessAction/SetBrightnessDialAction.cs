@@ -105,11 +105,11 @@ namespace GoveeLightController {
         }
 
         private void SetBrightness() {
-            if(localSettings.useGlobalSettings) {
-                GoveeDeviceController.Instance.SetBrightness(localSettings.Brightness, globalSettings.deviceIpList);
+            if(localSettings.UseGlobalSettings) {
+                GoveeDeviceController.Instance.SetBrightness(localSettings.Brightness, globalSettings.DeviceIpList);
             }
             else {
-                GoveeDeviceController.Instance.SetBrightness(localSettings.Brightness, localSettings.deviceIpList);
+                GoveeDeviceController.Instance.SetBrightness(localSettings.Brightness, localSettings.DeviceIpList);
             }
         }
         

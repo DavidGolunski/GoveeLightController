@@ -41,11 +41,11 @@ namespace GoveeLightController {
         }
 
         public override void KeyPressed(KeyPayload payload) {
-            if(localSettings.useGlobalSettings) {
-                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, globalSettings.deviceIpList);
+            if(localSettings.UseGlobalSettings) {
+                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, globalSettings.DeviceIpList);
             }
             else {
-                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, localSettings.deviceIpList);
+                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, localSettings.DeviceIpList);
             }
 
         }

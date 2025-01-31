@@ -51,11 +51,11 @@ namespace GoveeLightController {
 
         public override void KeyPressed(KeyPayload payload) {
             List<string> deviceIpList = null;
-            if(localSettings.useGlobalSettings) {
-                deviceIpList = globalSettings.deviceIpList;
+            if(localSettings.UseGlobalSettings) {
+                deviceIpList = globalSettings.DeviceIpList;
             }
             else {
-                deviceIpList = localSettings.deviceIpList;
+                deviceIpList = localSettings.DeviceIpList;
             }
             if(IsOn) {
 

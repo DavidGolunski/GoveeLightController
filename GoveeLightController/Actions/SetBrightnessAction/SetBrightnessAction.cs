@@ -22,8 +22,8 @@ namespace GoveeLightController {
          * The Action sets the brightsness of the lights
          */
 
-        private SetBrightnessSettings localSettings;
-        private DeviceListSettings globalSettings;
+        private readonly SetBrightnessSettings localSettings;
+        private readonly DeviceListSettings globalSettings;
 
 
         public SetBrightnessAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
@@ -45,11 +45,11 @@ namespace GoveeLightController {
         }
 
         public override void KeyPressed(KeyPayload payload) {
-            if(localSettings.useGlobalSettings) {
-                GoveeDeviceController.Instance.SetBrightness(localSettings.Brightness, globalSettings.deviceIpList);
+            if(localSettings.UseGlobalSettings) {
+                GoveeDeviceController.Instance.SetBrightness(localSettings.Brightness, globalSettings.DeviceIpList);
             }
             else {
-                GoveeDeviceController.Instance.SetBrightness(localSettings.Brightness, localSettings.deviceIpList);
+                GoveeDeviceController.Instance.SetBrightness(localSettings.Brightness, localSettings.DeviceIpList);
             }
 
         }
@@ -75,6 +75,7 @@ namespace GoveeLightController {
 
         private void OnPropertyInspectorOpened(object sender, SDEventReceivedEventArgs<PropertyInspectorDidAppear> e) {
             Connection.SetSettingsAsync(JObject.FromObject(localSettings));
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Updted Set Brightness Settings when the PI was opened");
         }
 
         #endregion

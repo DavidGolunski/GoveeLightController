@@ -52,11 +52,11 @@ namespace GoveeLightController {
                 return;
             }
 
-            if(localSettings.useGlobalSettings) {
-                CounterStrikeEffectsManager.Instance.Start(globalSettings.deviceIpList);
+            if(localSettings.UseGlobalSettings) {
+                CounterStrikeEffectsManager.Instance.Start(globalSettings.DeviceIpList);
             }
             else {
-                CounterStrikeEffectsManager.Instance.Start(localSettings.deviceIpList);
+                CounterStrikeEffectsManager.Instance.Start(localSettings.DeviceIpList);
             }
             Connection.SetStateAsync(1).GetAwaiter().GetResult();
 

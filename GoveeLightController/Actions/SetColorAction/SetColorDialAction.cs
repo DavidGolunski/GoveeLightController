@@ -114,6 +114,7 @@ namespace GoveeLightController {
             Bitmap img = ImageTools.GetBitmapFromFilePath("./Actions/SetColorAction/ColorRect.png");
             img = ImageTools.ReplaceColor(img, Color.Black, selectedColor);
 
+
             int hue = (int) selectedColor.GetHue();
             string imageString = Tools.ImageToBase64(img, true);
 
@@ -128,11 +129,11 @@ namespace GoveeLightController {
         }
 
         private void SetColor() {
-            if(localSettings.useGlobalSettings) {
-                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, globalSettings.deviceIpList);
+            if(localSettings.UseGlobalSettings) {
+                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, globalSettings.DeviceIpList);
             }
             else {
-                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, localSettings.deviceIpList);
+                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, localSettings.DeviceIpList);
             }
         }
 

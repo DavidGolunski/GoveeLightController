@@ -23,8 +23,8 @@ namespace GoveeLightController {
          * The Action enables/disables the League Effects Manager, which controls GoveeLights based on League Of Legends Events
          */
 
-        private DeviceListSettings localSettings;
-        private DeviceListSettings globalSettings;
+        private readonly DeviceListSettings localSettings;
+        private readonly DeviceListSettings globalSettings;
 
         public LeagueEffectsAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
@@ -52,11 +52,11 @@ namespace GoveeLightController {
                 return;
             }
 
-            if(localSettings.useGlobalSettings) {
-                LeagueEffectManager.Instance.Start(globalSettings.deviceIpList);
+            if(localSettings.UseGlobalSettings) {
+                LeagueEffectManager.Instance.Start(globalSettings.DeviceIpList);
             }
             else {
-                LeagueEffectManager.Instance.Start(localSettings.deviceIpList);
+                LeagueEffectManager.Instance.Start(localSettings.DeviceIpList);
             }
             Connection.SetStateAsync(1).GetAwaiter().GetResult();
 

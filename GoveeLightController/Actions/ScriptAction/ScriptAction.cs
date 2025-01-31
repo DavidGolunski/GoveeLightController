@@ -75,7 +75,7 @@ namespace GoveeLightController.Actions {
         public override void KeyPressed(KeyPayload payload) {
             
             string actionString = localSettings.SelectedAction;
-            bool actionSuccess = ScriptCommand.StartScriptAction(actionString, globalSettings.deviceIpList);
+            bool actionSuccess = ScriptCommand.StartScriptAction(actionString, globalSettings.DeviceIpList);
 
 
             if(!actionSuccess) {
