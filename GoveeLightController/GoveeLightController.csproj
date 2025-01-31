@@ -7,7 +7,7 @@
     <ProjectGuid>{4635D874-69C0-4010-BE46-77EF92EB1553}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>GoveeLightController</RootNamespace>
-    <AssemblyName>com.davidgolunski.goveelightcontroller</AssemblyName>
+    <AssemblyName>GoveeLightController</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <LangVersion>8</LangVersion>
     <FileAlignment>512</FileAlignment>

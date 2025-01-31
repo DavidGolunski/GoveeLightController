@@ -186,7 +186,7 @@
   "Icon": "Images/LightbulbGovee",
   "URL": "https://github.com/DavidGolunski/GoveeLightController",
   "Version": "1.0.0",
-  "CodePath": "com.davidgolunski.goveelightcontroller",
+  "CodePath": "GoveeLightController",
   "Category": "Govee Light Controller",
   "CategoryIcon": "Images/LightbulbGoveeIcon",
   "OS": [
