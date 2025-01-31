@@ -122,38 +122,37 @@ namespace GoveeLightController {
             try {
                 IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(localIP), 0);
 
-                using(UdpClient udpSender = new UdpClient(localEndPoint))
-                using(UdpClient udpReceiver = new UdpClient(4002)) {
-                    // Send broadcast message
-                    IPEndPoint sendEndPoint = new IPEndPoint(IPAddress.Parse("239.255.255.250"), 4001);
-                    udpSender.Send(bytes, bytes.Length, sendEndPoint);
+                using UdpClient udpSender = new UdpClient(localEndPoint);
+                using UdpClient udpReceiver = new UdpClient(4002);
+                // Send broadcast message
+                IPEndPoint sendEndPoint = new IPEndPoint(IPAddress.Parse("239.255.255.250"), 4001);
+                udpSender.Send(bytes, bytes.Length, sendEndPoint);
 
 
-                    // receive messages from devices
-                    udpReceiver.Client.ReceiveTimeout = timeout;
-                    while(true) {
-                        try {
-                            IPEndPoint remoteEP = null;
-                            byte[] data = udpReceiver.Receive(ref remoteEP);
-                            string receivedMessage = Encoding.UTF8.GetString(data);
+                // receive messages from devices
+                udpReceiver.Client.ReceiveTimeout = timeout;
+                while(true) {
+                    try {
+                        IPEndPoint remoteEP = null;
+                        byte[] data = udpReceiver.Receive(ref remoteEP);
+                        string receivedMessage = Encoding.UTF8.GetString(data);
 
-                            dynamic response = JsonConvert.DeserializeObject(receivedMessage);
+                        dynamic response = JsonConvert.DeserializeObject(receivedMessage);
 
-                            string ip = response?.msg?.data?.ip;
-                            string device = response?.msg?.data?.device;
-                            string sku = response?.msg?.data?.sku;
+                        string ip = response?.msg?.data?.ip;
+                        string device = response?.msg?.data?.device;
+                        string sku = response?.msg?.data?.sku;
 
-                            if(ip != null  && device != null && sku != null) {
-                                GoveeDevice foundDevice = new GoveeDevice(ip, device, sku);
-                                devices.Add(ip, foundDevice);
-                            }
-                        }
-                        catch(SocketException) {
-                            break; // Timeout reached, end discovery
+                        if(ip != null && device != null && sku != null) {
+                            GoveeDevice foundDevice = new GoveeDevice(ip, device, sku);
+                            devices.Add(ip, foundDevice);
                         }
                     }
+                    catch(SocketException) {
+                        break; // Timeout reached, end discovery
+                    }
                 }
- 
+
             }
             catch(Exception ex) {
                 Logger.Instance.LogMessage(TracingLevel.INFO, "Device Discovering Exception: " + ex.StackTrace);

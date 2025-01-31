@@ -46,7 +46,7 @@ namespace GoveeLightController {
         public async override void DialRotate(DialRotatePayload payload) {
             dialWasRotated = true;
 
-            Color selectedColor = localSettings.selectedColor;
+            Color selectedColor = localSettings.SelectedColor;
 
             float hue = selectedColor.GetHue();
             float sat = selectedColor.GetSaturation();
@@ -60,7 +60,7 @@ namespace GoveeLightController {
                 hue -= 360;
 
             Color col = ImageTools.FromHSB(hue, sat, 1);
-            localSettings.selectedColorHex = col.ToHex();
+            localSettings.SelectedColorHex = col.ToHex();
 
             UpdateLayout();
             SetColor();
@@ -107,7 +107,7 @@ namespace GoveeLightController {
         }
 
         private async void UpdateLayout() {
-            Color selectedColor = localSettings.selectedColor;
+            Color selectedColor = localSettings.SelectedColor;
 
             Bitmap img = ImageTools.GetBitmapFromFilePath("./Actions/SetColorAction/ColorRect.png");
             img = ImageTools.ReplaceColor(img, Color.Black, selectedColor);
@@ -128,10 +128,10 @@ namespace GoveeLightController {
 
         private void SetColor() {
             if(localSettings.UseGlobalSettings) {
-                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, globalSettings.DeviceIpList);
+                GoveeDeviceController.Instance.SetColor(localSettings.SelectedColor, globalSettings.DeviceIpList);
             }
             else {
-                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, localSettings.DeviceIpList);
+                GoveeDeviceController.Instance.SetColor(localSettings.SelectedColor, localSettings.DeviceIpList);
             }
         }
 

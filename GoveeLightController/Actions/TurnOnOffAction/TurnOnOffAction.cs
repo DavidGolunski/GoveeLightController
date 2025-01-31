@@ -40,7 +40,7 @@ namespace GoveeLightController {
         }
 
         public override void KeyPressed(KeyPayload payload) {
-            List<string> deviceIpList = null;
+            List<string> deviceIpList;
             if(localSettings.UseGlobalSettings) {
                 deviceIpList = globalSettings.DeviceIpList;
             }

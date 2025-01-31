@@ -12,12 +12,12 @@ namespace GoveeLightController {
 
         private static GoveeDeviceController instance;
         public static GoveeDeviceController Instance { 
-            get => instance ?? (instance = new GoveeDeviceController());
+            get => instance ??= new GoveeDeviceController();
             private set => instance = value;
         }
 
         // store all devices, so no new devices have to be created every time a function is called
-        private Dictionary<string, GoveeDevice> _devices;
+        private readonly Dictionary<string, GoveeDevice> _devices;
         private Color _primaryColor = Color.Black;
 
         public GoveeDeviceController() {

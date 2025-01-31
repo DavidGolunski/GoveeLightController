@@ -40,10 +40,10 @@ namespace GoveeLightController {
 
         public override void KeyPressed(KeyPayload payload) {
             if(localSettings.UseGlobalSettings) {
-                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, globalSettings.DeviceIpList);
+                GoveeDeviceController.Instance.SetColor(localSettings.SelectedColor, globalSettings.DeviceIpList);
             }
             else {
-                GoveeDeviceController.Instance.SetColor(localSettings.selectedColor, localSettings.DeviceIpList);
+                GoveeDeviceController.Instance.SetColor(localSettings.SelectedColor, localSettings.DeviceIpList);
             }
 
         }
@@ -73,13 +73,13 @@ namespace GoveeLightController {
         }
 
         private void UpdateImage() {
-            if(!localSettings.useDynamicIcon) {
+            if(!localSettings.UseDynamicIcon) {
                 Connection.SetDefaultImageAsync();
                 return;
             }
          
             Bitmap img = ImageTools.GetBitmapFromFilePath("./Actions/SetColorAction/LightbulbColorDynamic.png");
-            img = ImageTools.ReplaceColor(img, Color.Black, localSettings.selectedColor);
+            img = ImageTools.ReplaceColor(img, Color.Black, localSettings.SelectedColor);
             Connection.SetImageAsync(img).GetAwaiter().GetResult();
             img.Dispose();
         }
