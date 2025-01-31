@@ -69,17 +69,23 @@ namespace GoveeLightController.Actions {
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"ScriptAction: Destructor called");
         }
 
         public override void KeyPressed(KeyPayload payload) {
             
             string actionString = localSettings.SelectedAction;
-            bool actionSuccess = ScriptCommand.StartScriptAction(actionString, globalSettings.DeviceIpList);
+            bool actionSuccess;
 
+            if(localSettings.UseGlobalSettings) {
+                actionSuccess = ScriptCommand.StartScriptAction(actionString, globalSettings.DeviceIpList);
+            }
+            else {
+                actionSuccess = ScriptCommand.StartScriptAction(actionString, localSettings.DeviceIpList);
+            }
 
             if(!actionSuccess) {
                 Logger.Instance.LogMessage(TracingLevel.WARN, $"The Action {actionString} does not exist");
+                Connection.ShowAlert().GetAwaiter().GetResult();
             }
         }
 

@@ -153,7 +153,6 @@
     <None Include="StartStandaloneLeagueEffects.bat" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="!!README!!.txt" />
     <Content Include="Actions\CounterStrikeEffectsAction\CounterStrike%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

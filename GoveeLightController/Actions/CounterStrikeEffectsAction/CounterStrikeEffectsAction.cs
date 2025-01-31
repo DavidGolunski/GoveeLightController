@@ -23,8 +23,8 @@ namespace GoveeLightController {
          * The Action enables/disables the League Effects Manager, which controls GoveeLights based on League Of Legends Events
          */
 
-        private DeviceListSettings localSettings;
-        private DeviceListSettings globalSettings;
+        private readonly DeviceListSettings localSettings;
+        private readonly DeviceListSettings globalSettings;
 
         public CounterStrikeEffectsAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
@@ -42,7 +42,6 @@ namespace GoveeLightController {
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"CounterStrikeEffectsAction: Destructor called");
         }
 
         public override void KeyPressed(KeyPayload payload) {

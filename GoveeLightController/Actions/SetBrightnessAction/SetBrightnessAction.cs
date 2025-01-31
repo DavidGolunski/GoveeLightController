@@ -41,7 +41,6 @@ namespace GoveeLightController {
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"SetBrightnessAction: Destructor called");
         }
 
         public override void KeyPressed(KeyPayload payload) {
@@ -75,7 +74,6 @@ namespace GoveeLightController {
 
         private void OnPropertyInspectorOpened(object sender, SDEventReceivedEventArgs<PropertyInspectorDidAppear> e) {
             Connection.SetSettingsAsync(JObject.FromObject(localSettings));
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Updted Set Brightness Settings when the PI was opened");
         }
 
         #endregion

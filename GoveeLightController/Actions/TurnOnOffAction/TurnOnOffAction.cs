@@ -23,8 +23,8 @@ namespace GoveeLightController {
          * The Action toggles between turning lights on and off
          */
 
-        private DeviceListSettings localSettings;
-        private DeviceListSettings globalSettings;
+        private readonly DeviceListSettings localSettings;
+        private readonly DeviceListSettings globalSettings;
 
 
         private bool IsOn = false;
@@ -46,7 +46,6 @@ namespace GoveeLightController {
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"TurnOnOffAction: Destructor called");
         }
 
         public override void KeyPressed(KeyPayload payload) {

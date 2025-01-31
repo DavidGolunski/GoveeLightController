@@ -43,7 +43,6 @@ namespace GoveeLightController {
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"SetBrightnessDialAction: Destructor called");
         }
 
         public async override void DialRotate(DialRotatePayload payload) {

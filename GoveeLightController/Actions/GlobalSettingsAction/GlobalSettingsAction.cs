@@ -28,7 +28,6 @@ namespace GoveeLightController {
         public GlobalSettingsAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
                 this.settings = new DeviceListSettings();
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Received Settings in Constructor");
                 SaveSettings();
             }
             else {
@@ -39,7 +38,6 @@ namespace GoveeLightController {
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"GlobalSettingsAction Destructor called");
         }
 
         public override void KeyPressed(KeyPayload payload) {

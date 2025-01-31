@@ -16,8 +16,8 @@ namespace GoveeLightController {
          */
 
 
-        private SetColorSettings localSettings;
-        private DeviceListSettings globalSettings;
+        private readonly SetColorSettings localSettings;
+        private readonly DeviceListSettings globalSettings;
 
 
         public SetColorAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
@@ -37,7 +37,6 @@ namespace GoveeLightController {
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"SetColorAction: Destructor called");
         }
 
         public override void KeyPressed(KeyPayload payload) {
@@ -76,9 +75,7 @@ namespace GoveeLightController {
 
         private void UpdateImage() {
             if(!localSettings.useDynamicIcon) {
-                //Connection.SetStateAsync(0).GetAwaiter().GetResult();
                 Connection.SetDefaultImageAsync();
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Setting Static Icon for Color");
                 return;
             }
          

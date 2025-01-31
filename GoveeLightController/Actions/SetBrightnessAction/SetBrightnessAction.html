@@ -27,8 +27,8 @@
         <div type="range" class="sdpi-item sdShowTooltip" id="dvSpeed">
             <div class="sdpi-item-label" id="brightnessLabel">Brightness</div>
             <div class="sdpi-item-value">
-                <span class="clickable" value="1">1</span>
-                <input type="range" min="1" max="100" value=100 data-suffix=" %" class="sdProperty" id="brightness" oninput="setSettings()">
+                <span class="clickable" value="0">0</span>
+                <input type="range" min="0" max="100" value=100 data-suffix=" %" class="sdProperty" id="brightness" oninput="setSettings()">
                 <span class="clickable" value="100">100</span>
                 <label for="brightness" class="rangeLabel"></label>
             </div>
@@ -60,10 +60,7 @@
             const deviceIpListDiv = document.getElementById('dvDeviceIpList');
             const selectedIpsDiv = document.getElementById('dvSelectedIps');
 
-            const TestStringTextArea = document.getElementById('testString');
-            TestStringTextArea.value = "Test: " + dropdown.value + " " + deviceIpListDiv.style.display;
-
-            if (dropdown.value == 'global') {
+            if (dropdown.value === 'global') {
                 deviceIpListDiv.style.display = 'none'; // Hide the div
                 selectedIpsDiv.style.display = 'none';
             } else {

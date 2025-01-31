@@ -42,7 +42,6 @@ namespace GoveeLightController {
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"LeagueEffectsAction: Destructor called");
         }
 
         public override void KeyPressed(KeyPayload payload) {

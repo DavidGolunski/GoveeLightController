@@ -63,8 +63,8 @@ namespace GoveeLightController {
         }
 
         public void SetBrightness(int brightness) {
-            if(brightness <= 0 || brightness > 100)
-                throw new ArgumentOutOfRangeException(nameof(brightness), "Brightness must be between 1 and 100.");
+            if(brightness < 0 || brightness > 100)
+                throw new ArgumentOutOfRangeException(nameof(brightness), "Brightness must be between 0 and 100.");
 
             var message = new Dictionary<string, object>
             {

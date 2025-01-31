@@ -9,36 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdpi.css">
     <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdtools.common.js"></script>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/rangeTooltip.css">
-    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/rangeTooltip.js"></script>
-
     <script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
-    <script>
-        // Ensure the script runs after the DOM is loaded
-        document.addEventListener("DOMContentLoaded", function () {
-            // Get references to the dropdown and the div
-            const dropdown = document.getElementById('useGlobalSettingsOption');
-            const deviceIpListDiv = document.getElementById('dvDeviceIpList');
-
-            // Function to toggle visibility
-            function toggleDeviceIpList() {
-                console.log(`Dropdown value: ${dropdown.value}`); // Debugging log
-                if (dropdown.value === 'global') {
-                    deviceIpListDiv.style.display = 'none'; // Hide the div
-                    console.log("Hiding dvDeviceIpList"); // Debugging log
-                } else {
-                    deviceIpListDiv.style.display = 'block'; // Show the div
-                    console.log("Showing dvDeviceIpList"); // Debugging log
-                }
-            }
-
-            // Add event listener to the dropdown
-            dropdown.addEventListener('change', toggleDeviceIpList);
-
-            // Initialize visibility based on the default selected value
-            toggleDeviceIpList();
-        });
-    </script>
 </head>
 <body>
     <div class="sdpi-wrapper">
@@ -49,15 +20,15 @@
                 "Documents/davidgolunski/goveelightcontroller/"
             </div>
         </div>
-        <br/>
+        <br />
         <div class="sdpi-item">
             <div class="sdpi-item-label">Action Selection</div>
-            <select class="sdpi-item-value sdProperty sdList" sdListTextProperty="text" sdListValueProperty="value" sdValueField="selectedAction" id="actionDropDown">
+            <select class="sdpi-item-value sdProperty sdList" sdListTextProperty="text" sdListValueProperty="value" sdValueField="selectedAction" id="actionDropDown" oninput="setSettings()">
             </select>
         </div>
         <div class="sdpi-item">
             <div class="sdpi-item-label">Device Selection</div>
-            <select class="sdpi-item-value sdProperty" setting="useGlobalSettingsOption" id="useGlobalSettingsOption">
+            <select class="sdpi-item-value sdProperty" setting="useGlobalSettingsOption" id="useGlobalSettingsOption" oninput="setSettings()">
                 <option value="global">From Global Settings</option>
                 <option value="local">From Device IP List</option>
             </select>
@@ -65,13 +36,46 @@
         <div class="sdpi-item" id="dvDeviceIpList">
             <div class="sdpi-item-label">Device IP List</div>
             <sdpi-textarea class="sdpi-item-value sdProperty" setting="deviceIpListString" id="deviceIpListString"
-                           rows="6"></sdpi-textarea>
+                           rows="4" oninput="setSettings()"></sdpi-textarea>
         </div>
-        <div class="sdpi-item">
-            <div class="sdpi-item-label">Save Settings</div>
-            <button class="sdpi-item-value" onclick="setSettings()">Save</button>
-            <div class="sdpi-item-value">Always "Save" after editing</div>
+        <div class="sdpi-item" id="dvSelectedIps">
+            <div class="sdpi-item-label">Selected IPs</div>
+            <div class="sdpi-item-value sdProperty sdHTML" style="font-size: 16px;" id="validatedDeviceIpListString"></div>
         </div>
     </div>
+
+    <script>
+
+        // Function to toggle visibility
+        function toggleDeviceIpList() {
+            // Get references to the dropdown and the divs
+            const dropdown = document.getElementById('useGlobalSettingsOption');
+            const deviceIpListDiv = document.getElementById('dvDeviceIpList');
+            const selectedIpsDiv = document.getElementById('dvSelectedIps');
+
+            if (dropdown.value === 'global') {
+                deviceIpListDiv.style.display = 'none'; // Hide the div
+                selectedIpsDiv.style.display = 'none';
+            } else {
+                deviceIpListDiv.style.display = ''; // Show the div
+                selectedIpsDiv.style.display = '';
+            }
+        }
+
+        // add Event listener that triggers if the device selection is changed
+        const dropdown = document.getElementById('useGlobalSettingsOption');
+        dropdown.addEventListener('change', toggleDeviceIpList);
+
+
+        // add event listener that triggers when a message is recieved (this is called when the Property inspector is opened)
+        document.addEventListener('websocketCreate', function () {
+
+            websocket.addEventListener('message', function (event) {
+                toggleDeviceIpList();
+            });
+
+        });
+
+    </script>
 </body>
 </html>
