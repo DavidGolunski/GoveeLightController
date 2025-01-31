@@ -5,7 +5,6 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BarRaider.SdTools.Payloads;
-using System.ComponentModel;
 
 namespace GoveeLightController {
     [PluginActionId("com.davidgolunski.goveelightcontroller.setbrightnessdialaction")]
@@ -50,8 +49,8 @@ namespace GoveeLightController {
             int stepSize = payload.IsDialPressed ? 5 : 1;
 
             localSettings.Brightness += payload.Ticks * stepSize;
-            if(localSettings.Brightness < 1)
-                localSettings.Brightness = 1;
+            if(localSettings.Brightness < 0)
+                localSettings.Brightness = 0;
             if(localSettings.Brightness > 100)
                 localSettings.Brightness = 100;
 

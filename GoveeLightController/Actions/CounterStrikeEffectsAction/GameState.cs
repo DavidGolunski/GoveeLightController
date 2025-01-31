@@ -1,12 +1,6 @@
 ﻿using BarRaider.SdTools;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace GoveeLightController {
 
@@ -43,8 +37,8 @@ namespace GoveeLightController {
     }
 
     public enum CsRoundPhases {
-        UNAVAILABLE,
         LIVE,
+        UNAVAILABLE,
         OVER,
         FREEZETIME
     }

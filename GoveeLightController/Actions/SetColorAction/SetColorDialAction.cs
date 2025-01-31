@@ -2,7 +2,6 @@
 using BarRaider.SdTools.Events;
 using BarRaider.SdTools.Payloads;
 using BarRaider.SdTools.Wrappers;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Drawing;
