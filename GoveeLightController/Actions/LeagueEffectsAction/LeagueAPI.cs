@@ -276,9 +276,15 @@ namespace GoveeLightController {
                     return;
                 }
 
-                if(eventObj["Assisters"] is List<object> assistList && assistList.Contains(activePlayerName)) {
-                    currentEvent = LeagueEventTypes.VOID_GRUBS_KILLED;
-                    return;
+                List<string> assistList = ((JArray) eventObj["Assisters"]).ToObject<List<string>>();
+                if(assistList == null) {
+                    continue;
+                }
+                foreach(var assist in assistList) {
+                    if(assist.ToString() == activePlayerName) {
+                        currentEvent = LeagueEventTypes.VOID_GRUBS_KILLED;
+                        return;
+                    }
                 }
             }
 
@@ -377,8 +383,8 @@ namespace GoveeLightController {
                     currentEvent = LeagueEventTypes.HAS_KILLED_TURRET;
                     return;
                 }
-
-                if(!(eventObj["Assisters"] is List<object> assistList)) {
+                List<string> assistList = ((JArray) eventObj["Assisters"]).ToObject<List<string>>();
+                if(assistList == null) {
                     continue;
                 }
                 foreach(var assist in assistList) {
@@ -400,7 +406,8 @@ namespace GoveeLightController {
                     return;
                 }
 
-                if(!(eventObj["Assisters"] is List<object> assistList)) {
+                List<string> assistList = ((JArray) eventObj["Assisters"]).ToObject<List<string>>();
+                if(assistList == null) {
                     continue;
                 }
                 foreach(var assist in assistList) {
