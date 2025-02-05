@@ -30,6 +30,7 @@ namespace GoveeLightController {
                 string deviceIpListString = String.Join(",\n", this.DeviceIpList.ToArray());
                 return deviceIpListString.Trim();
             }
+            set { }
         }
 
 

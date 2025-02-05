@@ -19,13 +19,8 @@ namespace GoveeLightController {
         private readonly DeviceListSettings settings;
 
         public GlobalSettingsAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
-            if(payload.Settings == null || payload.Settings.Count == 0) {
-                this.settings = new DeviceListSettings();
-                SaveSettings();
-            }
-            else {
-                this.settings = payload.Settings.ToObject<DeviceListSettings>();
-            }
+            this.settings = new DeviceListSettings();
+            GlobalSettingsManager.Instance.RequestGlobalSettings();
             Connection.OnPropertyInspectorDidAppear += OnPropertyInspectorOpened;
         }
 
@@ -76,10 +71,12 @@ namespace GoveeLightController {
         public override void ReceivedSettings(ReceivedSettingsPayload payload) {
             Tools.AutoPopulateSettings(settings, payload.Settings);
             SaveSettings();
-            
         }
 
-        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) { }
+        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) {
+            Tools.AutoPopulateSettings(settings, payload.Settings);
+            Connection.SetSettingsAsync(JObject.FromObject(settings)).GetAwaiter().GetResult();
+        }
 
         // Save the current settings and send a "GlobalSettingsReceived" message to all other actions
         private Task SaveSettings() {
@@ -88,7 +85,7 @@ namespace GoveeLightController {
         }
 
         private void OnPropertyInspectorOpened(object sender, SDEventReceivedEventArgs<PropertyInspectorDidAppear> e) {
-            Connection.SetSettingsAsync(JObject.FromObject(settings));
+            Connection.SetSettingsAsync(JObject.FromObject(settings)).GetAwaiter().GetResult();
         }
     }
 }
