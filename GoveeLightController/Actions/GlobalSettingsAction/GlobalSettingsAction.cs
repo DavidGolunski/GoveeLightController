@@ -68,11 +68,13 @@ namespace GoveeLightController {
 
         public override void OnTick() { }
 
+        // if local settings are received then set them and send out a "GlobalSettingsReceived" message
         public override void ReceivedSettings(ReceivedSettingsPayload payload) {
             Tools.AutoPopulateSettings(settings, payload.Settings);
             SaveSettings();
         }
 
+        // if global settings are received, then load the settings, but do not send out another "GlobalSettingsReceived" message
         public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) {
             Tools.AutoPopulateSettings(settings, payload.Settings);
             Connection.SetSettingsAsync(JObject.FromObject(settings)).GetAwaiter().GetResult();

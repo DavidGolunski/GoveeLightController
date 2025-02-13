@@ -71,6 +71,7 @@ namespace GoveeLightController {
 
         // update function called by the thread every 0.1 seconds until the thread is closed
         private void Update(List<string> deviceIpList) {
+            LeagueAPI.Instance.RetrieveData();
             if(!LeagueAPI.Instance.IsInGame())
                 return;
 

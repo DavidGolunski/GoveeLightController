@@ -113,7 +113,7 @@ namespace GoveeLightController {
 
         // Retrieve data from the client. Returns true if successfull.
         // Fetched Data is stored in the classes attributes
-        private bool RetrieveData() {
+        public bool RetrieveData() {
             DateTime now = DateTime.Now;
             double timeDiff = (now - lastUpdate).TotalMilliseconds;
 
@@ -144,8 +144,8 @@ namespace GoveeLightController {
                         }
                     }
 
-                    Console.Write("PlayerName: " + activePlayerName + " PlayerTeam: " + activePlayerTeam);
-                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "PlayerName: " + activePlayerName + " PlayerTeam: " + activePlayerTeam);
+                    Console.Write("PlayerName: " + activePlayerName + " PlayerTeam: " + activePlayerTeam + " PrimaryRuneTree: " + PrimaryRuneTree);
+                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "PlayerName: " + activePlayerName + " PlayerTeam: " + activePlayerTeam + " PrimaryRuneTree: " + PrimaryRuneTree);
                 }
 
                 // there is no "player revived" event. This code simulates the event
@@ -440,14 +440,12 @@ namespace GoveeLightController {
 
         // function to retrieve information if the player is currently in a game
         public bool IsInGame() {
-            RetrieveData();
             return activePlayerName != null;
         }
 
         // function to retrieve information about the latest event.
         // if "popEvent" is true, it will set it to "NO_EVENT" aferwards, ensuring no double usage of the same event
         public LeagueEventTypes GetEvent(bool popEvent = true) {
-            RetrieveData();
             if(!popEvent || currentEvent == LeagueEventTypes.NO_EVENT)
                 return currentEvent;
 
