@@ -15,17 +15,17 @@ namespace GoveeLightController {
          */
 
 
-        private readonly SetColorSettings localSettings;
+        private readonly SetColorActionSettings localSettings;
         private readonly DeviceListSettings globalSettings;
 
 
         public SetColorAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
-                this.localSettings = new SetColorSettings();
+                this.localSettings = new SetColorActionSettings();
                 SaveSettings();
             }
             else {
-                this.localSettings = payload.Settings.ToObject<SetColorSettings>();
+                this.localSettings = payload.Settings.ToObject<SetColorActionSettings>();
             }
             this.globalSettings = new DeviceListSettings();
             GlobalSettingsManager.Instance.RequestGlobalSettings();
@@ -40,10 +40,10 @@ namespace GoveeLightController {
 
         public override void KeyPressed(KeyPayload payload) {
             if(localSettings.UseGlobalSettings) {
-                GoveeDeviceController.Instance.SetColor(localSettings.SelectedColor, globalSettings.DeviceIpList);
+                GoveeDeviceController.Instance.SetColor(Color.FromArgb(localSettings.ColorRed, localSettings.ColorGreen, localSettings.ColorBlue), globalSettings.DeviceIpList);
             }
             else {
-                GoveeDeviceController.Instance.SetColor(localSettings.SelectedColor, localSettings.DeviceIpList);
+                GoveeDeviceController.Instance.SetColor(Color.FromArgb(localSettings.ColorRed, localSettings.ColorGreen, localSettings.ColorBlue), localSettings.DeviceIpList);
             }
 
         }
@@ -53,7 +53,27 @@ namespace GoveeLightController {
         public override void OnTick() { }
 
         public override void ReceivedSettings(ReceivedSettingsPayload payload) {
+            int previousRed = localSettings.ColorRed;
+            int previousGreen = localSettings.ColorGreen;
+            int previousBlue = localSettings.ColorBlue;
+            string previousHexCode = localSettings.HexCodeString;
+            
             Tools.AutoPopulateSettings(localSettings, payload.Settings);
+
+            // if the rgb values have changed, update the hex code
+            if(previousRed != localSettings.ColorRed || previousGreen != localSettings.ColorGreen || previousBlue != localSettings.ColorBlue) {
+                localSettings.HexCodeString = Color.FromArgb(localSettings.ColorRed, localSettings.ColorGreen, localSettings.ColorBlue).ToHex();
+            }
+            // if the hex code has changed, update the rgb values
+            else if(previousHexCode != localSettings.HexCodeString) {
+                string modifiedHex = "ff" + localSettings.HexCodeString.PadRight(6, '0');
+                int colorInt = int.Parse(modifiedHex, System.Globalization.NumberStyles.HexNumber);
+                Color newColor = Color.FromArgb(colorInt);
+                localSettings.ColorRed = newColor.R;
+                localSettings.ColorGreen = newColor.G;
+                localSettings.ColorBlue = newColor.B;
+            }
+
             SaveSettings();
             UpdateImage();
         }
@@ -79,7 +99,7 @@ namespace GoveeLightController {
             }
          
             Bitmap img = ImageTools.GetBitmapFromFilePath("./Actions/SetColorAction/LightbulbColorDynamic.png");
-            img = ImageTools.ReplaceColor(img, Color.Black, localSettings.SelectedColor);
+            img = ImageTools.ReplaceColor(img, Color.Black, Color.FromArgb(localSettings.ColorRed, localSettings.ColorGreen, localSettings.ColorBlue));
             Connection.SetImageAsync(img).GetAwaiter().GetResult();
             img.Dispose();
         }

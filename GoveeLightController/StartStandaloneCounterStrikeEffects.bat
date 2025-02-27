@@ -12,7 +12,7 @@ SET IP_ADDRESSES=
 
 
 REM Run the program with the specified arguments
-com.davidgolunski.goveelightcontroller.exe "%EFFECT_MODE%" %IP_ADDRESSES%
+GoveeLightController.exe "%EFFECT_MODE%" %IP_ADDRESSES%
 
 REM Pause the console to view output
 PAUSE

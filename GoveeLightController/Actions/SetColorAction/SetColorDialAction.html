@@ -9,23 +9,61 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdpi.css">
     <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdtools.common.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/rangeTooltip.css">
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/rangeTooltip.js"></script>
+
     <script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
 </head>
 <body>
+    <div class="sdpi-info-label hidden" style="top: -1000;" value="">Tooltip</div>
     <div class="sdpi-wrapper">
         <div class="sdpi-item">
             <div class="sdpi-item-label">Description</div>
             <div class="sdpi-item-value">
                 Changes the color for one or more lights specified in the device list below.
-                You can scroll through different color hue's using the dial.<br />
-                Saturation has to be changed in the color selector below.
+                You can scroll through different color hue's using the dial.
             </div>
         </div>
         <br />
-        <div class="sdpi-item">
-            <div class="sdpi-item-label">Color</div>
-            <sdpi-color class="sdpi-item-value sdProperty" setting="selectedColorHex" id="selectedColorHex" default="ffff00"></sdpi-color>
+        <div type="range" class="sdpi-item sdShowTooltip" id="dvHue">
+            <div class="sdpi-item-label" id="hueLabel">Hue</div>
+            <div class="sdpi-item-value">
+                <span class="clickable" value="0">0</span>
+                <input type="range" min="0" max="360" value=0 data-suffix="°" class="sdProperty" id="colorHue" oninput="setSettings()">
+                <span class="clickable" value="360">360</span>
+                <label for="colorHue" class="rangeLabel"></label>
+            </div>
         </div>
+        <div type="range" class="sdpi-item sdShowTooltip" id="dvSaturation">
+            <div class="sdpi-item-label" id="saturationLabel">Saturation</div>
+            <div class="sdpi-item-value">
+                <span class="clickable" value="0">0</span>
+                <input type="range" min="0" max="100" value=100 data-suffix="%" class="sdProperty" id="colorSaturation" oninput="setSettings()">
+                <span class="clickable" value="100">100</span>
+                <label for="colorSaturation" class="rangeLabel"></label>
+            </div>
+        </div>
+        <div type="range" class="sdpi-item sdShowTooltip" id="dvBrightness">
+            <div class="sdpi-item-label" id="brightnessLabel">Brightness</div>
+            <div class="sdpi-item-value">
+                <span class="clickable" value="0">0</span>
+                <input type="range" min="0" max="100" value=100 data-suffix="%" class="sdProperty" id="colorBrightness" oninput="setSettings()">
+                <span class="clickable" value="100">100</span>
+                <label for="colorBrightness" class="rangeLabel"></label>
+            </div>
+        </div>
+
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Hex Code</div>
+            <div class="sdpi-item-value sdProperty sdHTML" setting="hexCodeString" id="hexCodeString">ff0000</div>
+        </div>
+
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Resulting Color</div>
+            <div class="sdpi-item-value" id="resultingColorDiv"></div>
+        </div>
+
+
         <div class="sdpi-item">
             <div class="sdpi-item-label">Device Selection</div>
             <select class="sdpi-item-value sdProperty" setting="useGlobalSettingsOption" id="useGlobalSettingsOption" oninput="setSettings()">
@@ -62,6 +100,16 @@
             }
         }
 
+        // Function to change the preview color
+        function changeResultingColorPreview() {
+            const resultingColorDiv = document.getElementById('resultingColorDiv');
+            const hexCodeStringDiv = document.getElementById('hexCodeString');
+
+            resultingColorDiv.style.backgroundColor = hexCodeStringDiv.textContent;
+
+        }
+
+
         // add Event listener that triggers if the device selection is changed
         const dropdown = document.getElementById('useGlobalSettingsOption');
         dropdown.addEventListener('change', toggleDeviceIpList);
@@ -72,6 +120,7 @@
 
             websocket.addEventListener('message', function (event) {
                 toggleDeviceIpList();
+                changeResultingColorPreview();
             });
 
         });

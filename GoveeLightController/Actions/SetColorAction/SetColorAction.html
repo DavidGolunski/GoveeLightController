@@ -9,9 +9,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdpi.css">
     <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdtools.common.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/rangeTooltip.css">
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/rangeTooltip.js"></script>
+
     <script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
 </head>
 <body>
+    <div class="sdpi-info-label hidden" style="top: -1000;" value="">Tooltip</div>
     <div class="sdpi-wrapper">
         <div class="sdpi-item">
             <div class="sdpi-item-label">Description</div>
@@ -19,14 +23,51 @@
                 Changes the color for one or more lights specified in the device list below.
             </div>
         </div>
-        <br />
-        <div class="sdpi-item">
-            <div class="sdpi-item-label">Color</div>
-            <sdpi-color class="sdpi-item-value sdProperty" setting="selectedColorHex" id="selectedColorHex" default="#ffffff"></sdpi-color>
+        <br/>
+
+        <div type="range" class="sdpi-item sdShowTooltip" id="dvRed">
+            <div class="sdpi-item-label" id="redLabel">Red</div>
+            <div class="sdpi-item-value">
+                <span class="clickable" value="0">0</span>
+                <input type="range" min="0" max="255" value=255 data-suffix="" class="sdProperty" id="colorRed" oninput="setSettings()">
+                <span class="clickable" value="255">255</span>
+                <label for="colorRed" class="rangeLabel"></label>
+            </div>
         </div>
+        <div type="range" class="sdpi-item sdShowTooltip" id="dvGreen">
+            <div class="sdpi-item-label" id="greenLabel">Green</div>
+            <div class="sdpi-item-value">
+                <span class="clickable" value="0">0</span>
+                <input type="range" min="0" max="255" value=255 data-suffix="" class="sdProperty" id="colorGreen" oninput="setSettings()">
+                <span class="clickable" value="255">255</span>
+                <label for="colorGreen" class="rangeLabel"></label>
+            </div>
+        </div>
+        <div type="range" class="sdpi-item sdShowTooltip" id="dvBlue">
+            <div class="sdpi-item-label" id="blueLabel">Blue</div>
+            <div class="sdpi-item-value">
+                <span class="clickable" value="0">0</span>
+                <input type="range" min="0" max="255" value=255 data-suffix="" class="sdProperty" id="colorBlue" oninput="setSettings()">
+                <span class="clickable" value="255">255</span>
+                <label for="colorBlue" class="rangeLabel"></label>
+            </div>
+        </div>
+
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Hex Code</div>
+            <sdpi-textfield class="sdpi-item-value sdProperty" setting="hexCodeString" id="hexCodeString"
+                            value="ffffff" maxlength="6" required oninput="setSettings()">
+            </sdpi-textfield>
+        </div>
+
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Resulting Color</div>
+            <div class="sdpi-item-value" id="resultingColorDiv"></div>
+        </div>
+
         <div class="sdpi-item">
             <div class="sdpi-item-label">Icon Style</div>
-            <select class="sdpi-item-value sdProperty" setting="useDynamicIconOption" id="useDynamicIconOption">
+            <select class="sdpi-item-value sdProperty" setting="useDynamicIconOption" id="useDynamicIconOption" oninput="setSettings()">
                 <option value="dynamic">Dynamic</option>
                 <option value="static">Static</option>
             </select>
@@ -66,17 +107,34 @@
                 selectedIpsDiv.style.display = '';
             }
         }
-
         // add Event listener that triggers if the device selection is changed
         const dropdown = document.getElementById('useGlobalSettingsOption');
         dropdown.addEventListener('change', toggleDeviceIpList);
 
 
+        // Function to change the preview color
+        function changeResultingColorPreview() {
+            const resultingColorDiv = document.getElementById('resultingColorDiv');
+
+            const colorRedInput = document.getElementById('colorRed');
+            const colorGreenInput = document.getElementById('colorGreen');
+            const colorBlueInput = document.getElementById('colorBlue');
+
+            let r = colorRedInput.value;
+            let g = colorGreenInput.value;
+            let b = colorBlueInput.value;
+
+            resultingColorDiv.style.backgroundColor = `rgb(${r}, ${g}, ${b})`; 
+            
+        }
+
         // add event listener that triggers when a message is recieved (this is called when the Property inspector is opened)
         document.addEventListener('websocketCreate', function () {
 
+            // add event listener that triggers when a message from the stream deck was received (e.g. settings)
             websocket.addEventListener('message', function (event) {
                 toggleDeviceIpList();
+                changeResultingColorPreview();
             });
 
         });
