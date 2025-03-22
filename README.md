@@ -51,6 +51,10 @@ If you are facing troubles with the automatic detection or you want to only use 
 
 
 ## Change and Release Notes
+### Version 1.0.1
+- Added "Support" buttons to the actions PropertyInspector
+- Fixed some spelling mistakes
+
 ### Version 1.0.0
 - Implementation of __"Global Settings Action"__ (Button)
 - Implementation of __"Turn On/Off Action"__ (Button)
