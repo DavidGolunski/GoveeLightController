@@ -181,7 +181,7 @@
     }
   ],
   "Author": "David Golunski",
-  "Name": "Govee Light Contoller",
+  "Name": "Govee Light Controller",
   "Description": "This plugin allows you to control your Govee lights using LAN Control (without an API key).\nThis also includes custom lightshow scripts and light effects for League of Legends and Counter Strike.\nHere you can find a full list of devices that support LAN Control:\nhttps://app-h5.govee.com/user-manual/wlan-guide",
   "Icon": "Images/LightbulbGovee",
   "URL": "https://github.com/DavidGolunski/GoveeLightController",
