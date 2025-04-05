@@ -6,7 +6,7 @@
     <meta name=apple-mobile-web-app-capable content=yes>
     <meta name=apple-mobile-web-app-status-bar-style content=black>
     <title>GoveeLightController League Effects</title>
-    <<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdpi.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdpi.css">
     <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdtools.common.js"></script>
 
     <script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
@@ -38,35 +38,25 @@
             <div class="sdpi-item-label">Selected IPs</div>
             <div class="sdpi-item-value sdProperty sdHTML" style="font-size: 16px;" id="validatedDeviceIpListString"></div>
         </div>
-        <br />
-        <div class="sdpi-item" style="justify-content: space-between; padding-left: 5px; padding-right: 5px;">
-            <div style="font-size: 10px;">
-                Need Support? <button onclick="OpenDiscordLink()" style="font-size: 10px; padding: 3px">Join the Discord</button>
-            </div>
-            <div style="font-size: 10px;">
-                Want to Support? <button onclick="OpenPaypalLink()" style="font-size: 10px; padding: 3px">Donate via PayPal</button>
-            </div>
-        </div>
+        <br/>
+        <details style="border: 1px solid #ccc; border-radius: 5px; padding: 3px; background: #3d3d3d; font-size: 10px;">
+            <summary style="font-weight: bold; cursor: pointer;">Feedback and Support</summary>
+            <br/>
+            <div>Links to Discord, guides and more can be found on the marketplace site!</div>
+            <button onclick="OpenMarketplaceLink()" style="font-size: 10px; padding: 3px">Marketplace</button>
+            <br/>
+            <br/>
+            <div>The plugin is free, but development is not. Any contribution or feedback no matter how small is greatly appreciated.</div>
+        </details>
     </div>
 
     <script>
-        function OpenDiscordLink() {
+        function OpenMarketplaceLink() {
             if (websocket && (websocket.readyState === 1)) {
                 const json = {
                     'event': 'openUrl',
                     'payload': {
-                        'url': 'https://discord.gg/9qMPNxRhqt'
-                    }
-                };
-                websocket.send(JSON.stringify(json));
-            }
-        }
-        function OpenPaypalLink() {
-            if (websocket && (websocket.readyState === 1)) {
-                const json = {
-                    'event': 'openUrl',
-                    'payload': {
-                        'url': 'https://www.paypal.com/donate/?hosted_button_id=ZN3URG59JBRVJ'
+                        'url': 'https://marketplace.elgato.com/product/govee-light-contoller-29d301d8-e245-497e-97e0-23fb09542bb1'
                     }
                 };
                 websocket.send(JSON.stringify(json));
@@ -102,7 +92,6 @@
             });
 
         });
-
     </script>
 </body>
 </html>
