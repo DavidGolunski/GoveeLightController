@@ -137,7 +137,7 @@
   "LOL@ENEMY_TEAM_HAS_ACED": [
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
-    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 2000 },
