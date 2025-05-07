@@ -392,7 +392,6 @@ namespace GoveeLightController {
                     return CsEventTypes.GAME_LOST;
                 }
                 else {
-                    Console.WriteLine("The game has concluded, but we were unable to determine who has won!\n" + this.ToString());
                     Logger.Instance.LogMessage(TracingLevel.WARN, "The game has concluded, but we were unable to determine who has won!\n" + this.ToString());
                     return CsEventTypes.NO_EVENT;
                 }

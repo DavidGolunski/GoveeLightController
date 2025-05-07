@@ -43,6 +43,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 2000 },
@@ -56,6 +57,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 255, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 100 },
     { "command": "SetBrightness", "value": 100 },
 
     { "command": "Wait", "delay": 700 },
@@ -93,6 +95,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 1000 },
@@ -106,6 +109,7 @@
     { "command": "TurnOn" },
     { "command": "Wait", "delay": 100 },
     { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 2000 },
@@ -125,6 +129,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 2000 },
@@ -138,6 +143,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 2000 },
@@ -151,6 +157,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 4000 },
@@ -164,6 +171,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 2000 },
@@ -177,6 +185,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 4000 },
@@ -190,6 +199,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 2000 },
@@ -203,6 +213,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 100 },
     { "command": "SetBrightness", "value": 100 },
 
     { "command": "Wait", "delay": 1000 },
@@ -244,6 +255,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
+    { "command": "Wait", "delay": 100 },
     { "command": "SetBrightness", "value": 100 },
 
     { "command": "Wait", "delay": 1000 },
@@ -285,6 +297,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 255, "g": 0, "b": 255 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 1000 },
@@ -298,6 +311,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 255, "g": 0, "b": 255 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 3000 },
@@ -311,6 +325,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 255, "g": 0, "b": 255 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 5000 },
@@ -324,6 +339,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 3000 },
@@ -337,6 +353,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 3000 },
@@ -350,6 +367,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 0, "g": 0, "b": 255 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 3000 },
@@ -363,6 +381,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 127, "g": 51, "b": 0 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 3000 },
@@ -376,6 +395,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 0, "g": 255, "b": 255 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 3000 },
@@ -389,6 +409,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "Wait", "delay": 100 },
 
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 3000 },
@@ -402,6 +423,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
+    { "command": "Wait", "delay": 100 },
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 700 },
 
@@ -423,6 +445,7 @@
     { "command": "TurnOn", "if":  "IsLeaguePlayerDead"},
     { "command": "Wait", "delay": 100, "if":  "IsLeaguePlayerDead" },
     { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
+    { "command": "Wait", "delay": 100 },
     { "command": "SetBrightness", "value": 100 },
     { "command": "Wait", "delay": 700 },
 

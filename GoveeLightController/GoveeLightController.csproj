@@ -151,8 +151,6 @@
     <None Include="scripts\ReadMe.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="StartStandaloneCounterStrikeEffects.bat" />
-    <None Include="StartStandaloneLeagueEffects.bat" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Actions\CounterStrikeEffectsAction\CounterStrike%402x.png">

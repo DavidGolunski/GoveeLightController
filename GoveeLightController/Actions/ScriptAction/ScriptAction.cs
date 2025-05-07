@@ -50,6 +50,7 @@ namespace GoveeLightController.Actions {
         private readonly ScriptActionSettings localSettings;
         private readonly DeviceListSettings globalSettings;
 
+        private readonly RaceTimer timer; // timer that takes care of running seperate action depending on how long the key was pressed
 
         public ScriptAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
@@ -62,6 +63,10 @@ namespace GoveeLightController.Actions {
             this.globalSettings = new DeviceListSettings();
 
 
+            timer = new RaceTimer(300);
+            timer.StoppedPrematurely += OnButtonTapped;
+            timer.TimeElapsed += OnButtonHold;
+
             GlobalSettingsManager.Instance.RequestGlobalSettings();
             Connection.OnPropertyInspectorDidAppear += OnPropertyInspectorOpened;
             ScriptCommand.OnActiveScriptActionChanged += OnActiveScriptActionChanged;
@@ -70,12 +75,39 @@ namespace GoveeLightController.Actions {
         }
 
         public override void Dispose() {
+            timer.StoppedPrematurely -= OnButtonTapped;
+            timer.TimeElapsed -= OnButtonHold;
+
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
             ScriptCommand.OnActiveScriptActionChanged -= OnActiveScriptActionChanged;
         }
 
         public override void KeyPressed(KeyPayload payload) {
-            
+            timer.Start();
+        }
+
+        public override void KeyReleased(KeyPayload payload) {
+            timer.Stop();
+        }
+
+        public override void OnTick() { }
+
+        public override void ReceivedSettings(ReceivedSettingsPayload payload) {
+            Tools.AutoPopulateSettings(localSettings, payload.Settings);
+            SaveSettings();
+
+            // Update the image if the selected action has changed
+            OnActiveScriptActionChanged();
+        }
+
+        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) {
+            Tools.AutoPopulateSettings(globalSettings, payload.Settings);
+        }
+
+        #region Private Methods
+
+        // called by RaceTimer
+        private void OnButtonTapped() {
             string actionString = localSettings.SelectedAction;
             bool actionSuccess;
 
@@ -93,33 +125,26 @@ namespace GoveeLightController.Actions {
             }
         }
 
-        public override void KeyReleased(KeyPayload payload) { }
+        // called by RaceTimer
+        private void OnButtonHold() {
+            ScriptCommand.StopScriptAction();
 
-        public override void OnTick() { }
-
-        public override void ReceivedSettings(ReceivedSettingsPayload payload) {
-            Tools.AutoPopulateSettings(localSettings, payload.Settings);
-            SaveSettings();
-
-            // Update the image if the selected action has changed
-            OnActiveScriptActionChanged();
+            if(localSettings.UseGlobalSettings) {
+                GoveeDeviceController.Instance.TurnOff(globalSettings.DeviceIpList);
+            }
+            else {
+                GoveeDeviceController.Instance.TurnOff(localSettings.DeviceIpList);
+            }
         }
 
-        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) {
-            Tools.AutoPopulateSettings(globalSettings, payload.Settings);
-        }
 
-        #region Private Methods
         private void OnActiveScriptActionChanged() {
             string newActionName = ScriptCommand.ActiveScriptActionName;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"OnActiveScriptActionChanged: {newActionName}");
             if(string.IsNullOrEmpty(localSettings.SelectedAction) || string.IsNullOrEmpty(newActionName) || localSettings.SelectedAction != newActionName) {
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Setting State 0");
                 Connection.SetStateAsync(0);
                 return;
             }
 
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Setting State 1");
             Connection.SetStateAsync(1);
         }
 

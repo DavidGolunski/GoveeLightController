@@ -268,7 +268,7 @@ namespace GoveeLightController {
 
 
         // stops the execution of the current script list
-        private static void StopTask() {
+        public static void StopScriptAction() {
             if(!IsRunning) {
                 return;
             }
@@ -287,7 +287,7 @@ namespace GoveeLightController {
             if(commands == null)
                 return false;
 
-            StopTask(); // Ensure any running task is stopped
+            StopScriptAction(); // Ensure any running task is stopped
 
             cancellationTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = cancellationTokenSource.Token;
@@ -303,9 +303,11 @@ namespace GoveeLightController {
                 catch(TaskCanceledException) {
                     // Expected during cancellation
                 }
-
-                ActiveScriptActionName = null;
-                OnActiveScriptActionChanged?.Invoke();
+                finally {
+                    ActiveScriptActionName = null;
+                    OnActiveScriptActionChanged?.Invoke();
+                }
+                
             }, cancellationToken);
 
             return true;
@@ -363,11 +365,9 @@ namespace GoveeLightController {
                     }
 
                     Logger.Instance.LogMessage(TracingLevel.INFO, "Scripts folder created and files copied successfully!");
-                    Console.WriteLine("Scripts folder created and files copied successfully!");
                 }
                 else {
                     Logger.Instance.LogMessage(TracingLevel.INFO, $"Source folder '{ScriptsDirectory}' does not exist. No files were copied.");
-                    Console.WriteLine($"Source folder '{ScriptsDirectory}' does not exist. No files were copied.");
                 }
             }
         }

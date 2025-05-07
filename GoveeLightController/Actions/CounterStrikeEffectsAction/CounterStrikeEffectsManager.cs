@@ -43,16 +43,13 @@ namespace GoveeLightController {
             if(cfgPath != null) {
                 bool successfull = CopyConfigurationFile("gamestate_integration_goveelightcontroller.cfg", cfgPath);
                 if(successfull) {
-                    Console.WriteLine("Copying of configuration file successfull");
                     Logger.Instance.LogMessage(TracingLevel.INFO, "Copying of configuration file successfull");
                 }
                 else {
-                    Console.WriteLine("Copying of configuration was not file successfull. Please copy the file \\\"gamestate_integration_goveelightcontroller.cfg\\\" to \\\"[Your Steam Folder]/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg\\\"\"");
                     Logger.Instance.LogMessage(TracingLevel.WARN, "Copying of configuration was not file successfull. Please copy the file \\\"gamestate_integration_goveelightcontroller.cfg\\\" to \\\"[Your Steam Folder]/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg\\\"\"");
                 }
             }
             else {
-                Console.WriteLine("Could not find the CounterStrike configuration file folder. Please copy the file \"gamestate_integration_goveelightcontroller.cfg\" to \"[Your Steam Folder]/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg\"");
                 Logger.Instance.LogMessage(TracingLevel.WARN, "Could not find the CounterStrike configuration file folder. Please copy the file \"gamestate_integration_goveelightcontroller.cfg\" to \"[Your Steam Folder]/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg\"");
             }
 

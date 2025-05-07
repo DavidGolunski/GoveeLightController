@@ -144,7 +144,6 @@ namespace GoveeLightController {
                         }
                     }
 
-                    Console.Write("PlayerName: " + activePlayerName + " PlayerTeam: " + activePlayerTeam + " PrimaryRuneTree: " + PrimaryRuneTree);
                     Logger.Instance.LogMessage(TracingLevel.DEBUG, "PlayerName: " + activePlayerName + " PlayerTeam: " + activePlayerTeam + " PrimaryRuneTree: " + PrimaryRuneTree);
                 }
 
@@ -186,7 +185,6 @@ namespace GoveeLightController {
                     // Debug Code
                     foreach(var eventObj in newEventData) {
                         string json = JsonConvert.SerializeObject(eventObj, Formatting.Indented);
-                        Console.WriteLine(json);
                         Logger.Instance.LogMessage(TracingLevel.DEBUG, json);
                     }*/
                 }
@@ -244,7 +242,6 @@ namespace GoveeLightController {
                 }
                 else {
                     Logger.Instance.LogMessage(TracingLevel.WARN, "No Rune Tree Type was detected");
-                    Console.WriteLine("No Rune Tree Type was detected");
                 }
                 return;
             }

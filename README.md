@@ -26,31 +26,33 @@ This will allow me to keep the applications alive for a little bit longer :)
 ## Troubleshooting
 - __The program can not find the lights:__  
 If the lights are not recognized make sure that the lights are within the same network and they have "LAN Control" enabled. If lights are connected with a Wifi-Repeater, try to connect them to the router directly.
-You can always specify IPs manually if needed
+You can always specify IPs manually if needed.  
+The ports 4001, 4002 and 4003 are required for communication. Make sure no other application is using these ports.  
+
 - __The lights are reacting "slowly" or multiple lights are out of sync:__  
 Govee Lights do not perform actions instantly. It sometimes can take some time until a change has been fully executed (usually around 500ms). E.g. if you change the color from blue to red, you will see purple for a split second.  
-This is just how Govee Lights work. If you have multiple different lights models, the lights might appear "out of sync", since the time it takes the lights to perform an action depends on the model.
+This is just how Govee Lights work. If you have multiple different lights models, the lights might appear "out of sync", since the time it takes the lights to perform an action depends on the model.  
+
 - __The CounterStrike Effects are not working:__  
 If the CounterStrike effects are not working, please make sure that the file called _"gamestate_integration_goveelightcontroller.cfg"_ is present in _"[Your Steam Installation Folder]/steamapps/common/Counter-Strike Global Offensive/game/csgo/csg"_.  
 The Plugin will try to automatically copy the file into that directory if it finds it, but this can always fail.
 If it still does not work, make sure that no other application is using the port 3000, as this is the port that CounterStrike uses to communicate all game updates.
-The Plugin does not work if you are only spectating a game.
+The Plugin does not work if you are only spectating a game.  
+
 - __The LeagueOfLegends Effects are not working:__  
-League of Legends effects are using port 2999 for communication. Make sure no other application is using that port.
+League of Legends effects are using port 2999 for communication. Make sure no other application is using that port.  
+
 - __Something else is going wrong:__  
 The plugin logs any issues inside the log file. You can find the log file at:  
 ```%appdata%/Elgato/StreamDeck/Plugins/com.davidgolunski.goveelightcontroller.sdPlugin/pluginlog.log```.  
 If you face any issues with the plugin you can always start ask for help on the [official Discord](https://discord.gg/9qMPNxRhqt).
 
-## Using Game Effects without a Streamdeck
-You can use the Game Effects for Counter Strike and League of Legends also without a Streamdeck.  
-Download this Repo, unzip it and execute one of the two _.bat_ files:  
-__StartStandaloneCounterStrikeEffects.bat__ and __StartStandaloneLeagueEffects.bat__  
-It will try to find all compatible Govee Devices inside the network and use them to display the in game effects.  
-If you are facing troubles with the automatic detection or you want to only use specific devices you can edit the _.bat_ file and provide one or multiple ips yourself.
-
 
 ## Change and Release Notes
+### Version 1.1.0
+- Improved stability of light scripts
+- 
+
 ### Version 1.0.2
 - Added "Support" buttons now link to the Elgato Marketplace. Users can join the discord from the link on the marketplace.
 

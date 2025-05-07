@@ -41,17 +41,32 @@ Sets the brightness of the light
 __Parameters:__  
 "value": 0-100
 
+### Command: "CallOtherAction"
+__Description:__  
+Calls another action. The script will fail while it is running if the other action does not exist.  
+_Warning: This has the potential to create endless loops, forcing you to cancel the action manually._  
+__Parameters:__  
+"name": "<Name of Other Action>"  
+
 ### Command: "Wait"
 __Description:__  
 Introduces a delay before the execution of the next command
 __Parameters:__  
-"delay": 0-10000 (time in milliseconds)
+"delay": 1-600000 (time in milliseconds)
 
+### Command: "RandomWait"
+__Description:__  
+Introduces a delay before the execution of the next command. The delay is randomly generated within the given boundries.  
+__Parameters:__  
+"min": 1-600000 (time in milliseconds)
+"max": 1-600000 (time in milliseconds)
 
 ## Example
-```
+```json
 {  
-"ColorSwitch1": [  
+"ColorSwitch1": [ 
+    { "command": "TurnOn" },
+    { "command": "Wait", "delay": 1000 }, 
     { "command": "SetColor", "r": 255, "g": 0, "b": 0 },  
     { "command": "Wait", "delay": 1000 },  
     { "command": "SetBrightness", "value": 75 },  
@@ -60,17 +75,17 @@ __Parameters:__
     { "command": "Wait", "delay": 1000 },  
     { "command": "SetBrightness", "value": 100 },  
     { "command": "Wait", "delay": 2000 },  
-    { "command": "TurnOff" }  
+    { "command": "CallOtherAction", "name": "ColorSwitch2" }  
   ],  
   "ColorSwitch2": [    
     { "command": "SetColor", "r": 255, "g": 255, "b": 0 },  
-    { "command": "Wait", "delay": 1000 },  
+    { "command": "RandomWait", "min": 1000, "max": 4000 },  
     { "command": "SetBrightness", "value": 75 },  
-    { "command": "Wait", "delay": 1000 },  
+    { "command": "RandomWait", "min": 1000, "max": 4000 },  
     { "command": "SetColor", "r": 0, "g": 255, "b": 255 },  
-    { "command": "Wait", "delay": 1000 },  
+    { "command": "RandomWait", "min": 1000, "max": 4000 },  
     { "command": "SetBrightness", "value": 100 },  
-    { "command": "Wait", "delay": 2000 },  
+    { "command": "RandomWait", "min": 1000, "max": 4000 },  
     { "command": "TurnOff" }  
   ]
 }
