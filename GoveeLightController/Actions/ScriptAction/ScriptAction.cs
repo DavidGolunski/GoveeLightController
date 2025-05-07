@@ -73,6 +73,7 @@ namespace GoveeLightController.Actions {
             string actionString = localSettings.SelectedAction;
             bool actionSuccess;
 
+            ScriptCommand.ClearActionCache();
             if(localSettings.UseGlobalSettings) {
                 actionSuccess = ScriptCommand.StartScriptAction(actionString, globalSettings.DeviceIpList);
             }

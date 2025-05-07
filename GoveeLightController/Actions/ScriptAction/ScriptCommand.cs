@@ -17,6 +17,7 @@ namespace GoveeLightController {
         SetPrimaryColor,
         ActivatePrimaryColor,
         Wait,
+        CallOtherAction,
         Unknown // For unrecognized commands
     }
 
@@ -28,6 +29,15 @@ namespace GoveeLightController {
          */
         private static readonly string ScriptsDirectory = Path.Combine(".", "scripts");
         private static readonly string UserScriptsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "davidgolunski", "goveelightcontroller");
+        private static readonly Dictionary<string, List<ScriptCommand>> ScriptActionCache = new Dictionary<string, List<ScriptCommand>>();
+        private static readonly Mutex ScriptActionCacheMutex = new Mutex();
+
+        public static void ClearActionCache() {
+            ScriptActionCacheMutex.WaitOne();
+            ScriptActionCache.Clear();
+            ScriptActionCacheMutex.ReleaseMutex();
+        }
+
 
         public Commands Command { get; set; }
         public int R { get; set; }
@@ -36,6 +46,7 @@ namespace GoveeLightController {
         public int Value { get; set; }
         public int Delay { get; set; }
         public string IfCondition { get; set; }
+        public string OtherScriptName { get; set; }
 
 
         public ScriptCommand(Commands command) {
@@ -46,6 +57,7 @@ namespace GoveeLightController {
             Value = -1;
             Delay = -1;
             IfCondition = "";
+            OtherScriptName = "";
         }
 
         public static ScriptCommand FromDictionary(Commands command, Dictionary<string, object> parameters) {
@@ -63,6 +75,8 @@ namespace GoveeLightController {
                 commandInfo.Delay = Convert.ToInt32(delay);
             if(parameters.TryGetValue("if", out var ifCondition))
                 commandInfo.IfCondition = ifCondition.ToString();
+            if(parameters.TryGetValue("name", out var name))
+                commandInfo.OtherScriptName = name.ToString();
 
             if(!commandInfo.IsValid()) {
                 return null;
@@ -108,6 +122,12 @@ namespace GoveeLightController {
                 case Commands.TurnOn:
                 case Commands.TurnOff:
                     return true;
+                case Commands.CallOtherAction:
+                    if(string.IsNullOrEmpty(OtherScriptName)) {
+                        Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid value. A name of a different action is needed.");
+                        return false;
+                    }
+                    return true;
                 case Commands.Unknown:
                 default:
                     return false;
@@ -116,24 +136,24 @@ namespace GoveeLightController {
         }
 
         // executes this command
-        private void Execute(List<string> ips = null) {
+        private string Execute(CancellationToken cancellationToken, List<string> ips = null) {
           
             if(IfCondition == "IsLeaguePlayerNotDead" && LeagueAPI.Instance.IsDead) {
-                return;
+                return null;
             }
             if(IfCondition == "IsLeaguePlayerDead" && !LeagueAPI.Instance.IsDead) {
-                return;
+                return null;
             }
             if(IfCondition == "IsCounterStrikePlayerNotDead" && CounterStrikeAPI.Instance.IsProviderDead) {
-                return;
+                return null;
             }
             if(IfCondition == "IsCounterStrikePlayerDead" && !CounterStrikeAPI.Instance.IsProviderDead) {
-                return;
+                return null;
             }
 
             switch(Command) {
                 case Commands.Wait:
-                    Task.Delay(Delay).Wait();
+                    Task.Delay(Delay, cancellationToken).Wait(cancellationToken);
                     break;
                 case Commands.SetBrightness:
                     GoveeDeviceController.Instance.SetBrightness(Value, ips);
@@ -153,10 +173,13 @@ namespace GoveeLightController {
                 case Commands.ActivatePrimaryColor:
                     GoveeDeviceController.Instance.ActivatePrimaryColor(ips);
                     break;
+                case Commands.CallOtherAction:
+                    return OtherScriptName;
                 case Commands.Unknown:
                 default:
                     break;
             }
+            return null;
         }
 
         public override string ToString() {
@@ -168,6 +191,8 @@ namespace GoveeLightController {
                 case Commands.SetPrimaryColor:
                 case Commands.SetColor:
                     return $"{Command}, R({R}), G({G}), B({B})" + " ifCondition: \"" + IfCondition + "\"";
+                case Commands.CallOtherAction:
+                    return $"{Command}, Name({OtherScriptName})" + " ifCondition: \"" + IfCondition + "\"";
                 case Commands.TurnOn:
                 case Commands.TurnOff:
                 case Commands.ActivatePrimaryColor:
@@ -186,24 +211,22 @@ namespace GoveeLightController {
 
 
         private static CancellationTokenSource _cancellationTokenSource = null;
-        private static bool _isRunning = false;
+        private static Task ScriptActionTask;
         public static bool IsRunning {
-            get => _isRunning;
+            get => ScriptActionTask != null && !ScriptActionTask.IsCompleted;
         }
         
         // stops the execution of the current script list
         private static void StopTask() {
-            if(!_isRunning)
+            if(!IsRunning) {
                 return;
-
-            _isRunning = false;
+            }
 
             if(_cancellationTokenSource != null) {
                 _cancellationTokenSource.Cancel(); // Signal cancellation
                 _cancellationTokenSource.Dispose();
                 _cancellationTokenSource = null;
             }
-
         }
 
         // starts executing a list of script commands
@@ -216,19 +239,15 @@ namespace GoveeLightController {
             if(commands == null)
                 return false;
             StopTask(); // Ensure any running task is stopped
-            _cancellationTokenSource = new CancellationTokenSource();
-            _isRunning = true;
 
-            Task.Run(async () =>
-            {
+            _cancellationTokenSource = new CancellationTokenSource();
+
+            ScriptActionTask = Task.Run(async () => {
                 try {
                     await RunScriptAction(commands, ips, _cancellationTokenSource.Token);
                 }
                 catch(TaskCanceledException) {
                     // Expected during cancellation
-                }
-                finally {
-                    _isRunning = false;
                 }
             });
 
@@ -237,18 +256,32 @@ namespace GoveeLightController {
 
 
         private static async Task RunScriptAction(List<ScriptCommand> commands, List<string> ips, CancellationToken cancellationToken) {
-            foreach(ScriptCommand command in commands) {
-                if(cancellationToken.IsCancellationRequested)
+            for(int i = 0; i < commands.Count; i++) {
+                if(cancellationToken.IsCancellationRequested) {
                     break;
+                }
 
-                command.Execute(ips); // Execute the command
-                await Task.Yield(); // Allow the task to yield back control to other tasks
+                string result = commands[i].Execute(cancellationToken, ips); // Execute the command
+
+                // if the function returned a string, then a new action should be called
+                if(!string.IsNullOrEmpty(result)) {
+                    List<ScriptCommand> newCommands = GetAction(result);
+                    if(newCommands != null && newCommands.Count > 0) {
+                        // Insert the new commands right after the current one
+                        commands.InsertRange(i + 1, newCommands);
+                    }
+                }
+
+                await Task.Yield(); // Yield to allow responsiveness in async context
             }
         }
 
 
-
         #endregion
+
+
+        #region FileManagement
+
 
         // Creates the necessary folders if they do not exists yet and copies predefined script files into them
         private static void CreateDirectories() {
@@ -294,7 +327,6 @@ namespace GoveeLightController {
                 Logger.Instance.LogMessage(TracingLevel.ERROR, "The file at \"" + fileName + "\" does not exist");
                 return false;
             }
-
             try {
                 string jsonContent = File.ReadAllText(fileName);
                 var json = JsonConvert.DeserializeObject<Dictionary<string, List<Dictionary<string, object>>>>(jsonContent);
@@ -305,6 +337,7 @@ namespace GoveeLightController {
                             Logger.Instance.LogMessage(TracingLevel.ERROR, "Parsing Error: " + fileName + " did not contain \"command\"");
                             return false;
                         }
+
 
 
                         string commandName = command["command"].ToString();
@@ -350,6 +383,14 @@ namespace GoveeLightController {
 
         // returns a list of ScriptCommands, based on an actions name
         public static List<ScriptCommand> GetAction(string actionName) {
+            // try to get the action from the cache
+            ScriptActionCacheMutex.WaitOne();
+            if(ScriptActionCache.TryGetValue(actionName, out var cachedScriptAction)) {
+                ScriptActionCacheMutex.ReleaseMutex();
+                return cachedScriptAction;
+            }
+            ScriptActionCacheMutex.ReleaseMutex();
+            
             foreach(var fileName in GetScriptFileNames()) {
                 if(IsValidFile(fileName)) {
                     string jsonContent = File.ReadAllText(fileName);
@@ -368,6 +409,11 @@ namespace GoveeLightController {
                             }
                         }
 
+                        // write the result into cache
+                        ScriptActionCacheMutex.WaitOne();
+                        ScriptActionCache.Add(actionName, result);
+                        ScriptActionCacheMutex.ReleaseMutex();
+
                         return result;
                     }
                 }
@@ -379,5 +425,6 @@ namespace GoveeLightController {
         #endregion
     }
 
+    #endregion
 
 }

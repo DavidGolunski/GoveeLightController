@@ -41,6 +41,7 @@ namespace GoveeLightController {
                 return;
             }
 
+            ScriptCommand.ClearActionCache();
             if(localSettings.UseGlobalSettings) {
                 LeagueEffectManager.Instance.Start(globalSettings.DeviceIpList);
             }
