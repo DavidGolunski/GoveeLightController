@@ -52,6 +52,7 @@ namespace GoveeLightController {
         public int Delay { get; set; } // used for Wait
         public string OtherScriptName { get; set; } // used for CallOtherAction
         public string IfCondition { get; set; } // optional for all
+        public string IpString { get; set; } // optional parameter for SetColor, SetBrightness, ActivatePrimaryColor, TurnOn and TurnOff
         
 
 
@@ -66,6 +67,7 @@ namespace GoveeLightController {
             Delay = -1;
             OtherScriptName = "";
             IfCondition = "";
+            IpString = "";
         }
 
         public static ScriptCommand FromDictionary(Commands command, Dictionary<string, object> parameters) {
@@ -92,6 +94,8 @@ namespace GoveeLightController {
                 commandInfo.OtherScriptName = name.ToString();
             if(parameters.TryGetValue("if", out var ifCondition))
                 commandInfo.IfCondition = ifCondition.ToString();
+            if(parameters.TryGetValue("ip", out var ip))
+                commandInfo.IpString = ip.ToString();
             
 
             if(!commandInfo.IsValid()) {
@@ -136,17 +140,39 @@ namespace GoveeLightController {
                         Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid value. A Brightness must be between 0 and 100");
                         return false;
                     }
+
+                    if(!string.IsNullOrEmpty(IpString) && !GoveeDeviceController.IsValidIP(IpString)) {
+                        Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid ip address (\"" + IpString + "\"). ");
+                        return false;
+                    }
+
                     break;
                 case Commands.SetPrimaryColor:
+                    if(R < 0 || R > 255 || G < 0 || G > 255 || B < 0 || B > 255) {
+                        Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid value. RGB values need to be between 0 and 255");
+                        return false;
+                    }
+                    break;
                 case Commands.SetColor:
                     if(R < 0 || R > 255 ||  G < 0 || G > 255 || B < 0 || B > 255) {
                         Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid value. RGB values need to be between 0 and 255");
                         return false;
                     }
+
+                    if(!string.IsNullOrEmpty(IpString) && !GoveeDeviceController.IsValidIP(IpString)) {
+                        Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid ip address (\"" + IpString + "\"). ");
+                        return false;
+                    }
+
                     break;
                 case Commands.ActivatePrimaryColor:
                 case Commands.TurnOn:
                 case Commands.TurnOff:
+                    if(!string.IsNullOrEmpty(IpString) && !GoveeDeviceController.IsValidIP(IpString)) {
+                        Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid ip address (\"" + IpString + "\"). ");
+                        return false;
+                    }
+
                     return true;
                 case Commands.CallOtherAction:
                     if(string.IsNullOrEmpty(OtherScriptName)) {
@@ -186,22 +212,37 @@ namespace GoveeLightController {
                     Task.Delay(randomDelay, cancellationToken).Wait(cancellationToken);
                     break;
                 case Commands.SetBrightness:
-                    GoveeDeviceController.Instance.SetBrightness(Value, ips);
+                    if(string.IsNullOrEmpty(IpString))
+                        GoveeDeviceController.Instance.SetBrightness(Value, ips);
+                    else
+                        GoveeDeviceController.Instance.SetBrightness(Value, new List<string>() { IpString });
                     break;
                 case Commands.SetColor:
-                    GoveeDeviceController.Instance.SetColor(Color.FromArgb(255, R, G, B), ips);
+                    if(string.IsNullOrEmpty(IpString))
+                        GoveeDeviceController.Instance.SetColor(Color.FromArgb(255, R, G, B), ips);
+                    else
+                        GoveeDeviceController.Instance.SetColor(Color.FromArgb(255, R, G, B), new List<string>() { IpString });
                     break;
                 case Commands.TurnOn:
-                    GoveeDeviceController.Instance.TurnOn(ips);
+                    if(string.IsNullOrEmpty(IpString))
+                        GoveeDeviceController.Instance.TurnOn(ips);
+                    else
+                        GoveeDeviceController.Instance.TurnOn(new List<string>() { IpString });
                     break;
                 case Commands.TurnOff:
-                    GoveeDeviceController.Instance.TurnOff(ips);
+                    if(string.IsNullOrEmpty(IpString))
+                        GoveeDeviceController.Instance.TurnOff(ips);
+                    else
+                        GoveeDeviceController.Instance.TurnOff(new List<string>() { IpString });
                     break;
                 case Commands.SetPrimaryColor:
                     GoveeDeviceController.Instance.SetPrimaryColor(Color.FromArgb(255, R, G, B));
                     break;
                 case Commands.ActivatePrimaryColor:
-                    GoveeDeviceController.Instance.ActivatePrimaryColor(ips);
+                    if(string.IsNullOrEmpty(IpString))
+                        GoveeDeviceController.Instance.ActivatePrimaryColor(ips);
+                    else
+                        GoveeDeviceController.Instance.ActivatePrimaryColor(new List<string>() { IpString });
                     break;
                 case Commands.CallOtherAction:
                     return OtherScriptName;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
+using System.Text.RegularExpressions;
 
 namespace GoveeLightController {
     public class GoveeDeviceController {
@@ -78,6 +79,17 @@ namespace GoveeLightController {
         }
 
         #region supportive functions
+        // heavily used by action settings (DeviceSettings) and ScriptCommands
+        public static bool IsValidIP(string ip) {
+            // Regex to match a valid IPv4 address
+            string pattern = @"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\." +
+                             @"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\." +
+                             @"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\." +
+                             @"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+
+            return Regex.IsMatch(ip, pattern);
+        }
+
 
         private void AddNonExistingDevices(List<string> ips) {
             if(ips == null || ips.Count == 0) {

@@ -67,22 +67,12 @@ namespace GoveeLightController {
 
             List<string> validIPs = new List<string>();
             foreach(var ip in ips) {
-                if(IsValidIP(ip)) {
+                if(GoveeDeviceController.IsValidIP(ip)) {
                     validIPs.Add(ip);
                 }
             }
 
             DeviceIpList = validIPs;
-        }
-
-        private static bool IsValidIP(string ip) {
-            // Regex to match a valid IPv4 address
-            string pattern = @"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\." +
-                             @"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\." +
-                             @"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\." +
-                             @"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
-
-            return Regex.IsMatch(ip, pattern);
         }
     }
 }

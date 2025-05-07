@@ -20,13 +20,14 @@
 __Description:__  
 Turns the light on  
 __Parameters:__  
-No Additional Parameters Required
+(optional) "ip": "[ip address of a light]" - By adding this, this command will only change the light at the ip address  
+  
 
 ### Command: "TurnOff"
 __Description:__  
 Turns the light off  
 __Parameters:__  
-No Additional Parameters Required
+(optional) "ip": "[ip address of a light]" - By adding this, this command will only change the light at the ip address  
 
 ### Command: "SetColor"
 __Description:__  
@@ -35,23 +36,40 @@ __Parameters:__
 "r": 0-255  
 "g": 0-255  
 "b": 0-255  
+(optional) "ip": "[ip address of a light]" - By adding this, this command will only change the light at the ip address  
 
 ### Command: "SetBrightness"
 __Description:__  
 Sets the brightness of the light  
 __Parameters:__  
 "value": 0-100
+(optional) "ip": "[ip address of a light]" - By adding this, this command will only change the light at the ip address  
+
+### Command: "SetPrimaryColor"
+__Description:__  
+Saves one color as "Primary" for all lights. The primary color can be activated with the "ActivatePrimaryColor" command.  
+The primary color gets saved while the program (stream deck software) is running.  
+__Parameters:__  
+"r": 0-255  
+"g": 0-255  
+"b": 0-255  
+
+### Command: "ActivatePrimaryColor"
+__Description:__  
+Activates the primary color that was set with the "SetPrimaryColor" command. Restarting the program (stream deck software) resets the saved primary color.  
+__Parameters:__  
+(optional) "ip": "[ip address of a light]" - By adding this, this command will only change the light at the ip address  
 
 ### Command: "CallOtherAction"
 __Description:__  
 Calls another action. The script will fail while it is running if the other action does not exist.  
 _Warning: This has the potential to create endless loops, forcing you to cancel the action manually._  
 __Parameters:__  
-"name": "<Name of Other Action>"  
+"name": "[Name of Other Action]"  
 
 ### Command: "Wait"
 __Description:__  
-Introduces a delay before the execution of the next command
+Introduces a delay before the execution of the next command  
 __Parameters:__  
 "delay": 1-600000 (time in milliseconds)
 
@@ -59,7 +77,7 @@ __Parameters:__
 __Description:__  
 Introduces a delay before the execution of the next command. The delay is randomly generated within the given boundries.  
 __Parameters:__  
-"min": 1-600000 (time in milliseconds)
+"min": 1-600000 (time in milliseconds)  
 "max": 1-600000 (time in milliseconds)
 
 ## Example
