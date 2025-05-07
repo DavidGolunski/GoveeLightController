@@ -16,6 +16,7 @@ namespace GoveeLightController {
         SetBrightness,
         SetPrimaryColor,
         ActivatePrimaryColor,
+        RandomWait,
         Wait,
         CallOtherAction,
         Unknown // For unrecognized commands
@@ -31,6 +32,7 @@ namespace GoveeLightController {
         private static readonly string UserScriptsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "davidgolunski", "goveelightcontroller");
         private static readonly Dictionary<string, List<ScriptCommand>> ScriptActionCache = new Dictionary<string, List<ScriptCommand>>();
         private static readonly Mutex ScriptActionCacheMutex = new Mutex();
+        private static readonly Random RandomNum = new Random();
 
         public static void ClearActionCache() {
             ScriptActionCacheMutex.WaitOne();
@@ -40,13 +42,16 @@ namespace GoveeLightController {
 
 
         public Commands Command { get; set; }
-        public int R { get; set; }
-        public int G { get; set; }
-        public int B { get; set; }
-        public int Value { get; set; }
-        public int Delay { get; set; }
-        public string IfCondition { get; set; }
-        public string OtherScriptName { get; set; }
+        public int R { get; set; } // used for SetColor
+        public int G { get; set; } // used for SetColor
+        public int B { get; set; } // used for SetColor
+        public int Value { get; set; } // used for SetBrightness
+        public int MinDelay { get; set; } // used for RandomWait
+        public int MaxDelay { get; set; } // used for RandomWait
+        public int Delay { get; set; } // used for Wait
+        public string OtherScriptName { get; set; } // used for CallOtherAction
+        public string IfCondition { get; set; } // optional for all
+        
 
 
         public ScriptCommand(Commands command) {
@@ -55,9 +60,11 @@ namespace GoveeLightController {
             G = -1;
             B = -1;
             Value = -1;
+            MinDelay = -1;
+            MaxDelay = -1;
             Delay = -1;
-            IfCondition = "";
             OtherScriptName = "";
+            IfCondition = "";
         }
 
         public static ScriptCommand FromDictionary(Commands command, Dictionary<string, object> parameters) {
@@ -69,14 +76,22 @@ namespace GoveeLightController {
                 commandInfo.G = Convert.ToInt32(g);
             if(parameters.TryGetValue("b", out var b))
                 commandInfo.B = Convert.ToInt32(b);
+
             if(parameters.TryGetValue("value", out var value))
                 commandInfo.Value = Convert.ToInt32(value);
+
+            if(parameters.TryGetValue("min", out var minDelay))
+                commandInfo.MinDelay = Convert.ToInt32(minDelay);
+            if(parameters.TryGetValue("max", out var maxDelay))
+                commandInfo.MaxDelay = Convert.ToInt32(maxDelay);
             if(parameters.TryGetValue("delay", out var delay))
                 commandInfo.Delay = Convert.ToInt32(delay);
-            if(parameters.TryGetValue("if", out var ifCondition))
-                commandInfo.IfCondition = ifCondition.ToString();
+
             if(parameters.TryGetValue("name", out var name))
                 commandInfo.OtherScriptName = name.ToString();
+            if(parameters.TryGetValue("if", out var ifCondition))
+                commandInfo.IfCondition = ifCondition.ToString();
+            
 
             if(!commandInfo.IsValid()) {
                 return null;
@@ -100,8 +115,18 @@ namespace GoveeLightController {
 
             switch(Command) {
                 case Commands.Wait:
-                    if(Delay <= 0 || Delay > 10000) {
-                        Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid delay. Delays need to be above 0 an lower than 10001");
+                    if(Delay <= 0 || Delay > 600000) {
+                        Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid delay. Delays need to be above 0 an lower than 600001");
+                        return false;
+                    }
+                    break;
+                case Commands.RandomWait:
+                    if(MinDelay <= 0 || MaxDelay <= 0 || MinDelay > 600000 || MaxDelay > 600000) {
+                        Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid min or max delay. Delays need to be above 0 an lower than 600001");
+                        return false;
+                    }
+                    if(MinDelay >= MaxDelay) {
+                        Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" must have a min delay that is lower than the max delay");
                         return false;
                     }
                     break;
@@ -155,6 +180,10 @@ namespace GoveeLightController {
                 case Commands.Wait:
                     Task.Delay(Delay, cancellationToken).Wait(cancellationToken);
                     break;
+                case Commands.RandomWait:
+                    int randomDelay = RandomNum.Next(MinDelay, MaxDelay + 1);
+                    Task.Delay(randomDelay, cancellationToken).Wait(cancellationToken);
+                    break;
                 case Commands.SetBrightness:
                     GoveeDeviceController.Instance.SetBrightness(Value, ips);
                     break;
@@ -186,6 +215,8 @@ namespace GoveeLightController {
             switch(Command) {
                 case Commands.Wait:
                     return $"{Command}, Delay({Delay})" + " ifCondition: \"" + IfCondition + "\"";
+                case Commands.RandomWait:
+                    return $"{Command}, Min({MinDelay}), Max({MaxDelay})" + " ifCondition: \"" + IfCondition + "\"";
                 case Commands.SetBrightness:
                     return $"{Command}, Value({Value})" + " ifCondition: \"" + IfCondition + "\"";
                 case Commands.SetPrimaryColor:
@@ -207,8 +238,6 @@ namespace GoveeLightController {
 
 
         #region thread management
-
-
 
         private static CancellationTokenSource _cancellationTokenSource = null;
         private static Task ScriptActionTask;
@@ -241,7 +270,6 @@ namespace GoveeLightController {
             StopTask(); // Ensure any running task is stopped
 
             _cancellationTokenSource = new CancellationTokenSource();
-
             ScriptActionTask = Task.Run(async () => {
                 try {
                     await RunScriptAction(commands, ips, _cancellationTokenSource.Token);
