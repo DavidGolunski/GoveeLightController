@@ -51,7 +51,9 @@ If you face any issues with the plugin you can always start ask for help on the 
 ## Change and Release Notes
 ### Version 1.1.0
 - Improved stability of light scripts
-- 
+- ScriptActions now show which action is currently running and can be stopped by holding the button down
+- Added the "CallOtherAction" script command, which allows you to reuse actions or to create endless actions
+- Added the "RandomWait" script command, that delays the execution of the script for a random amount of time
 
 ### Version 1.0.2
 - Added "Support" buttons now link to the Elgato Marketplace. Users can join the discord from the link on the marketplace.

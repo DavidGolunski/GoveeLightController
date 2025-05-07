@@ -440,6 +440,11 @@ namespace GoveeLightController {
 
         // returns a list of ScriptCommands, based on an actions name
         public static List<ScriptCommand> GetAction(string actionName) {
+            // actions that start with an '_' are hidden, but can be called with or without the '_' in front
+            if(actionName.StartsWith("_")) {
+                actionName = actionName.Substring(1);
+            }
+
             // try to get the action from the cache
             ScriptActionCacheMutex.WaitOne();
             if(ScriptActionCache.TryGetValue(actionName, out var cachedScriptAction)) {
@@ -453,8 +458,18 @@ namespace GoveeLightController {
                     string jsonContent = File.ReadAllText(fileName);
                     var json = JsonConvert.DeserializeObject<Dictionary<string, List<Dictionary<string, object>>>>(jsonContent);
 
-                    if(json != null && json.ContainsKey(actionName)) {
-                        var commandList = json[actionName];
+                    if(json != null) {
+                        List<Dictionary<string, object>> commandList = null;
+                        if(json.ContainsKey(actionName)) {
+                            commandList = json[actionName];
+                        }
+                        else if(json.ContainsKey("_" + actionName)) {
+                            commandList = json["_" + actionName];
+                        }
+                        else {
+                            continue;
+                        }
+
                         var result = new List<ScriptCommand>();
 
                         foreach(var command in commandList) {

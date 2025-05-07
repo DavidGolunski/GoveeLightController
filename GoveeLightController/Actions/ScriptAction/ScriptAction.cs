@@ -4,6 +4,7 @@ using BarRaider.SdTools.Wrappers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace GoveeLightController.Actions {
@@ -154,7 +155,8 @@ namespace GoveeLightController.Actions {
 
         private void OnPropertyInspectorOpened(object sender, SDEventReceivedEventArgs<PropertyInspectorDidAppear> e) {
 
-            List<string> actionNames = ScriptCommand.GetListOfActions();
+            // filter out times that start with _
+            List<string> actionNames = ScriptCommand.GetListOfActions().Where(item => !item.StartsWith("_")).ToList();
             actionNames.Sort();
 
             List<ActionItem> actions = new List<ActionItem>();
