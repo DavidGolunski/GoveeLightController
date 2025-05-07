@@ -50,6 +50,7 @@ namespace GoveeLightController.Actions {
         private readonly ScriptActionSettings localSettings;
         private readonly DeviceListSettings globalSettings;
 
+
         public ScriptAction(SDConnection connection, InitialPayload payload) : base(connection, payload) {
             if(payload.Settings == null || payload.Settings.Count == 0) {
                 this.localSettings = new ScriptActionSettings();
@@ -59,13 +60,18 @@ namespace GoveeLightController.Actions {
                 this.localSettings = payload.Settings.ToObject<ScriptActionSettings>();
             }
             this.globalSettings = new DeviceListSettings();
+
+
             GlobalSettingsManager.Instance.RequestGlobalSettings();
             Connection.OnPropertyInspectorDidAppear += OnPropertyInspectorOpened;
-            Connection.SetStateAsync(0).GetAwaiter().GetResult();
+            ScriptCommand.OnActiveScriptActionChanged += OnActiveScriptActionChanged;
+
+            OnActiveScriptActionChanged();
         }
 
         public override void Dispose() {
             Connection.OnPropertyInspectorDidAppear -= OnPropertyInspectorOpened;
+            ScriptCommand.OnActiveScriptActionChanged -= OnActiveScriptActionChanged;
         }
 
         public override void KeyPressed(KeyPayload payload) {
@@ -94,6 +100,9 @@ namespace GoveeLightController.Actions {
         public override void ReceivedSettings(ReceivedSettingsPayload payload) {
             Tools.AutoPopulateSettings(localSettings, payload.Settings);
             SaveSettings();
+
+            // Update the image if the selected action has changed
+            OnActiveScriptActionChanged();
         }
 
         public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) {
@@ -101,6 +110,18 @@ namespace GoveeLightController.Actions {
         }
 
         #region Private Methods
+        private void OnActiveScriptActionChanged() {
+            string newActionName = ScriptCommand.ActiveScriptActionName;
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, $"OnActiveScriptActionChanged: {newActionName}");
+            if(string.IsNullOrEmpty(localSettings.SelectedAction) || string.IsNullOrEmpty(newActionName) || localSettings.SelectedAction != newActionName) {
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Setting State 0");
+                Connection.SetStateAsync(0);
+                return;
+            }
+
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Setting State 1");
+            Connection.SetStateAsync(1);
+        }
 
         private Task SaveSettings() {
             return Connection.SetSettingsAsync(JObject.FromObject(localSettings));

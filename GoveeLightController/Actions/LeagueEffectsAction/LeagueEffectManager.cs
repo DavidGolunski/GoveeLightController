@@ -19,12 +19,10 @@ namespace GoveeLightController {
         }
 
 
-        private CancellationTokenSource _cancellationTokenSource;
-        public bool IsRunning { get => _cancellationTokenSource != null; }
+        private CancellationTokenSource cancellationTokenSource;
+        public bool IsRunning { get => cancellationTokenSource != null; }
 
         public LeagueEffectManager() {}
-
-        private Dictionary<string, List<ScriptCommand>> actionDict;
 
         // Ensure resources are released
         ~LeagueEffectManager() {
@@ -37,9 +35,10 @@ namespace GoveeLightController {
             if(IsRunning)
                 return;
 
-            _cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
 
-            actionDict = GetActionDict();
+            ScriptCommand.ClearActionCache();
             LeagueAPI.Instance.Reset();
 
             Logger.Instance.LogMessage(TracingLevel.INFO, "Started League Effects Manager Task");
@@ -47,24 +46,27 @@ namespace GoveeLightController {
             Task.Run(async () =>
             {
                 try {
-                    while(!_cancellationTokenSource.Token.IsCancellationRequested) {
+                    while(!cancellationToken.IsCancellationRequested) {
                         Update(deviceIpList);
-                        await Task.Delay(100, _cancellationTokenSource.Token); // Wait for 0.1 second
+                        await Task.Delay(100, cancellationToken); // Wait for 0.1 second
                     }
                 }
                 catch(TaskCanceledException) {
                     // Task was cancelled, which is expected during Stop
                 }
-            }, _cancellationTokenSource.Token);
+                catch(Exception ex) {
+                    Logger.Instance.LogMessage(TracingLevel.ERROR, ex.ToString());
+                }
+            }, cancellationToken);
         }
 
         // Stops the thread
         public void Stop() {
             if(!IsRunning) return;
 
-            _cancellationTokenSource.Cancel(); // Signal the task to stop
-            _cancellationTokenSource.Dispose();
-            _cancellationTokenSource = null;
+            cancellationTokenSource.Cancel(); // Signal the task to stop
+            cancellationTokenSource.Dispose();
+            cancellationTokenSource = null;
             LeagueAPI.Instance.Reset();
             Logger.Instance.LogMessage(TracingLevel.INFO, "League Manager Task has been stopped successfully");
         }
@@ -80,30 +82,10 @@ namespace GoveeLightController {
                 return;
 
             Logger.Instance.LogMessage(TracingLevel.INFO, "League Event found: " + leagueEvent.ToString());
-
-            if(!actionDict.ContainsKey(leagueEvent.ToString()))
-                return;
-
-            List<ScriptCommand> currentAction = actionDict[leagueEvent.ToString()];
-            
-            Console.WriteLine("LeagueEvent animation starting: " + leagueEvent.ToString());
-            ScriptCommand.StartScriptAction(currentAction, deviceIpList);
-        }
-
-
-        private Dictionary<string, List<ScriptCommand>> GetActionDict() {
-            Dictionary<string, List<ScriptCommand>> actions = new Dictionary<string, List<ScriptCommand>>();
-
-            List<string> actionNames = ScriptCommand.GetListOfActions();
-            foreach(var actionName in actionNames) {
-                if(!actionName.StartsWith("LOL@"))
-                    continue;
-
-                string actionNameWithoutLol = actionName.Remove(0, 4);
-                actions.Add(actionNameWithoutLol, ScriptCommand.GetAction(actionName));
+            bool successfull = ScriptCommand.StartScriptAction("LOL@" + leagueEvent.ToString(), deviceIpList);
+            if(!successfull) {
+                Logger.Instance.LogMessage(TracingLevel.WARN, "No effect found called: LOL@" + leagueEvent.ToString());
             }
-            
-            return actions;
         }
     }
 }

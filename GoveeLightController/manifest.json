@@ -126,8 +126,14 @@
           "Image": "Actions/ScriptAction/LightbulbCode",
           "TitleAlignment": "middle",
           "FontSize": "12"
+        },
+        {
+          "Image": "Actions/ScriptAction/LightbulbCodeGreen",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
         }
       ],
+      "DisableAutomaticStates": true,
       "SupportedInMultiActions": true,
       "Tooltip": "Executes a Script for Govee lights",
       "UUID": "com.davidgolunski.goveelightcontroller.scriptaction",

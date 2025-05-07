@@ -20,12 +20,10 @@ namespace GoveeLightController {
         }
 
 
-        private CancellationTokenSource _cancellationTokenSource;
-        public bool IsRunning { get => _cancellationTokenSource != null; }
+        private CancellationTokenSource cancellationTokenSource;
+        public bool IsRunning { get => cancellationTokenSource != null; }
 
         public CounterStrikeEffectsManager() { }
-
-        private Dictionary<string, List<ScriptCommand>> actionDict;
 
         // Ensure resources are released
         ~CounterStrikeEffectsManager() {
@@ -38,6 +36,7 @@ namespace GoveeLightController {
             if(IsRunning)
                 return;
 
+            ScriptCommand.ClearActionCache();
 
             string cfgPath = GetConfigurationFileTargetLocation();
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "cfgPath: " + cfgPath);
@@ -57,9 +56,8 @@ namespace GoveeLightController {
                 Logger.Instance.LogMessage(TracingLevel.WARN, "Could not find the CounterStrike configuration file folder. Please copy the file \"gamestate_integration_goveelightcontroller.cfg\" to \"[Your Steam Folder]/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg\"");
             }
 
-            _cancellationTokenSource = new CancellationTokenSource();
-
-            actionDict = GetActionDict();
+            cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
             CounterStrikeAPI.Instance.Reset();
 
             Logger.Instance.LogMessage(TracingLevel.INFO, "Started Counter Strike Effects Manager Task");
@@ -69,9 +67,9 @@ namespace GoveeLightController {
                 try {
                     CounterStrikeAPI.Instance.StartListening();
 
-                    while(!_cancellationTokenSource.Token.IsCancellationRequested) {
+                    while(!cancellationToken.IsCancellationRequested) {
                         Update(deviceIpList);
-                        await Task.Delay(10, _cancellationTokenSource.Token); // Wait for 0.01 seconds. The CS Buffer is set to 0.05, so we should not miss any updates. The update method will wait anyways on the next update
+                        await Task.Delay(10, cancellationToken); // Wait for 0.01 seconds. The CS Buffer is set to 0.05, so we should not miss any updates. The update method will wait anyways on the next update
                     }
                 }
                 catch(TaskCanceledException) {
@@ -80,7 +78,7 @@ namespace GoveeLightController {
                 catch(Exception ex) {
                     Logger.Instance.LogMessage(TracingLevel.ERROR, ex.ToString());
                 }
-            }, _cancellationTokenSource.Token);
+            }, cancellationToken);
         }
 
         // Stops the thread
@@ -90,9 +88,9 @@ namespace GoveeLightController {
 
             CounterStrikeAPI.Instance.StopListening();
 
-            _cancellationTokenSource.Cancel(); // Signal the task to stop
-            _cancellationTokenSource.Dispose();
-            _cancellationTokenSource = null;
+            cancellationTokenSource.Cancel(); // Signal the task to stop
+            cancellationTokenSource.Dispose();
+            cancellationTokenSource = null;
 
             CounterStrikeAPI.Instance.Reset();
             Logger.Instance.LogMessage(TracingLevel.INFO, "Counter Strike Effects Manager Task has been stopped successfully");
@@ -115,28 +113,10 @@ namespace GoveeLightController {
 
             Logger.Instance.LogMessage(TracingLevel.INFO, "CounterStrike Event Found: " + csEvent.ToString());
 
-            if(!actionDict.ContainsKey(csEvent.ToString()))
-                return;
-
-            List<ScriptCommand> currentAction = actionDict[csEvent.ToString()];
-
-            ScriptCommand.StartScriptAction(currentAction, deviceIpList);
-        }
-
-
-        private Dictionary<string, List<ScriptCommand>> GetActionDict() {
-            Dictionary<string, List<ScriptCommand>> actions = new Dictionary<string, List<ScriptCommand>>();
-
-            List<string> actionNames = ScriptCommand.GetListOfActions();
-            foreach(var actionName in actionNames) {
-                if(!actionName.StartsWith("CS@"))
-                    continue;
-
-                string actionNameWithoutLol = actionName.Remove(0, 3);
-                actions.Add(actionNameWithoutLol, ScriptCommand.GetAction(actionName));
+            bool successfull = ScriptCommand.StartScriptAction("CS@" + csEvent.ToString(), deviceIpList);
+            if(!successfull) {
+                Logger.Instance.LogMessage(TracingLevel.WARN, "No effect found called: CS@" + csEvent.ToString());
             }
-
-            return actions;
         }
 
         #region configuration file copying

@@ -41,7 +41,6 @@ namespace GoveeLightController {
                 return;
             }
 
-            ScriptCommand.ClearActionCache();
             if(localSettings.UseGlobalSettings) {
                 CounterStrikeEffectsManager.Instance.Start(globalSettings.DeviceIpList);
             }

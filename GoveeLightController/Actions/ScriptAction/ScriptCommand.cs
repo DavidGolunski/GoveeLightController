@@ -6,6 +6,7 @@ using System.IO;
 using BarRaider.SdTools;
 using System.Drawing;
 using System.Threading;
+using static System.Collections.Specialized.BitVector32;
 
 namespace GoveeLightController {
 
@@ -236,48 +237,76 @@ namespace GoveeLightController {
 
         #region static functions
 
-
         #region thread management
 
-        private static CancellationTokenSource _cancellationTokenSource = null;
+        private static CancellationTokenSource cancellationTokenSource = null;
         private static Task ScriptActionTask;
         public static bool IsRunning {
             get => ScriptActionTask != null && !ScriptActionTask.IsCompleted;
         }
+
+        // Newly created script actions can get the current active script from here
+        private static string activeScriptActionName = null;
+        private static readonly Mutex activeScriptActionNameMutex = new Mutex();
+        public static string ActiveScriptActionName {
+            set {
+                activeScriptActionNameMutex.WaitOne();
+                activeScriptActionName = value;
+                activeScriptActionNameMutex.ReleaseMutex();
+            }
+            get {
+                activeScriptActionNameMutex.WaitOne();
+                string val = activeScriptActionName;
+                activeScriptActionNameMutex.ReleaseMutex();
+                return val;
+            }
+        }
+
+        // To inform script actions that the active script has changed
+        public static event Action OnActiveScriptActionChanged;
         
+
+
         // stops the execution of the current script list
         private static void StopTask() {
             if(!IsRunning) {
                 return;
             }
-
-            if(_cancellationTokenSource != null) {
-                _cancellationTokenSource.Cancel(); // Signal cancellation
-                _cancellationTokenSource.Dispose();
-                _cancellationTokenSource = null;
+            
+            if(cancellationTokenSource != null) {
+                cancellationTokenSource.Cancel(); // Signal cancellation
+                cancellationTokenSource.Dispose();
+                cancellationTokenSource = null;
             }
         }
 
         // starts executing a list of script commands
         // this is done in a seperate thread, as to not disturb the rest of the program 
         public static bool StartScriptAction(string action, List<string> ips = null) {
-            return StartScriptAction(GetAction(action), ips);
-        }
-
-        public static bool StartScriptAction(List<ScriptCommand> commands, List<string> ips = null) {
+            List<ScriptCommand> commands = GetAction(action);
             if(commands == null)
                 return false;
+
             StopTask(); // Ensure any running task is stopped
 
-            _cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
+            
+
             ScriptActionTask = Task.Run(async () => {
+                ActiveScriptActionName = action;
+                OnActiveScriptActionChanged?.Invoke();
+
                 try {
-                    await RunScriptAction(commands, ips, _cancellationTokenSource.Token);
+                    await RunScriptAction(commands, ips, cancellationToken);
                 }
                 catch(TaskCanceledException) {
                     // Expected during cancellation
                 }
-            });
+
+                ActiveScriptActionName = null;
+                OnActiveScriptActionChanged?.Invoke();
+            }, cancellationToken);
 
             return true;
         }
