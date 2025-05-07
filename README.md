@@ -52,6 +52,7 @@ If you face any issues with the plugin you can always start ask for help on the 
 ### Version 1.1.0
 - Improved stability of light scripts
 - ScriptActions now show which action is currently running and can be stopped by holding the button down
+- Light show scripts can now be hidden if their name starts with "_", this makes it easier to select light shows scripts that you care about
 - Added the "CallOtherAction" script command, which allows you to reuse actions or to create endless actions
 - Added the "RandomWait" script command, that delays the execution of the script for a random amount of time
 

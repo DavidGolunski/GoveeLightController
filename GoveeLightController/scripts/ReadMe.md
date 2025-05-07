@@ -9,9 +9,10 @@
 
 ## JSON Structure
 1. The JSON is a collection of "Actions" (String)
-2. Each Action is an array of commands that can be executed
-3. A Command might need to have additional parameters to be valid
-4. You can add some selected if statements using "if" and one of the predefined variables
+2. "Actions" can be hidden from the "ScriptAction" dropdown selection if the name starts with '_'
+3. Each Action is an array of commands that can be executed
+4. A Command might need to have additional parameters to be valid
+5. You can add some selected if statements using "if" and one of the predefined variables
 
 
 ## Commands
