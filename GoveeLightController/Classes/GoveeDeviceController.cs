@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
 using System.Text.RegularExpressions;
+using BarRaider.SdTools;
 
 namespace GoveeLightController {
     public class GoveeDeviceController {
@@ -59,7 +60,6 @@ namespace GoveeLightController {
 
         public void SetBrightness(int brightness, List<string> ips = null) {
             AddNonExistingDevices(ips);
-
             List<string> ipsToUse = ips ?? _devices.Keys.ToList();
             foreach(var ip in ipsToUse) {
                 _devices[ip].SetBrightness(brightness);

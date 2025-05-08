@@ -337,6 +337,7 @@ namespace GoveeLightController {
             ScriptActionTask = Task.Run(async () => {
                 ActiveScriptActionName = action;
                 OnActiveScriptActionChanged?.Invoke();
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "ScriptCommand - Starting Action - " + action);
 
                 try {
                     await RunScriptAction(commands, ips, cancellationToken);
@@ -348,8 +349,9 @@ namespace GoveeLightController {
                     ActiveScriptActionName = null;
                     OnActiveScriptActionChanged?.Invoke();
                 }
-                
-            }, cancellationToken);
+
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "ScriptCommand - Edngin Action - " + action);
+            });
 
             return true;
         }

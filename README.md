@@ -55,6 +55,7 @@ If you face any issues with the plugin you can always start ask for help on the 
 - Light show scripts can now be hidden if their name starts with "_", this makes it easier to select light shows scripts that you care about
 - Added the "CallOtherAction" script command, which allows you to reuse actions or to create endless actions
 - Added the "RandomWait" script command, that delays the execution of the script for a random amount of time
+- Many script commands now support an optional "ip" parameter, that allows the control of single lights within a light show
 
 ### Version 1.0.2
 - Added "Support" buttons now link to the Elgato Marketplace. Users can join the discord from the link on the marketplace.

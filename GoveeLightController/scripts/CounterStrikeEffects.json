@@ -1,5 +1,5 @@
 {
-  "CS@ROUND_STARTED_T": [
+  "_CS@ROUND_STARTED_T": [
     { "command": "TurnOn" },
     { "command": "Wait", "delay": 100 },
     { "command": "SetPrimaryColor", "r": 255, "g": 106, "b": 0 },
@@ -7,7 +7,7 @@
     { "command": "Wait", "delay": 200 },
     { "command": "SetBrightness",  "value": 50 }
   ],
-  "CS@ROUND_STARTED_CT": [
+  "_CS@ROUND_STARTED_CT": [
     { "command": "TurnOn" },
     { "command": "Wait", "delay": 100 },
     { "command": "SetPrimaryColor", "r": 0, "g": 0, "b": 255 },
@@ -15,7 +15,7 @@
     { "command": "Wait", "delay": 200 },
     { "command": "SetBrightness",  "value": 50 }
   ],
-  "CS@ROUND_WON": [
+  "_CS@ROUND_WON": [
     { "command": "TurnOn"},
     { "command": "Wait", "delay": 100 },
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
@@ -24,7 +24,7 @@
     { "command": "Wait", "delay": 3000 },
     { "command": "TurnOff" }
   ],
-  "CS@ROUND_LOST": [
+  "_CS@ROUND_LOST": [
     { "command": "TurnOn"},
     { "command": "Wait", "delay": 100 },
     { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
@@ -33,7 +33,7 @@
     { "command": "Wait", "delay": 3000 },
     { "command": "TurnOff" }
   ],
-  "CS@GAME_WON": [
+  "_CS@GAME_WON": [
     { "command": "TurnOn" },
     { "command": "Wait", "delay": 100 },
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
@@ -74,7 +74,7 @@
     { "command": "Wait", "delay": 100 },
     { "command": "TurnOff" }
   ],
-  "CS@GAME_LOST": [
+  "_CS@GAME_LOST": [
     { "command": "TurnOn" },
     { "command": "Wait", "delay": 100 },
     { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
@@ -115,7 +115,7 @@
     { "command": "Wait", "delay": 100 },
     { "command": "TurnOff" }
   ],
-  "CS@HAS_KILLED": [
+  "_CS@HAS_KILLED": [
     { "command": "TurnOn"},
     { "command": "Wait", "delay": 100 },
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
@@ -126,7 +126,7 @@
     { "command": "Wait", "delay": 100 },
     { "command": "ActivatePrimaryColor" }
   ],
-  "CS@HAS_DIED": [
+  "_CS@HAS_DIED": [
     { "command": "TurnOn" },
     { "command": "Wait", "delay": 100 },
     { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
@@ -138,14 +138,14 @@
     { "command": "Wait", "delay": 100 },
     { "command": "TurnOff" }
   ],
-  "CS@HAS_REVIVED": [
+  "_CS@HAS_REVIVED": [
     { "command": "TurnOn" },
     { "command": "Wait", "delay": 100 },
     { "command": "ActivatePrimaryColor" },
     { "command": "Wait", "delay": 100 },
     { "command": "SetBrightness", "value": 50 }
   ],
-  "CS@ENTERRED_MAIN_MENU": [
+  "_CS@ENTERRED_MAIN_MENU": [
     { "command": "TurnOn"},
     { "command": "Wait", "delay": 100 },
     { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
