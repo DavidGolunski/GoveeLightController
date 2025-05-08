@@ -337,7 +337,6 @@ namespace GoveeLightController {
             ScriptActionTask = Task.Run(async () => {
                 ActiveScriptActionName = action;
                 OnActiveScriptActionChanged?.Invoke();
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "ScriptCommand - Starting Action - " + action);
 
                 try {
                     await RunScriptAction(commands, ips, cancellationToken);
@@ -349,8 +348,6 @@ namespace GoveeLightController {
                     ActiveScriptActionName = null;
                     OnActiveScriptActionChanged?.Invoke();
                 }
-
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "ScriptCommand - Edngin Action - " + action);
             });
 
             return true;
@@ -502,7 +499,7 @@ namespace GoveeLightController {
                     var json = JsonConvert.DeserializeObject<Dictionary<string, List<Dictionary<string, object>>>>(jsonContent);
 
                     if(json != null) {
-                        List<Dictionary<string, object>> commandList = null;
+                        List<Dictionary<string, object>> commandList;
                         if(json.ContainsKey(actionName)) {
                             commandList = json[actionName];
                         }

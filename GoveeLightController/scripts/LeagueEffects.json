@@ -23,7 +23,7 @@
     { "command": "TurnOff", "if": "IsLeaguePlayerDead" }
   ],
   "_LOL@GAME_STARTED_DOMINATION": [
-    { "command": "SetPrimaryColor", "r": 255, "g": 0, "b": 0 },
+    { "command": "SetPrimaryColor", "r": 255, "g": 55, "b": 0 },
     { "command": "ActivatePrimaryColor" },
     { "command": "Wait", "delay": 200 },
     { "command": "TurnOn" },
