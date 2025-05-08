@@ -69,9 +69,7 @@
     <Compile Include="Actions\CounterStrikeEffectsAction\CounterStrikeEffectsAction.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Actions\CounterStrikeEffectsAction\GameState.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
+    <Compile Include="Actions\CounterStrikeEffectsAction\GameState.cs" />
     <Compile Include="Actions\ScriptAction\ScriptAction.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

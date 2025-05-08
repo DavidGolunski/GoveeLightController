@@ -320,6 +320,12 @@ namespace GoveeLightController {
 
             if(cancellationTokenSource != null) {
                 cancellationTokenSource.Cancel(); // Signal cancellation
+
+                // wait on the script task to exit gracefully
+                if(ScriptActionTask != null) {
+                    ScriptActionTask.GetAwaiter().GetResult();
+                }
+                
                 cancellationTokenSource.Dispose();
                 cancellationTokenSource = null;
             }
@@ -350,7 +356,7 @@ namespace GoveeLightController {
                     ActiveScriptActionName = null;
                     OnActiveScriptActionChanged?.Invoke();
                 }
-                catch(TaskCanceledException) {
+                catch(OperationCanceledException) { 
                     // Expected during cancellation
                 }
             });
@@ -360,10 +366,8 @@ namespace GoveeLightController {
 
 
         private static async Task RunScriptAction(List<ScriptCommand> commands, List<string> ips, CancellationToken cancellationToken) {
-            for(int i = 0; i < commands.Count; i++) {
-                if(cancellationToken.IsCancellationRequested) {
-                    break;
-                }
+            for(int i = 0; i < commands.Count && !cancellationToken.IsCancellationRequested; i++) {
+               
 
                 string result = commands[i].Execute(cancellationToken, ips); // Execute the command
 
@@ -374,6 +378,10 @@ namespace GoveeLightController {
                         // Insert the new commands right after the current one
                         commands.InsertRange(i + 1, newCommands);
                     }
+                }
+
+                if(cancellationToken.IsCancellationRequested) {
+                    break;
                 }
 
                 await Task.Yield(); // Yield to allow responsiveness in async context
