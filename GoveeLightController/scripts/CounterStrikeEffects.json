@@ -151,5 +151,9 @@
     { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
     { "command": "Wait", "delay": 100 },
     { "command": "SetBrightness", "value": 50 }
+  ],
+  "_CS@INTEGRATION_STARTED": [
+  ],
+  "_CS@INTEGRATION_STOPPED": [
   ]
 }

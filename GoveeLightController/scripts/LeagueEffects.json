@@ -343,5 +343,9 @@
     { "command": "Wait", "delay": 700 },
 
     { "command": "CallOtherAction", "name": "_LOL_AFTER_EVENT_COMMANDS" }
+  ],
+  "_LOL@INTEGRATION_STARTED": [
+  ],
+  "_LOL@INTEGRATION_STOPPED": [
   ]
 }

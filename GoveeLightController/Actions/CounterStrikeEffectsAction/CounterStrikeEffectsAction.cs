@@ -36,7 +36,12 @@ namespace GoveeLightController {
 
         public override void KeyPressed(KeyPayload payload) {
             if(CounterStrikeEffectsManager.Instance.IsRunning) {
-                CounterStrikeEffectsManager.Instance.Stop();
+                if(localSettings.UseGlobalSettings) {
+                    CounterStrikeEffectsManager.Instance.Stop(globalSettings.DeviceIpList);
+                }
+                else {
+                    CounterStrikeEffectsManager.Instance.Stop(localSettings.DeviceIpList);
+                }
                 Connection.SetStateAsync(0).GetAwaiter().GetResult();
                 return;
             }

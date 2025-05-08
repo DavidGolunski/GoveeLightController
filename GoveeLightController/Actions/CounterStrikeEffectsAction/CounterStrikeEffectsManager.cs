@@ -41,8 +41,8 @@ namespace GoveeLightController {
             string cfgPath = GetConfigurationFileTargetLocation();
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "cfgPath: " + cfgPath);
             if(cfgPath != null) {
-                bool successfull = CopyConfigurationFile("gamestate_integration_goveelightcontroller.cfg", cfgPath);
-                if(successfull) {
+                bool successfullCopy = CopyConfigurationFile("gamestate_integration_goveelightcontroller.cfg", cfgPath);
+                if(successfullCopy) {
                     Logger.Instance.LogMessage(TracingLevel.INFO, "Copying of configuration file successfull");
                 }
                 else {
@@ -58,6 +58,11 @@ namespace GoveeLightController {
             CounterStrikeAPI.Instance.Reset();
 
             Logger.Instance.LogMessage(TracingLevel.INFO, "Started Counter Strike Effects Manager Task");
+            // run the script that should run, when the cs integration starts
+            bool successfull = ScriptCommand.StartScriptAction("CS@INTEGRATION_STARTED", deviceIpList);
+            if(!successfull) {
+                Logger.Instance.LogMessage(TracingLevel.WARN, "No effect found called: CS@INTEGRATION_STARTED");
+            }
 
             Task.Run(async () =>
             {
@@ -75,19 +80,30 @@ namespace GoveeLightController {
                 catch(Exception ex) {
                     Logger.Instance.LogMessage(TracingLevel.ERROR, ex.ToString());
                 }
-            }, cancellationToken);
+            });
         }
 
         // Stops the thread
-        public void Stop() {
+        public void Stop(List<string> deviceIpList = null) {
             if(!IsRunning)
                 return;
 
             CounterStrikeAPI.Instance.StopListening();
 
-            cancellationTokenSource.Cancel(); // Signal the task to stop
-            cancellationTokenSource.Dispose();
-            cancellationTokenSource = null;
+            if(cancellationTokenSource != null) {
+                cancellationTokenSource.Cancel(); // Signal the task to stop
+                cancellationTokenSource.Dispose();
+                cancellationTokenSource = null;
+            }
+            
+            if(deviceIpList != null) {
+                // run the script that should run, when the cs integration stops
+                bool successfull = ScriptCommand.StartScriptAction("CS@INTEGRATION_STOPPED", deviceIpList);
+                if(!successfull) {
+                    Logger.Instance.LogMessage(TracingLevel.WARN, "No effect found called: CS@INTEGRATION_STOPPED");
+                }
+            }
+            
 
             CounterStrikeAPI.Instance.Reset();
             Logger.Instance.LogMessage(TracingLevel.INFO, "Counter Strike Effects Manager Task has been stopped successfully");

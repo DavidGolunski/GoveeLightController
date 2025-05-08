@@ -43,6 +43,12 @@ namespace GoveeLightController {
 
             Logger.Instance.LogMessage(TracingLevel.INFO, "Started League Effects Manager Task");
 
+            // run the script that should run, when the lol integration starts
+            bool successfull = ScriptCommand.StartScriptAction("LOL@INTEGRATION_STARTED", deviceIpList);
+            if(!successfull) {
+                Logger.Instance.LogMessage(TracingLevel.WARN, "No effect found called: LOL@INTEGRATION_STARTED");
+            }
+
             Task.Run(async () =>
             {
                 try {
@@ -57,17 +63,30 @@ namespace GoveeLightController {
                 catch(Exception ex) {
                     Logger.Instance.LogMessage(TracingLevel.ERROR, ex.ToString());
                 }
-            }, cancellationToken);
+            });
         }
 
         // Stops the thread
-        public void Stop() {
+        public void Stop(List<string> deviceIpList = null) {
             if(!IsRunning) return;
 
-            cancellationTokenSource.Cancel(); // Signal the task to stop
-            cancellationTokenSource.Dispose();
-            cancellationTokenSource = null;
+            if(cancellationTokenSource != null) {
+                cancellationTokenSource.Cancel(); // Signal the task to stop
+                cancellationTokenSource.Dispose();
+                cancellationTokenSource = null;
+            }
+            
             LeagueAPI.Instance.Reset();
+
+            if(deviceIpList != null) {
+                // run the script that should run, when the lol integration stops
+                bool successfull = ScriptCommand.StartScriptAction("LOL@INTEGRATION_STOPPED", deviceIpList);
+                if(!successfull) {
+                    Logger.Instance.LogMessage(TracingLevel.WARN, "No effect found called: LOL@INTEGRATION_STOPPED");
+                }
+            }
+            
+
             Logger.Instance.LogMessage(TracingLevel.INFO, "League Manager Task has been stopped successfully");
         }
 

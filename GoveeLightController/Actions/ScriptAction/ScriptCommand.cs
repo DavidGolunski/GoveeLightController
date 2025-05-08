@@ -333,6 +333,8 @@ namespace GoveeLightController {
                 return false;
 
             StopScriptAction(); // Ensure any running task is stopped
+            if(commands.Count == 0)
+                return true;
 
             cancellationTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = cancellationTokenSource.Token;

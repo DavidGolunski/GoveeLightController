@@ -146,6 +146,8 @@ The following list is _ordered by the priority in which the events will be trigg
 8. __CS@HAS_DIED__: Happens if you die in game.
 9. __CS@HAS_REVIVED__: Happens if you revive in game (this can happen in gamemodes like Deathmatch or Arms Race).
 10. __CS@ENTERRED_MAIN_MENU__; Happens if you enter the main menu.
+11. __CS@INTEGRAITON_STARTED__: Happens when you start the integration.
+12. __CS@INTEGRATION_STOPPED__: Happens when you stop the integration.
 
 
 ### League of Legends Events
@@ -181,3 +183,5 @@ The following list is _ordered by the priority in which the events will be trigg
 27. __LOL@HAS_ASSISTED_INHIB__: Happens if you assist in destroying an enemy Inhibitor.
 28. __LOL@TEAM_HAS_ACED__: Happens if your team aces the enemy team.
 29. __LOL@ENEMY_TEAM_HAS_ACED__: Happens if the enemy team aces your team.
+30. __LOL@INTEGRAITON_STARTED__: Happens when you start the integration.
+31. __LOL@INTEGRATION_STOPPED__: Happens when you stop the integration.

@@ -79,7 +79,7 @@ namespace GoveeLightController {
         }
 
         public bool HandleMessage(string json) {
-            //Logger.Instance.LogMessage(TracingLevel.DEBUG, json);
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, json);
 
             JObject csUpdates = JObject.Parse(json);
 
