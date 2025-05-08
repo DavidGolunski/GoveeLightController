@@ -313,7 +313,11 @@ namespace GoveeLightController {
             if(!IsRunning) {
                 return;
             }
-            
+
+            // if the task is cancelled, manually notify the ActiveScript Listeners, as it will not be done automatically
+            ActiveScriptActionName = null;
+            OnActiveScriptActionChanged?.Invoke();
+
             if(cancellationTokenSource != null) {
                 cancellationTokenSource.Cancel(); // Signal cancellation
                 cancellationTokenSource.Dispose();
@@ -340,13 +344,12 @@ namespace GoveeLightController {
 
                 try {
                     await RunScriptAction(commands, ips, cancellationToken);
+                    // automatically notify the ActiveScript Listeners about the end of this function, this will be skipped if task is cancelled
+                    ActiveScriptActionName = null;
+                    OnActiveScriptActionChanged?.Invoke();
                 }
                 catch(TaskCanceledException) {
                     // Expected during cancellation
-                }
-                finally {
-                    ActiveScriptActionName = null;
-                    OnActiveScriptActionChanged?.Invoke();
                 }
             });
 
