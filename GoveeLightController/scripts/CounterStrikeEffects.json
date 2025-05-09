@@ -35,6 +35,12 @@
     { "command": "Wait", "delay": 100 },
     { "command": "ActivatePrimaryColor"}
   ],
+  "_CS@ROUND_WON_BOMB_EXPLODED": [
+    { "command": "CallOtherAction", "name": "CS@ROUND_WON" }
+  ],
+  "_CS@ROUND_WON_BOMB_DEFUSED": [
+    { "command": "CallOtherAction", "name": "CS@ROUND_WON" }
+  ],
   "_CS@ROUND_LOST": [
     { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
     { "command": "CallOtherAction", "name": "_CS_TURN_ON_IF_DEAD" },
@@ -43,6 +49,12 @@
     { "command": "SetBrightness", "value": 20 },
     { "command": "Wait", "delay": 100 },
     { "command": "ActivatePrimaryColor"}
+  ],
+  "_CS@ROUND_LOST_BOMB_EXPLODED": [
+    { "command": "CallOtherAction", "name": "CS@ROUND_LOST" }
+  ],
+  "_CS@ROUND_LOST_BOMB_DEFUSED": [
+    { "command": "CallOtherAction", "name": "CS@ROUND_LOST" }
   ],
   "_CS@GAME_WON": [
     { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
@@ -128,6 +140,17 @@
     { "command": "TurnOn" },
     { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" }
   ],
+  "_CS@TEAM_PLANTED_BOMB": [
+    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_HIGHLIGHT_BRIGHTNESS" },
+    { "command": "Wait", "delay": 2000 },
+    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" }
+  ],
+  "_CS@ENEMIES_PLANTED_BOMB": [
+    { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
+    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_HIGHLIGHT_BRIGHTNESS" },
+    { "command": "Wait", "delay": 2000 },
+    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" }
+  ],
   "_CS@STARTED_FLASHED": [
     { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
     { "command": "Wait", "delay": 100 },
@@ -155,6 +178,14 @@
     { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
     { "command": "Wait", "delay": 100 },
     { "command": "TurnOn"},
+    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" }
+  ],
+  "_CS@SPECTATOR_BOMB_PLANTED": [
+    { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
+    { "command": "Wait", "delay": 10 },
+    { "command": "TurnOn" },
+    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_HIGHLIGHT_BRIGHTNESS" },
+    { "command": "Wait", "delay": 2000 },
     { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" }
   ],
   "_CS@SPECTATOR_FREECAM": [
@@ -196,6 +227,9 @@
     { "command": "Wait", "delay": 100 },
     { "command": "SetColor", "r": 0, "g": 0, "b": 255 }
   ],
+  "_CS@SPECTATOR_ROUND_WON_CT_BOMB_DEFUSED": [
+    { "command": "CallOtherAction", "name": "_CS@SPECTATOR_ROUND_WON_CT" }
+  ],
   "_CS@SPECTATOR_GAME_WON_T": [
     { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
     { "command": "Wait", "delay": 10 },
@@ -203,6 +237,9 @@
     { "command": "CallOtherAction", "name": "_CS_ACTIVATE_HIGHLIGHT_BRIGHTNESS" }, 
     { "command": "Wait", "delay": 5000 },
     { "command": "TurnOff" }
+  ],
+  "_CS@SPECTATOR_ROUND_WON_T_BOMB_EXPLODED": [
+    { "command": "CallOtherAction", "name": "_CS@SPECTATOR_ROUND_WON_T" }
   ],
   "_CS@SPECTATOR_GAME_WON_CT": [
     { "command": "SetColor", "r": 0, "g": 0, "b": 255 },

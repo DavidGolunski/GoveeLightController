@@ -11,7 +11,11 @@ namespace GoveeLightController {
         ROUND_STARTED_T,
         ROUND_STARTED_CT,
         ROUND_WON,
+        ROUND_WON_BOMB_EXPLODED,
+        ROUND_WON_BOMB_DEFUSED,
         ROUND_LOST,
+        ROUND_LOST_BOMB_EXPLODED,
+        ROUND_LOST_BOMB_DEFUSED,
 
         GAME_WON,
         GAME_LOST,
@@ -21,6 +25,9 @@ namespace GoveeLightController {
         HAS_KILLED,
         HAS_ASSISTED,
         HAS_REVIVED,
+
+        TEAM_PLANTED_BOMB,
+        ENEMIES_PLANTED_BOMB,
 
         STARTED_FLASHED,
         STARTED_SMOKED,
@@ -32,8 +39,11 @@ namespace GoveeLightController {
         SPECTATOR_FREECAM,
         SPECTATOR_WATCHING_T,
         SPECTATOR_WATCHING_CT,
+        SPECTATOR_BOMB_PLANTED,
         SPECTATOR_ROUND_WON_T,
+        SPECTATOR_ROUND_WON_T_BOMB_EXPLODED,
         SPECTATOR_ROUND_WON_CT,
+        SPECTATOR_ROUND_WON_CT_BOMB_DEFUSED,
         SPECTATOR_GAME_WON_T,
         SPECTATOR_GAME_WON_CT,
         SPECTATOR_GAME_TIED
@@ -42,8 +52,7 @@ namespace GoveeLightController {
     public enum CsTeam {
         UNAVAILABLE,
         T,
-        CT,
-        BOTH
+        CT
     }
 
     public enum CsRoundPhases {
@@ -59,6 +68,13 @@ namespace GoveeLightController {
         LIVE,
         INTERMISSION,
         GAME_OVER
+    }
+
+    public enum CsBombStatus {
+        UNAVAILABLE,
+        PLANTED,
+        EXPLODED,
+        DEFUSED
     }
 
     public class GameState {
@@ -85,6 +101,7 @@ namespace GoveeLightController {
         private bool HasRoundInformation { get; set; } = false;
         private CsRoundPhases RoundPhase { get; set; } = CsRoundPhases.UNAVAILABLE; //The phase countdown section contains the same information, but also includes additional phases like "warm up" or "bomb"
         private CsTeam WinTeam { get; set; } = CsTeam.UNAVAILABLE;
+        private CsBombStatus BombStatus { get; set; } = CsBombStatus.UNAVAILABLE;
 
         // map information
         private bool HasMapInformation { get; set; } = false;
@@ -211,13 +228,26 @@ namespace GoveeLightController {
             }
 
             string winTeamString = round["win_team"]?.ToString();
-            if(winTeamString == null)
-                return true;
-            if(winTeamString.Equals("T")) {
-                WinTeam = CsTeam.T;
+            if(!string.IsNullOrEmpty(winTeamString)) {
+                if(winTeamString.Equals("T")) {
+                    WinTeam = CsTeam.T;
+                }
+                else if(winTeamString.Equals("CT")) {
+                    WinTeam = CsTeam.CT;
+                }
             }
-            else if(winTeamString.Equals("CT")) {
-                WinTeam = CsTeam.CT;
+
+            string bombStatusString = round["bomb"]?.ToString();
+            if(!string.IsNullOrEmpty(bombStatusString)) {
+                if(bombStatusString.Equals("planted")) {
+                    BombStatus = CsBombStatus.PLANTED;
+                }
+                else if(bombStatusString.Equals("exploded")) {
+                    BombStatus = CsBombStatus.EXPLODED;
+                }
+                else if(bombStatusString.Equals("defused")) {
+                    BombStatus = CsBombStatus.DEFUSED;
+                }
             }
 
             return true;
@@ -300,19 +330,7 @@ namespace GoveeLightController {
             ProviderTeam = CsTeam.UNAVAILABLE;
         }
 
-        /*
-            Main Menu Identifiers: PlayerData && No PlayerSateData && ProviderID == PlayerID && PlayerActivity == menu && No MapData && No RoundData
-            Pre-Game Team Selection Competitive Identifiers: No PlayerData && MapData && No RoundData && MapPhase == warmup
-            Pre-Game Team Selection Deathmatch Identifiers: No PlayerData && MapData && RoundData && MapPhase == live && RoundPhase == freezetime
-            BuyPhase Begin Identifiers: PlayerData && MapData && RoundData && ProviderID == PlayerID && MapPhase == live && RoundPhase == freezetime
-            Round Begin Identifiers: PlayerData && MapData && RoundData && ProviderID == PlayerID && MapPhase == live && RoundPhase == live
-            Player Died in Round Identifiers: PlayerData && MapData && RoundData && ProviderID == PlayerID && MapPhase == live && RoundPhase == live && PlayerHealth == 0
-            Round Ended Identifiers: PlayerData && MapData && RoundData && MapPhase == live && RoundPhase == over && RoundWinTeam Exists
-            Player Died from Bomb Winning the round: -- no wories here, just make sure that the round is over. no conflicting events expected if round conclusion is prioritized
-            Round Ended and now Half Time Identifier: PlayerData && MapData && RoundData && MapPhase == intermission && RoundPhase == over && WinTeamExists
-            Game Won Identifiers: PlayerData && MapData && RoundData && MapPhase == gameover && RoundPhase == freezetime && WinTeamExists
-            Spectating in FreeCam: No PlayerData && MapData && RoundData && round_totaldmg in PlayerStats Exists
-         */
+
         // returns the "most important" event that happened between this GameState and the previousGameState
         public CsEventTypes GetEvent(GameState previousGameState) {
             if(this.Equals(previousGameState))
@@ -383,19 +401,25 @@ namespace GoveeLightController {
                     && RoundPhase == CsRoundPhases.OVER && previousGameState.RoundPhase != CsRoundPhases.OVER) {
 
                     if(WinTeam == CsTeam.T)
-                        return CsEventTypes.SPECTATOR_ROUND_WON_T;
-                    if(WinTeam == CsTeam.CT)
-                        return CsEventTypes.SPECTATOR_ROUND_WON_CT;
+                        return BombStatus == CsBombStatus.EXPLODED ? CsEventTypes.SPECTATOR_ROUND_WON_T_BOMB_EXPLODED : CsEventTypes.SPECTATOR_ROUND_WON_T;
 
-                    Logger.Instance.LogMessage(TracingLevel.WARN, "The round ended while provider was spectating, but no WinTeam was available (" + WinTeam.ToString() + ")");
+                    if(WinTeam == CsTeam.CT)
+                        return BombStatus == CsBombStatus.DEFUSED ? CsEventTypes.SPECTATOR_ROUND_WON_CT_BOMB_DEFUSED : CsEventTypes.SPECTATOR_ROUND_WON_CT;
+
+                    // this should not be possible, it's just here for safety
                     return CsEventTypes.NO_EVENT;
                 }
 
+
+                // Bomb Planted Event
+                if(HasRoundInformation && previousGameState.HasRoundInformation && RoundPhase == CsRoundPhases.LIVE
+                    && BombStatus == CsBombStatus.PLANTED && previousGameState.BombStatus == CsBombStatus.UNAVAILABLE) 
+                    return CsEventTypes.SPECTATOR_BOMB_PLANTED;
+
                 // Switched to Freecam
                 if(!HasPlayerInformation && previousGameState.HasPlayerInformation
-                    && !HasPlayerStateInformation && previousGameState.HasPlayerStateInformation) {
+                    && !HasPlayerStateInformation && previousGameState.HasPlayerStateInformation)
                     return CsEventTypes.SPECTATOR_FREECAM;
-                }
 
                 // Switched to Spectate a player
                 if(HasPlayerInformation && HasPlayerStateInformation) {
@@ -457,9 +481,12 @@ namespace GoveeLightController {
                 && (MapPhase == CsMapPhases.LIVE || MapPhase == CsMapPhases.INTERMISSION)
                 && RoundPhase == CsRoundPhases.OVER && previousGameState.RoundPhase != CsRoundPhases.OVER) {
 
-                if(ProviderTeam == WinTeam)
-                    return CsEventTypes.ROUND_WON;
-                return CsEventTypes.ROUND_LOST;
+                if(BombStatus == CsBombStatus.EXPLODED)
+                    return ProviderTeam == WinTeam ? CsEventTypes.ROUND_WON_BOMB_EXPLODED : CsEventTypes.ROUND_LOST_BOMB_EXPLODED;
+                else if(BombStatus == CsBombStatus.DEFUSED)
+                    return ProviderTeam == WinTeam ? CsEventTypes.ROUND_WON_BOMB_DEFUSED : CsEventTypes.ROUND_LOST_BOMB_DEFUSED;
+
+                return ProviderTeam == WinTeam ? CsEventTypes.ROUND_WON : CsEventTypes.ROUND_LOST;
             }
 
             // Round Started Events
@@ -482,6 +509,13 @@ namespace GoveeLightController {
             if(IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
                 && previousGameState.PlayerFlashed < PlayerFlashed && PlayerFlashed > 0)
                 return CsEventTypes.STARTED_FLASHED;
+
+            // bomb planted events
+            if(IsProviderPlayingAndAlive && HasRoundInformation && previousGameState.HasRoundInformation 
+                && RoundPhase == CsRoundPhases.LIVE && ProviderTeam != CsTeam.UNAVAILABLE 
+                && BombStatus == CsBombStatus.PLANTED && previousGameState.BombStatus == CsBombStatus.UNAVAILABLE)
+                return ProviderTeam == CsTeam.T ? CsEventTypes.TEAM_PLANTED_BOMB : CsEventTypes.ENEMIES_PLANTED_BOMB;
+
 
             // kill events
             if(HasMapInformation && IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerInformation && RoundKills > previousGameState.RoundKills)
@@ -541,6 +575,7 @@ namespace GoveeLightController {
                 && this.HasRoundInformation == otherGameState.HasRoundInformation
                 && this.RoundPhase == otherGameState.RoundPhase
                 && this.WinTeam == otherGameState.WinTeam
+                && this.BombStatus == otherGameState.BombStatus
                 && this.HasMapInformation == otherGameState.HasMapInformation
                 && this.MapPhase == otherGameState.MapPhase
                 && this.ScoreTeamT == otherGameState.ScoreTeamT
@@ -568,6 +603,7 @@ namespace GoveeLightController {
                 hash = hash * 23 + HasRoundInformation.GetHashCode();
                 hash = hash * 23 + RoundPhase.GetHashCode();
                 hash = hash * 23 + WinTeam.GetHashCode();
+                hash = hash * 23 + BombStatus.GetHashCode();
                 hash = hash * 23 + HasMapInformation.GetHashCode();
                 hash = hash * 23 + MapPhase.GetHashCode();
                 hash = hash * 23 + ScoreTeamT.GetHashCode();
@@ -608,6 +644,7 @@ namespace GoveeLightController {
             if(HasRoundInformation) {
                 output += "\n\tRoundPhase: " + RoundPhase.ToString();
                 output += "\n\tWinTeam: " + WinTeam.ToString();
+                output += "\n\tBombStatus: " + BombStatus.ToString();
             }
 
             output += "\nHasMapInformation: " + HasMapInformation;

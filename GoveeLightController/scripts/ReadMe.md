@@ -141,28 +141,37 @@ The following list is _ordered by the priority in which the events will be trigg
 2. __CS@SPECTATOR_GAME_WON_T__: Happens if you are spectating and the terrorits win the game.
 3. __CS@SPECATOR_GAME_WON_CT__: Happens if you are spectating and the counter-terrorists wind the game.
 4. __CS@SPECTATOR_GAME_TIED__: Happens if you are spectating and the game ends in a tie.
-5. __CS@SPECTATOR_ROUND_WON_T__: Happens if you are spectating and the terrorists win the round.
-6. __CS@SPECTATOR_ROUND_WON_CT__: Happens if you are spectating and the counter-terrorists win the round.
-7. __CS@SPECTATOR_FREECAM__: Happens if you are spectating and you switch to the free camera.
-8. __CS@SPECTATOR_WATCHING_T__: Happens if you are spectating and you switch to a terrorists camera.
-9. __CS@SPECTATOR_WATCHING_CT__: Happens if you are spectating and you switch to a counter-terrorists.
-10. __CS@GAME_WON__: Happens if you win a game.
-11. __CS@GAME_LOST__: Happens if you loose a game.
-12. __CS@GAME_TIED__: Happens if you tie a game.
-13. __CS@ROUND_WON__: Happens if you win a round.
-14. __CS@ROUND_LOST__: Happens if you loose a round.
-15. __CS@ROUND_STARTED_T__: Happens if a new round (or warmup) starts in which you are in the "Terrosit" Team.
-16. __CS@ROUND_STARTED_CT__: Happens if a new round (or warmup) starts in which you are in the "Terrosit" Team.
-17. __CS@STARTED_FLASHED__: Happens when you get flashed.
-18. __CS@HAS_KILLED__: Happens if you kill an enemy.
-19. __CS@HAS_DIED__: Happens when you die in game.
-20. __CS@HAS_REVIVED__: Happens if you revive in game (this can happen in gamemodes like Deathmatch or Arms Race).
-21. __CS@STOPPED_SMOKED__: Happens if you step out of a smoke.
-22. __CS@STARTED_SMOKED__: Happens if you step into a smoke.
-23. __CS@STOPPED_BURNING__: Happens if you step out of a molotov.
-24. __CS@STARTED_BURNING__: Happens if you step into a molotov.
-25. __CS@INTEGRAITON_STARTED__: Happens when you start the integration.
-26. __CS@INTEGRATION_STOPPED__: Happens when you stop the integration.
+5. __CS@SPECTATOR_ROUND_WON_T_BOMB_EXPLODED__: Happens if you are spectating and the terrorists win the round by letting the bomb explode.
+6. __CS@SPECTATOR_ROUND_WON_T__: Happens if you are spectating and the terrorists win the round.
+7. __CS@SPECTATOR_ROUND_WON_CT_BOMB_EXPLODED__: Happens if you are spectating and the counter-terrorists win the round by defusing the bomb.
+8. __CS@SPECTATOR_ROUND_WON_CT__: Happens if you are spectating and the counter-terrorists win the round.
+9. __CS@SPECTATOR_BOMB_PLANTED__: Happens if you are spectating and the terrorists plant the bomb. 
+10. __CS@SPECTATOR_FREECAM__: Happens if you are spectating and you switch to the free camera.
+11. __CS@SPECTATOR_WATCHING_T__: Happens if you are spectating and you switch to a terrorists camera.
+12. __CS@SPECTATOR_WATCHING_CT__: Happens if you are spectating and you switch to a counter-terrorists.
+13. __CS@GAME_WON__: Happens if you win a game.
+14. __CS@GAME_LOST__: Happens if you loose a game.
+15. __CS@GAME_TIED__: Happens if you tie a game.
+16. __CS@ROUND_WON_BOMB_EXPLODED__: Happens if you win a round by letting the bomb explode.
+17. __CS@ROUND_LOST_BOMB_EXPLODED__: Happens if you loose a round by letting the bomb explode.
+18. __CS@ROUND_WON_BOMB_DEFUSED__: Happens if you win a round by defusing the bomb.
+19. __CS@ROUND_LOST_BOMB_DEFUSED__: Happens if you loose a round by letting the bomb get defused.
+20. __CS@ROUND_WON__: Happens if you win a round.
+21. __CS@ROUND_LOST__: Happens if you loose a round.
+22. __CS@ROUND_STARTED_T__: Happens if a new round (or warmup) starts in which you are in the "Terrosit" Team.
+23. __CS@ROUND_STARTED_CT__: Happens if a new round (or warmup) starts in which you are in the "Terrosit" Team.
+24. __CS@STARTED_FLASHED__: Happens when you get flashed.
+25. __CS@TEAM_PLANTED_BOMB__: Happens if your team plants the bomb.
+26. __CS@ENEMIES_PLANTED_BOMB__: Happens if the enemy team plants the bomb.
+27. __CS@HAS_KILLED__: Happens if you kill an enemy.
+28. __CS@HAS_DIED__: Happens when you die in game.
+29. __CS@HAS_REVIVED__: Happens if you revive in game (this can happen in gamemodes like Deathmatch or Arms Race).
+30. __CS@STOPPED_SMOKED__: Happens if you step out of a smoke.
+31. __CS@STARTED_SMOKED__: Happens if you step into a smoke.
+32. __CS@STOPPED_BURNING__: Happens if you step out of a molotov.
+33. __CS@STARTED_BURNING__: Happens if you step into a molotov.
+34. __CS@INTEGRAITON_STARTED__: Happens when you start the integration.
+35. __CS@INTEGRATION_STOPPED__: Happens when you stop the integration.
 
 
 
