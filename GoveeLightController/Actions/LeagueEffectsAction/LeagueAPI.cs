@@ -144,7 +144,7 @@ namespace GoveeLightController {
                         }
                     }
 
-                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "PlayerName: " + activePlayerName + " PlayerTeam: " + activePlayerTeam + " PrimaryRuneTree: " + PrimaryRuneTree);
+                    //Logger.Instance.LogMessage(TracingLevel.DEBUG, "PlayerName: " + activePlayerName + " PlayerTeam: " + activePlayerTeam + " PrimaryRuneTree: " + PrimaryRuneTree);
                 }
 
                 // there is no "player revived" event. This code simulates the event

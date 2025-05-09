@@ -81,7 +81,6 @@ namespace GoveeLightController {
 
         public override void ReceivedSettings(ReceivedSettingsPayload payload) {
             Tools.AutoPopulateSettings(localSettings, payload.Settings);
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "SetColorDialAction - " + localSettings.HexCodeString);
             SaveSettings();
             UpdateLayout();
         }

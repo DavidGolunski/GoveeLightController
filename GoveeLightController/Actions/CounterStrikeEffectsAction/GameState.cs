@@ -219,10 +219,6 @@ namespace GoveeLightController {
             else if(winTeamString.Equals("CT")) {
                 WinTeam = CsTeam.CT;
             }
-            else {
-                WinTeam = CsTeam.BOTH;
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Win Team: " + winTeamString);
-            }
 
             return true;
         }

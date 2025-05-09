@@ -39,7 +39,7 @@ namespace GoveeLightController {
             ScriptCommand.ClearActionCache();
 
             string cfgPath = GetConfigurationFileTargetLocation();
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "cfgPath: " + cfgPath);
+            Logger.Instance.LogMessage(TracingLevel.INFO, "cfgPath: " + cfgPath);
             if(cfgPath != null) {
                 bool successfullCopy = CopyConfigurationFile("gamestate_integration_goveelightcontroller.cfg", cfgPath);
                 if(successfullCopy) {

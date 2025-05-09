@@ -65,14 +65,6 @@ namespace GoveeLightController {
                         pixels[position] = replacementB;     // Blue
                         pixels[position + 1] = replacementG; // Green
                         pixels[position + 2] = replacementR; // Red
-
-                        if(targetR == 255 && targetG == 255 && targetB == 255) {
-                            Logger.Instance.LogMessage(TracingLevel.DEBUG, "White pixel found. Replacing Pixel with: " + replacementR + " " + replacementG + " " + replacementB);
-                        }
-                    }
-
-                    if(targetR == 255 && targetG == 255 && targetB == 255) {
-                        Logger.Instance.LogMessage(TracingLevel.DEBUG, "Searching for White Color " + pixels[position] + " " + pixels[position + 1] + " " + pixels[position + 2]);
                     }
                 }
             }
