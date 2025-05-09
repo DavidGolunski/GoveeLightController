@@ -1,6 +1,7 @@
 ﻿using BarRaider.SdTools;
 using Newtonsoft.Json.Linq;
 using System;
+using System.IO;
 using System.Net;
 using System.Text;
 
@@ -21,7 +22,7 @@ namespace GoveeLightController {
         private GameState previousGameState;
         private GameState currentGameState;
 
-        public bool IsProviderDead { get => currentGameState?.IsProviderDead ?? true; }
+        public bool IsProviderDead { get => !currentGameState?.IsProviderPlayingAndAlive ?? true; }
 
         public CounterStrikeAPI() {
             listener = new HttpListener();
@@ -62,7 +63,8 @@ namespace GoveeLightController {
                 }
 
                 successfull = HandleMessage(json);
-
+                string timestampedEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {json.Replace("\n", " ").Replace("\t", " ")}{Environment.NewLine}";
+                File.AppendAllText("GameStateLog.txt", timestampedEntry);
                 
                 // Send a response back to CS
                 HttpListenerResponse response = context.Response;
@@ -96,8 +98,8 @@ namespace GoveeLightController {
 
             previousGameState = currentGameState;
             currentGameState = new GameState(csUpdates, previousGameState);
-       
-            Logger.Instance.LogMessage(TracingLevel.INFO, "Message Handling Successfull\n" + currentGameState.ToString());
+            
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Message Handling Successfull\n" + currentGameState.ToString());
             return true;
         }
 

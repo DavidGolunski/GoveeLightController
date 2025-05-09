@@ -52,6 +52,9 @@ namespace GoveeLightController {
             else {
                 Logger.Instance.LogMessage(TracingLevel.WARN, "Could not find the CounterStrike configuration file folder. Please copy the file \"gamestate_integration_goveelightcontroller.cfg\" to \"[Your Steam Folder]/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg\"");
             }
+            // Delete GameStateLog file if it exists
+            if(File.Exists("GameStateLog.txt"))
+                File.Delete("GameStateLog.txt");
 
             cancellationTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = cancellationTokenSource.Token;

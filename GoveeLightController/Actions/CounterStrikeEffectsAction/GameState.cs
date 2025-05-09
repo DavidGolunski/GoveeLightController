@@ -15,11 +15,22 @@ namespace GoveeLightController {
 
         GAME_WON,
         GAME_LOST,
+        GAME_TIED,
 
         HAS_DIED,
         HAS_KILLED,
         HAS_ASSISTED,
-        HAS_REVIVED
+        HAS_REVIVED,
+
+
+        SPECTATOR_FREECAM,
+        SPECTATOR_WATCHING_T,
+        SPECTATOR_WATCHING_CT,
+        SPECTATOR_ROUND_WON_T,
+        SPECTATOR_ROUND_WON_CT,
+        SPECTATOR_GAME_WON_T,
+        SPECTATOR_GAME_WON_CT,
+        SPECTATOR_GAME_TIED
     }
 
     public enum CsTeam {
@@ -27,13 +38,6 @@ namespace GoveeLightController {
         T,
         CT,
         BOTH
-    }
-
-    public enum CsActivities {
-        UNAVAILABLE,
-        MENU,
-        PLAYING,
-        TEXT_INPUT
     }
 
     public enum CsRoundPhases {
@@ -54,92 +58,54 @@ namespace GoveeLightController {
     public class GameState {
 
         // provider information
-        public ulong ProviderSteamID { get; private set; }
-        public ulong TimeStamp { get; private set; }
-
-        
+        private ulong ProviderSteamID { get; set; } = 0;
+        private ulong TimeStamp { get; set; } = 0;
 
         // player information
-        public bool HasPlayerInformation { get; private set; }
-        public ulong PlayerSteamID { get; private set; } 
-        public string PlayerName { get; private set; }
-        public int ObserverSlot { get; private set; }
-        public CsTeam PlayerTeam { get; private set; }
-        public CsActivities PlayerActivity { get; private set; }
-
-        // this field is actually not sent by the game. It is needed to store the players team, as the "player information" is about the player that is being spectated
-        public CsTeam ProviderTeam { get; private set; }
-        // this field is also not sent by the game. It is needed for the "if" statements in the effects. Is only updated in the "GetEvent" function
-        public bool IsProviderDead { get; private set; }
-
+        private bool HasPlayerInformation { get; set; } = false;
+        private ulong PlayerSteamID { get; set; } = 0;
+        private CsTeam PlayerTeam { get; set; } = CsTeam.UNAVAILABLE;
 
         // player state information
-        public bool HasPlayerStateInformation { get; private set; }
-        public int PlayerHealth { get; private set; }
-        public int PlayerFlashed { get; private set; }
-        public int RoundKills { get; private set; }
+        private bool HasPlayerStateInformation { get; set; } = false;
+        private int PlayerHealth { get; set; } = -1;
+        private int PlayerFlashed { get; set; } = -1;
+        private int RoundKills { get; set; } = -1;
+        private int RoundTotalDamage { get; set; } = -1; // this is only sent if the user is a spectator to a game (not a dead player spectating someone else). If this is set, then the provider is definetely spectating
 
         // round information
-        public bool HasRoundInformation { get; private set; }
-        public CsRoundPhases RoundPhase { get; private set; } //The phase countdown section contains the same information, but also includes additional phases like "warm up" or "bomb"
-        public CsTeam WinTeam { get; private set; }
+        private bool HasRoundInformation { get; set; } = false;
+        private CsRoundPhases RoundPhase { get; set; } = CsRoundPhases.UNAVAILABLE; //The phase countdown section contains the same information, but also includes additional phases like "warm up" or "bomb"
+        private CsTeam WinTeam { get; set; } = CsTeam.UNAVAILABLE;
 
         // map information
-        public bool HasMapInformation { get; private set; }
-        public CsMapPhases MapPhase { get; private set; }
-        public int Round { get; private set; }
+        private bool HasMapInformation { get; set; } = false;
+        private CsMapPhases MapPhase { get; set; } = CsMapPhases.UNAVAILABLE;
+        private int Round { get; set; } = -1;
 
 
-        public bool IsObserving {
-            get => ProviderSteamID > 0 && PlayerSteamID > 0 && ProviderSteamID != PlayerSteamID;
+        // Data not sent directly by CS, but calculated instead
+        private bool IsSpectator { get; set; } = false; // set if the provider is a spectator to the game (not only dead and watching teammates)
+
+
+        public bool IsProviderPlayingAndAlive {
+            get => ProviderSteamID > 0 && PlayerSteamID > 0 && ProviderSteamID == PlayerSteamID;
         }
 
 
-        // creates a "default" gamestate, in which nothing is set
-        public GameState() {
-            ProviderSteamID = 0;
-            TimeStamp = 0;
+        // this field is actually not sent by the game. It is needed to store the players team, as the "player information" is about the player that is being spectated
+        private CsTeam ProviderTeam { get; set; } = CsTeam.UNAVAILABLE;
 
-            HasPlayerInformation = false;
-            PlayerSteamID = 0;
-            PlayerName = null;
-            ObserverSlot = -1;
-            PlayerTeam = CsTeam.UNAVAILABLE;
-            PlayerActivity = CsActivities.UNAVAILABLE;
 
-            ProviderTeam = CsTeam.UNAVAILABLE;
-            IsProviderDead = true;
-
-            HasPlayerStateInformation = false;
-            PlayerHealth = -1;
-            PlayerFlashed = -1;
-            RoundKills = -1;
-
-            HasRoundInformation = false;
-            RoundPhase = CsRoundPhases.UNAVAILABLE;
-            WinTeam = CsTeam.UNAVAILABLE;
-            
-            HasMapInformation = false;
-            MapPhase = CsMapPhases.UNAVAILABLE;
-            Round = -1;
-        }
-
-        // parses data from the jsonPayload into the class automatically. Can not copy data from previous state
-        public GameState(JObject jsonPayload) : base() {
+        // parses data from the JSON Payload, also copying data from previous state if necessary
+        public GameState(JObject jsonPayload, GameState previousState = null) {
             ParseProviderInformation(jsonPayload);
             HasPlayerInformation = ParsePlayerInformation(jsonPayload);
             HasPlayerStateInformation = ParsePlayerStateInformation(jsonPayload);
             HasRoundInformation = ParseRoundInformation(jsonPayload);
             HasMapInformation = ParseMapInformation(jsonPayload);
-        }
 
-        // parses data from the JSON Payload, also copying data from previous state if necessary
-        public GameState(JObject jsonPayload, GameState previousState) : base() {
-            ParseProviderInformation(jsonPayload);
-            HasPlayerInformation = ParsePlayerInformation(jsonPayload, previousState);
-            HasPlayerStateInformation = ParsePlayerStateInformation(jsonPayload, previousState);
-            HasRoundInformation = ParseRoundInformation(jsonPayload, previousState);
-            HasMapInformation = ParseMapInformation(jsonPayload, previousState);
+            InitCalculatedFields(previousState);
         }
 
         // this is always sent. no need to look for "previous" or "added" things from a previous state
@@ -161,31 +127,10 @@ namespace GoveeLightController {
             return true;
         }
 
-        private bool ParsePlayerInformation(JObject jsonPayload, GameState previousGameState = null) {
-            if(jsonPayload == null) return false;
+        private bool ParsePlayerInformation(JObject jsonPayload) {
+            if(jsonPayload == null || jsonPayload["player"] == null)
+                return false;
 
-
-
-            if(jsonPayload["previously"]?["player"] != null) {
-                // if we need the previous gamestate, but it is null, we can not complete the "parsing" correctly
-                if(previousGameState == null) return false;
-
-                this.PlayerSteamID = previousGameState.PlayerSteamID;
-                this.PlayerName = previousGameState.PlayerName;
-                this.ObserverSlot = previousGameState.ObserverSlot;
-                this.PlayerTeam = previousGameState.PlayerTeam;
-                this.PlayerActivity = previousGameState.PlayerActivity;
-
-                this.ProviderTeam = previousGameState.ProviderTeam;
-                this.IsProviderDead = previousGameState.IsProviderDead;
-
-                if(jsonPayload["player"] == null)
-                    return true;
-            }
-
-
-            // parse player data from the payload
-            if(jsonPayload["player"] == null) return false;
 
             JToken player = jsonPayload["player"];
 
@@ -194,14 +139,6 @@ namespace GoveeLightController {
                 return false;
 
             PlayerSteamID = Convert.ToUInt64(steamId);
-
-            string name = player["name"]?.ToString();
-            if(!string.IsNullOrEmpty(name))
-                PlayerName = name;
-
-            string observerSlotString = player["observer_slot"]?.ToString();
-            if(!string.IsNullOrEmpty(observerSlotString))
-                ObserverSlot = Convert.ToInt32(observerSlotString);
 
             string playerTeamString = player["team"]?.ToString();
             if("T".Equals(playerTeamString)) {
@@ -215,41 +152,12 @@ namespace GoveeLightController {
                     ProviderTeam = CsTeam.CT;
             }
 
-            string playerActivity = player["activity"]?.ToString();
-            if("playing".Equals(playerActivity)) {
-                PlayerActivity = CsActivities.PLAYING;
-            }
-            else if("menu".Equals(playerActivity)) {
-                PlayerActivity = CsActivities.MENU;
-            }
-            else if("textinput".Equals(playerActivity)) {
-                PlayerActivity = CsActivities.TEXT_INPUT;
-            }
-            else if(!string.IsNullOrEmpty(playerActivity)) {
-                Logger.Instance.LogMessage(TracingLevel.WARN, "Unknown player activity: " + playerActivity);
-            }
-
             return true;
         }
 
-        private bool ParsePlayerStateInformation(JObject jsonPayload, GameState previousGameState = null) {
-            if(jsonPayload == null) return false;
+        private bool ParsePlayerStateInformation(JObject jsonPayload) {
+            if(jsonPayload == null || jsonPayload["player"]?["state"] == null) return false;
 
-
-            if(jsonPayload["previously"]?["state"] != null) {
-                if(previousGameState == null) return false;
-
-                this.PlayerHealth = previousGameState.PlayerHealth;
-                this.PlayerFlashed = previousGameState.PlayerFlashed;
-                this.RoundKills = previousGameState.RoundKills;
-
-                if(jsonPayload["player"]?["state"] == null)
-                    return true;
-            }
-
-
-            // parse player data from the payload
-            if(jsonPayload["player"]?["state"] == null)  return false;
 
             JToken state = jsonPayload["player"]["state"];
 
@@ -262,24 +170,14 @@ namespace GoveeLightController {
             string roundKills = state["round_kills"]?.ToString();
             if(!string.IsNullOrEmpty(roundKills)) RoundKills = Convert.ToInt32(roundKills);
 
+            string roundTotalDamage = state["round_totaldmg"]?.ToString();
+            if(!string.IsNullOrEmpty(roundTotalDamage)) RoundTotalDamage = Convert.ToInt32(roundTotalDamage); // if this field exists, the provider is a spectator to a game as they can see information that players of the game can't see
 
             return true;
         }
 
-        private bool ParseRoundInformation(JObject jsonPayload, GameState previousGameState = null) {
-            if(jsonPayload == null) return false;
-
-            if(jsonPayload["previously"]?["round"] != null) {
-                if(previousGameState == null) return false;
-
-                this.Round = previousGameState.Round;
-                this.WinTeam = previousGameState.WinTeam;
-
-                if(jsonPayload["round"] == null)
-                    return true;
-            }
-
-            if(jsonPayload["round"] == null) return false;
+        private bool ParseRoundInformation(JObject jsonPayload) {
+            if(jsonPayload == null || jsonPayload["round"] == null) return false;
 
             JToken round = jsonPayload["round"];
 
@@ -311,22 +209,9 @@ namespace GoveeLightController {
             return true;
         }
 
-        private bool ParseMapInformation(JObject jsonPayload, GameState previousGameState = null) {
-            if(jsonPayload == null) return false;
+        private bool ParseMapInformation(JObject jsonPayload) {
+            if(jsonPayload == null || jsonPayload["map"] == null) return false;
 
-
-            if(jsonPayload["previously"]?["map"] != null) {
-                if(previousGameState == null)  return false;
-
-                this.MapPhase = previousGameState.MapPhase;
-                this.Round = previousGameState.Round;
-
-                if(jsonPayload["map"] == null)
-                    return true;
-            }
-
-
-            if(jsonPayload["map"] == null) return false;
 
             JToken map = jsonPayload["map"];
             string mapPhaseString = map["phase"]?.ToString();
@@ -347,38 +232,186 @@ namespace GoveeLightController {
             string roundString = map["round"]?.ToString();
             if(!string.IsNullOrEmpty(roundString)) Round = Convert.ToInt32(roundString);
 
-
             return true;
         }
 
+        private void InitCalculatedFields(GameState previousState = null) {
+            // easy case to check if the provider is definetely spectating (not being a dead playing watching someone). No Provider Team is needed
+            if(HasPlayerStateInformation && RoundTotalDamage >= 0) {
+                IsSpectator = true;
+                ProviderTeam = CsTeam.UNAVAILABLE;
+                return;
+            }
+
+            // easy check to see if the provider is in the main menu. This should reset the Provider Team
+            if(HasPlayerInformation && !HasPlayerStateInformation && !HasMapInformation && !HasRoundInformation && ProviderSteamID == PlayerSteamID) {
+                IsSpectator = false;
+                ProviderTeam = CsTeam.UNAVAILABLE;
+                return;
+            }
+
+            // check if the player is spectating (also happens if the player is in a pre-game team selection). No Provider team is avaialble
+            if(!HasPlayerInformation && !HasPlayerStateInformation && HasMapInformation) {
+                IsSpectator = true;
+                ProviderTeam = CsTeam.UNAVAILABLE;
+                return;
+            }
+
+            // check if the Player is actively Playing
+            if(IsProviderPlayingAndAlive && HasMapInformation && HasRoundInformation) {
+                IsSpectator = false;
+                ProviderTeam = PlayerTeam;
+                return;
+            }
+
+            // check if the Player is Playing and spectating another player from their own team. This is the case if they don't have access to the RoundTotalDamage Stat
+            if(HasPlayerInformation && HasPlayerStateInformation && HasMapInformation && HasRoundInformation && RoundTotalDamage < 0) {
+                IsSpectator = false;
+                ProviderTeam = PlayerTeam;
+                return;
+            }
+
+            // from here we have to rely on the previous state to deliver missing information
+            if(previousState != null) {
+                IsSpectator = previousState.IsSpectator;
+                ProviderTeam = previousState.ProviderTeam;
+                return;
+            }
+
+            // if no previous state is given, assume the provider is a spectator, just to not provide confusing events
+            IsSpectator = true;
+            ProviderTeam = CsTeam.UNAVAILABLE;
+        }
+
+        /*
+            Main Menu Identifiers: PlayerData && No PlayerSateData && ProviderID == PlayerID && PlayerActivity == menu && No MapData && No RoundData
+            Pre-Game Team Selection Competitive Identifiers: No PlayerData && MapData && No RoundData && MapPhase == warmup
+            Pre-Game Team Selection Deathmatch Identifiers: No PlayerData && MapData && RoundData && MapPhase == live && RoundPhase == freezetime
+            BuyPhase Begin Identifiers: PlayerData && MapData && RoundData && ProviderID == PlayerID && MapPhase == live && RoundPhase == freezetime
+            Round Begin Identifiers: PlayerData && MapData && RoundData && ProviderID == PlayerID && MapPhase == live && RoundPhase == live
+            Player Died in Round Identifiers: PlayerData && MapData && RoundData && ProviderID == PlayerID && MapPhase == live && RoundPhase == live && PlayerHealth == 0
+            Round Ended Identifiers: PlayerData && MapData && RoundData && MapPhase == live && RoundPhase == over && RoundWinTeam Exists
+            Player Died from Bomb Winning the round: -- no wories here, just make sure that the round is over. no conflicting events expected if round conclusion is prioritized
+            Round Ended and now Half Time Identifier: PlayerData && MapData && RoundData && MapPhase == intermission && RoundPhase == over && WinTeamExists
+            Game Won Identifiers: PlayerData && MapData && RoundData && MapPhase == gameover && RoundPhase == freezetime && WinTeamExists
+            Spectating in FreeCam: No PlayerData && MapData && RoundData && round_totaldmg in PlayerStats Exists
+         */
         // returns the "most important" event that happened between this GameState and the previousGameState
         public CsEventTypes GetEvent(GameState previousGameState) {
-            // special case: the previous GameState is null. This means that the plugin was turned on mid game
+            if(this.Equals(previousGameState))
+                return CsEventTypes.NO_EVENT;
+
+            // always check for main menu first
+            // the information sent is always the same and does not need the previousGameState
+            if(HasPlayerInformation && !HasPlayerStateInformation
+                && !HasMapInformation && !HasRoundInformation
+                && ProviderSteamID == PlayerSteamID)
+                return CsEventTypes.ENTERRED_MAIN_MENU;
+
+
+            // From here we can assume the player is in game (or in a pregame teamselection)
+
+
+            // special case: there is no previous game state. Try to find out what the best approach for initializing the lights is
             if(previousGameState == null) {
-                if(HasPlayerInformation && !HasRoundInformation && !HasMapInformation && PlayerActivity == CsActivities.MENU)
-                    return CsEventTypes.ENTERRED_MAIN_MENU;
-                
-                if(HasPlayerInformation && !IsObserving) {
-                    if(ProviderTeam == CsTeam.T)
-                        return CsEventTypes.ROUND_STARTED_T;
-                    if(ProviderTeam == CsTeam.CT)
-                        return CsEventTypes.ROUND_STARTED_CT;
+                if(IsSpectator) {
+                    // if you join the game as a spectator and the round is in progress
+                    if(HasMapInformation && HasRoundInformation && MapPhase == CsMapPhases.LIVE && (RoundPhase == CsRoundPhases.LIVE || RoundPhase == CsRoundPhases.FREEZETIME)) {
+                        if(!HasPlayerInformation)
+                            return CsEventTypes.SPECTATOR_FREECAM;
+
+                        if(PlayerTeam == CsTeam.T)
+                            return CsEventTypes.SPECTATOR_WATCHING_T;
+
+                        if(PlayerTeam == CsTeam.CT)
+                            return CsEventTypes.SPECTATOR_WATCHING_CT;
+                    }
+
+                    // it probably does not make sense to throw an event. As it would probably be heavily delayed anyways.
+                    return CsEventTypes.NO_EVENT;
                 }
+
+                // if the provider is dead, don't throw an event. Wait until the next round
+                if(!IsProviderPlayingAndAlive)
+                    return CsEventTypes.NO_EVENT;
+
+                if(ProviderTeam == CsTeam.T)
+                    return CsEventTypes.ROUND_STARTED_T;
+                if(ProviderTeam == CsTeam.CT)
+                    return CsEventTypes.ROUND_STARTED_CT;
+
                 return CsEventTypes.NO_EVENT;
             }
 
-
-
-
-            if(this == previousGameState) return CsEventTypes.NO_EVENT;
-
-
-            // game ended events
-            if(HasMapInformation && previousGameState.HasMapInformation
-                && HasPlayerInformation && HasRoundInformation
-                && MapPhase == CsMapPhases.GAME_OVER && previousGameState.MapPhase == CsMapPhases.LIVE) {
-
+            // first go through events if the provider is a spectator
+            if(IsSpectator) {
                 
+                // Game Ended Event
+                if(HasMapInformation && previousGameState.HasMapInformation
+                    && HasRoundInformation && previousGameState.HasRoundInformation
+                    && MapPhase == CsMapPhases.GAME_OVER && previousGameState.MapPhase != CsMapPhases.GAME_OVER) {
+
+                    if(WinTeam == CsTeam.T)
+                        return CsEventTypes.SPECTATOR_GAME_WON_T;
+                    if(WinTeam == CsTeam.CT)
+                        return CsEventTypes.SPECTATOR_GAME_WON_CT;
+                    return CsEventTypes.SPECTATOR_GAME_TIED;
+                }
+
+                // Round Ended Event
+                if(HasMapInformation && previousGameState.HasMapInformation
+                    && HasRoundInformation && previousGameState.HasRoundInformation
+                    && (MapPhase == CsMapPhases.LIVE || MapPhase == CsMapPhases.INTERMISSION)
+                    && RoundPhase == CsRoundPhases.OVER && previousGameState.RoundPhase != CsRoundPhases.OVER) {
+
+                    if(WinTeam == CsTeam.T)
+                        return CsEventTypes.SPECTATOR_ROUND_WON_T;
+                    if(WinTeam == CsTeam.CT)
+                        return CsEventTypes.SPECTATOR_ROUND_WON_CT;
+
+                    Logger.Instance.LogMessage(TracingLevel.WARN, "The round ended while provider was spectating, but no WinTeam was available (" + WinTeam.ToString() + ")");
+                    return CsEventTypes.NO_EVENT;
+                }
+
+                // Switched to Freecam
+                if(!HasPlayerInformation && previousGameState.HasPlayerInformation
+                    && !HasPlayerStateInformation && previousGameState.HasPlayerStateInformation) {
+                    return CsEventTypes.SPECTATOR_FREECAM;
+                }
+
+                // Switched to Spectate a player
+                if(HasPlayerInformation && HasPlayerStateInformation) {
+
+                    // if was freecam before
+                    if(!previousGameState.HasPlayerInformation) {
+                        if(PlayerTeam == CsTeam.T)
+                            return CsEventTypes.SPECTATOR_WATCHING_T;
+                        if(PlayerTeam == CsTeam.CT)
+                            return CsEventTypes.SPECTATOR_WATCHING_CT;
+
+                        Logger.Instance.LogMessage(TracingLevel.WARN, "The provider switched to specating a player, but the Player did not have a team (" + PlayerTeam.ToString() + ")");
+                        return CsEventTypes.NO_EVENT;
+                    }
+
+                    // if switched from ct to t
+                    if(previousGameState.PlayerTeam == CsTeam.CT && PlayerTeam == CsTeam.T)
+                        return CsEventTypes.SPECTATOR_WATCHING_T;
+                    // if switched from t to ct
+                    if(previousGameState.PlayerTeam == CsTeam.T && PlayerTeam == CsTeam.CT)
+                        return CsEventTypes.SPECTATOR_WATCHING_CT;
+
+                    // no switch in teams happend
+                    return CsEventTypes.NO_EVENT;
+                }
+
+                return CsEventTypes.NO_EVENT;
+            }
+
+            // Game Ended Events
+            if(HasMapInformation && previousGameState.HasMapInformation
+                && HasRoundInformation && previousGameState.HasRoundInformation
+                && MapPhase == CsMapPhases.GAME_OVER && previousGameState.MapPhase != CsMapPhases.GAME_OVER) {
+
                 if(WinTeam == CsTeam.T && ProviderTeam == CsTeam.T) {
                     return CsEventTypes.GAME_WON;
                 }
@@ -392,214 +425,78 @@ namespace GoveeLightController {
                     return CsEventTypes.GAME_LOST;
                 }
                 else {
-                    Logger.Instance.LogMessage(TracingLevel.WARN, "The game has concluded, but we were unable to determine who has won!\n" + this.ToString());
-                    return CsEventTypes.NO_EVENT;
+                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "GameState - Unable to determine who won. ProviderTeam: " + ProviderTeam.ToString() + " WinTeam: " + WinTeam.ToString());
+                    return CsEventTypes.GAME_TIED;
                 }
             }
-            /*
-            else {
-                string message = "Game Ended Event failed because: ";
-                if(!HasMapInformation)
-                    message += "[HasMapInformation was False]";
-                if(!previousGameState.HasMapInformation)
-                    message += "[previousGameState.HasMapInformation was False]";
-                if(!HasPlayerInformation)
-                    message += "[HasPlayerInformation was False]";
-                if(!HasRoundInformation)
-                    message += "[HasRoundInformation was False]";
-                if(MapPhase != CsMapPhases.GAME_OVER)
-                    message += "[MapPhase was not GAME_OVER (" + MapPhase + ")]";
-                if(previousGameState.MapPhase != CsMapPhases.LIVE)
-                    message += "[previousGameState.MapPhase was not LIVE (" + previousGameState.MapPhase + ")]";
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }*/
 
-            // round ended events
-            if(HasRoundInformation && previousGameState.HasRoundInformation
-                && HasPlayerInformation && HasMapInformation
+            // Round Ended Events
+            if(HasMapInformation && previousGameState.HasMapInformation
+                && HasRoundInformation && previousGameState.HasRoundInformation
+                && (MapPhase == CsMapPhases.LIVE || MapPhase == CsMapPhases.INTERMISSION)
                 && RoundPhase == CsRoundPhases.OVER && previousGameState.RoundPhase != CsRoundPhases.OVER) {
-                if(ProviderTeam == WinTeam) {
+
+                if(ProviderTeam == WinTeam)
                     return CsEventTypes.ROUND_WON;
-                }
-                else {
-                    return CsEventTypes.ROUND_LOST;
-                }
+                return CsEventTypes.ROUND_LOST;
             }
-            /*
-            else {
-                string message = "Round Ended Event failed because: ";
-                if(!HasRoundInformation)
-                    message += "[HasRoundInformation was False]";
-                if(!previousGameState.HasRoundInformation)
-                    message += "[previousGameState.HasRoundInformation was False]";
-                if(!HasPlayerInformation)
-                    message += "[HasPlayerInformation was False]";
-                if(!HasMapInformation)
-                    message += "[HasMapInformation was False]";
-                if(RoundPhase != CsRoundPhases.OVER)
-                    message += "[RoundPhase was not OVER (" + RoundPhase + ")]";
-                if(previousGameState.RoundPhase == CsRoundPhases.OVER)
-                    message += "[previousGameState.RoundPhase was OVER (" + previousGameState.RoundPhase + ")]";
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }*/
 
-            // round started events
-            if(HasRoundInformation && previousGameState.HasRoundInformation
-                && HasPlayerInformation
-                && RoundPhase == CsRoundPhases.FREEZETIME && previousGameState.RoundPhase != CsRoundPhases.FREEZETIME) {
-                if(PlayerTeam == CsTeam.T) {
-                    IsProviderDead = false;
+            // Round Started Events
+            if(HasPlayerInformation && HasMapInformation && HasRoundInformation
+                && ((RoundPhase == CsRoundPhases.FREEZETIME && previousGameState.RoundPhase != CsRoundPhases.FREEZETIME) // if round started normaly
+                || (ProviderTeam != CsTeam.UNAVAILABLE && ProviderTeam != previousGameState.ProviderTeam)) // if switched within a round or a non competetive gamemode is selected
+                ) {
+
+                if(ProviderTeam == CsTeam.T)
                     return CsEventTypes.ROUND_STARTED_T;
-                }
-                else {
-                    IsProviderDead = false;
+
+                if(ProviderTeam == CsTeam.CT)
                     return CsEventTypes.ROUND_STARTED_CT;
-                }
+
+                Logger.Instance.LogMessage(TracingLevel.WARN, "Wanted to send Round Started Event, but ProviderTeam was not a valid Team.\n" + this.ToString());
+                return CsEventTypes.NO_EVENT;
             }
-            /*
-            else {
-                string message = "Round Started Event failed because: ";
-                if(!HasRoundInformation)
-                    message += "[HasRoundInformation was False]";
-                if(!previousGameState.HasRoundInformation)
-                    message += "[previousGameState.HasRoundInformation was False]";
-                if(!HasPlayerInformation)
-                    message += "[HasPlayerInformation was False]";
-                if(RoundPhase != CsRoundPhases.FREEZETIME)
-                    message += "[RoundPhase was not FREEZETIME (" + RoundPhase + ")]";
-                if(previousGameState.RoundPhase == CsRoundPhases.FREEZETIME)
-                    message += "[previousGameState.RoundPhase was FREEZETIME (" + previousGameState.RoundPhase + ")]";
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }*/
-
-            // team select events
-            if(!IsObserving && !previousGameState.IsObserving
-                && HasPlayerInformation
-                && ProviderTeam != previousGameState.ProviderTeam) {
-
-                if(ProviderTeam == CsTeam.T) {
-                    IsProviderDead = true;
-                    return CsEventTypes.ROUND_STARTED_T;
-                }
-                if(ProviderTeam == CsTeam.CT) {
-                    IsProviderDead = true;
-                    return CsEventTypes.ROUND_STARTED_CT;
-                }
-                    
-            }/*
-            else {
-                string message = "Team Select Event failed because: ";
-                if(IsObserving)
-                    message += "[IsObserving was True]";
-                if(previousGameState.IsObserving)
-                    message += "[previousGameState.IsObserving was True]";
-                if(!HasPlayerInformation)
-                    message += "[HasPlayerInformation was False]";
-                if(ProviderTeam == previousGameState.ProviderTeam)
-                    message += "[ProviderTeam was not different from previousGameState.ProviderTeam (ProviderTeam: " + ProviderTeam + ", previousGameState.ProviderTeam: " + previousGameState.ProviderTeam + ")]";
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }*/
-
-
 
             // kill events
-            if(!IsObserving && HasPlayerStateInformation && previousGameState.HasPlayerInformation && RoundKills > previousGameState.RoundKills)
+            if(HasMapInformation && IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerInformation && RoundKills > previousGameState.RoundKills)
                 return CsEventTypes.HAS_KILLED;
-            /*
-            else {
-                string message = "Player Kill Event failed because: ";
-                if(IsObserving)
-                    message += "[IsObserving was True]";
-                if(!HasPlayerStateInformation)
-                    message += "[HasPlayerStateInformation was False]";
-                if(!previousGameState.HasPlayerInformation)
-                    message += "[previousGameState.HasPlayerInformation was False]";
-                if(RoundKills <= previousGameState.RoundKills)
-                    message += "[RoundKills was not greater than previousGameState.RoundKills (RoundKills: " + RoundKills + ", previousGameState.RoundKills: " + previousGameState.RoundKills + ")]";
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }*/
 
             // death events
-            if(!IsObserving && PlayerHealth == 0 && !previousGameState.IsObserving && previousGameState.PlayerHealth > 0) {
-                IsProviderDead = true;
+            if(HasMapInformation && IsProviderPlayingAndAlive && PlayerHealth == 0 && previousGameState.PlayerHealth > 0)
                 return CsEventTypes.HAS_DIED;
-            }
-            /*
-            else {
-                string message = "Player Death Event failed because: ";
-                if(IsObserving)
-                    message += "[IsObserving was True]";
-                if(PlayerHealth != 0)
-                    message += "[PlayerHealth was not 0 (" + PlayerHealth + ")]";
-                if(previousGameState.IsObserving)
-                    message += "[previousGameState.IsObserving was True]";
-                if(previousGameState.PlayerHealth <= 0)
-                    message += "[previousGameState.PlayerHealth was not greater than 0 (" + previousGameState.PlayerHealth + ")]";
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }*/
-
 
             // revive events
-            if(IsProviderDead && !IsObserving && PlayerHealth > 0) {
-                IsProviderDead = false;
+            if(HasMapInformation && IsProviderPlayingAndAlive && !previousGameState.IsProviderPlayingAndAlive)
                 return CsEventTypes.HAS_REVIVED;
-            }
-            /*
-            else {
-                string message = "Provider Revive Event failed because: ";
-                if(!IsProviderDead)
-                    message += "[IsProviderDead was False]";
-                if(IsObserving)
-                    message += "[IsObserving was True]";
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }*/
 
-
-            // main menu switch events
-            if(HasPlayerInformation && !HasPlayerStateInformation && !HasMapInformation && !HasRoundInformation && PlayerActivity == CsActivities.MENU)
-                return CsEventTypes.ENTERRED_MAIN_MENU;
-            /*
-            else {
-                string message = "Player Menu Activity Event failed because: ";
-                if(!HasPlayerInformation)
-                    message += "[HasPlayerInformation was False]";
-                if(HasPlayerStateInformation)
-                    message += "[HasPlayerStateInformation was True]";
-                if(HasMapInformation)
-                    message += "[HasMapInformation was True]";
-                if(HasRoundInformation)
-                    message += "[HasRoundInformation was True]";
-                if(PlayerActivity != CsActivities.MENU)
-                    message += "[PlayerActivity was not MENU (" + PlayerActivity + ")]";
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, message);
-            }*/
 
             return CsEventTypes.NO_EVENT;
         }
 
+
+
+
         public override bool Equals(object obj) {
-            if(obj.GetType() != this.GetType()) return false;
+            if(obj == null || obj.GetType() != this.GetType()) return false;
             GameState otherGameState = obj as GameState;
 
             return this.ProviderSteamID == otherGameState.ProviderSteamID
                 && this.HasPlayerInformation == otherGameState.HasPlayerInformation
                 && this.PlayerSteamID == otherGameState.PlayerSteamID
-                && this.PlayerName == otherGameState.PlayerName
-                && this.ObserverSlot == otherGameState.ObserverSlot
                 && this.PlayerTeam == otherGameState.PlayerTeam
-                && this.PlayerActivity == otherGameState.PlayerActivity
-                && this.ProviderTeam == otherGameState.ProviderTeam
-                && this.IsProviderDead == otherGameState.IsProviderDead
                 && this.HasPlayerStateInformation == otherGameState.HasPlayerStateInformation
                 && this.PlayerHealth == otherGameState.PlayerHealth
                 && this.PlayerFlashed == otherGameState.PlayerFlashed
                 && this.RoundKills == otherGameState.RoundKills
+                && this.RoundTotalDamage == otherGameState.RoundTotalDamage
                 && this.HasRoundInformation == otherGameState.HasRoundInformation
                 && this.RoundPhase == otherGameState.RoundPhase
                 && this.WinTeam == otherGameState.WinTeam
                 && this.HasMapInformation == otherGameState.HasMapInformation
                 && this.MapPhase == otherGameState.MapPhase
-                && this.Round == otherGameState.Round;
+                && this.Round == otherGameState.Round
+                && this.IsSpectator == otherGameState.IsSpectator
+                && this.ProviderTeam == otherGameState.ProviderTeam;
         }
 
         public override int GetHashCode() {
@@ -607,25 +504,23 @@ namespace GoveeLightController {
             {
                 int hash = 17;
 
-                hash = hash * 23 + (ProviderSteamID.GetHashCode());
+                hash = hash * 23 + ProviderSteamID.GetHashCode();
                 hash = hash * 23 + HasPlayerInformation.GetHashCode();
-                hash = hash * 23 + (PlayerSteamID.GetHashCode());
-                hash = hash * 23 + (PlayerName?.GetHashCode() ?? 0);
-                hash = hash * 23 + ObserverSlot.GetHashCode();
-                hash = hash * 23 + (PlayerTeam.GetHashCode());
-                hash = hash * 23 + (PlayerActivity.GetHashCode());
-                hash = hash * 23 + (ProviderTeam.GetHashCode());
-                hash = hash * 23 + IsProviderDead.GetHashCode();
+                hash = hash * 23 + PlayerSteamID.GetHashCode();
+                hash = hash * 23 + PlayerTeam.GetHashCode();
                 hash = hash * 23 + HasPlayerStateInformation.GetHashCode();
                 hash = hash * 23 + PlayerHealth.GetHashCode();
                 hash = hash * 23 + PlayerFlashed.GetHashCode();
                 hash = hash * 23 + RoundKills.GetHashCode();
+                hash = hash * 23 + RoundTotalDamage.GetHashCode();
                 hash = hash * 23 + HasRoundInformation.GetHashCode();
-                hash = hash * 23 + (RoundPhase.GetHashCode());
-                hash = hash * 23 + (WinTeam.GetHashCode());
+                hash = hash * 23 + RoundPhase.GetHashCode();
+                hash = hash * 23 + WinTeam.GetHashCode();
                 hash = hash * 23 + HasMapInformation.GetHashCode();
-                hash = hash * 23 + (MapPhase.GetHashCode());
+                hash = hash * 23 + MapPhase.GetHashCode();
                 hash = hash * 23 + Round.GetHashCode();
+                hash = hash * 23 + IsSpectator.GetHashCode();
+                hash = hash * 23 + ProviderTeam.GetHashCode();
 
                 return hash;
             }
@@ -638,15 +533,12 @@ namespace GoveeLightController {
             output += "\n\tProviderSteamID: " + ProviderSteamID;
             output += "\n\tTimesStamp: " + TimeStamp;
             output += "\n\tProviderTeam: " + ProviderTeam;
-            output += "\n\tIsProviderDead: " + IsProviderDead; 
+            output += "\n\tIsSpectator: " + IsSpectator;
 
             output += "\nHasPlayerInformation: " + HasPlayerInformation;
             if(HasPlayerInformation) {
                 output += "\n\tPlayerSteamID: " + PlayerSteamID;
-                output += "\n\tPlayerName: " + PlayerName;
-                output += "\n\tObserverSlot: " + ObserverSlot;
                 output += "\n\tPlayerTeam: " + PlayerTeam.ToString();
-                output += "\n\tPlayerActivity: " + PlayerActivity.ToString();
             }
 
             output += "\nHasPlayerStateInformation: " + HasPlayerStateInformation;
@@ -654,6 +546,7 @@ namespace GoveeLightController {
                 output += "\n\tPlayerHealth: " + PlayerHealth;
                 output += "\n\tPlayerFlashed: " + PlayerFlashed;
                 output += "\n\tRoundKills: " + RoundKills;
+                output += "\n\tRoundTotalDamage: " + RoundTotalDamage;
             }
 
             output += "\nHasRoundInformation: " + HasRoundInformation;

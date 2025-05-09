@@ -322,9 +322,7 @@ namespace GoveeLightController {
                 cancellationTokenSource.Cancel(); // Signal cancellation
 
                 // wait on the script task to exit gracefully
-                if(ScriptActionTask != null) {
-                    ScriptActionTask.GetAwaiter().GetResult();
-                }
+                ScriptActionTask?.GetAwaiter().GetResult();
                 
                 cancellationTokenSource.Dispose();
                 cancellationTokenSource = null;
