@@ -22,6 +22,12 @@ namespace GoveeLightController {
         HAS_ASSISTED,
         HAS_REVIVED,
 
+        STARTED_FLASHED,
+        STARTED_SMOKED,
+        STARTED_BURNING,
+
+        STOPPED_SMOKED,
+        STOPPED_BURNING,
 
         SPECTATOR_FREECAM,
         SPECTATOR_WATCHING_T,
@@ -70,6 +76,8 @@ namespace GoveeLightController {
         private bool HasPlayerStateInformation { get; set; } = false;
         private int PlayerHealth { get; set; } = -1;
         private int PlayerFlashed { get; set; } = -1;
+        private int PlayerSmoked { get; set; } = -1;
+        private int PlayerBurning { get; set; } = -1;
         private int RoundKills { get; set; } = -1;
         private int RoundTotalDamage { get; set; } = -1; // this is only sent if the user is a spectator to a game (not a dead player spectating someone else). If this is set, then the provider is definetely spectating
 
@@ -89,8 +97,11 @@ namespace GoveeLightController {
         private bool IsSpectator { get; set; } = false; // set if the provider is a spectator to the game (not only dead and watching teammates)
 
 
-        public bool IsProviderPlayingAndAlive {
+        private bool IsProviderPlaying {
             get => ProviderSteamID > 0 && PlayerSteamID > 0 && ProviderSteamID == PlayerSteamID;
+        }
+        public bool IsProviderPlayingAndAlive {
+            get => IsProviderPlaying && HasPlayerStateInformation && PlayerHealth > 0;
         }
 
 
@@ -167,6 +178,12 @@ namespace GoveeLightController {
 
             string flashedString = state["flashed"]?.ToString();
             if(!string.IsNullOrEmpty(flashedString)) PlayerFlashed = Convert.ToInt32(flashedString);
+
+            string smokedString = state["smoked"]?.ToString();
+            if(!string.IsNullOrEmpty(smokedString)) PlayerSmoked = Convert.ToInt32(smokedString);
+
+            string burningString = state["burning"]?.ToString();
+            if(!string.IsNullOrEmpty(burningString)) PlayerBurning = Convert.ToInt32(burningString);
 
             string roundKills = state["round_kills"]?.ToString();
             if(!string.IsNullOrEmpty(roundKills)) RoundKills = Convert.ToInt32(roundKills);
@@ -262,7 +279,7 @@ namespace GoveeLightController {
             }
 
             // check if the Player is actively Playing
-            if(IsProviderPlayingAndAlive && HasMapInformation && HasRoundInformation) {
+            if(IsProviderPlaying && HasMapInformation && HasRoundInformation) {
                 IsSpectator = false;
                 ProviderTeam = PlayerTeam;
                 return;
@@ -336,7 +353,7 @@ namespace GoveeLightController {
                 }
 
                 // if the provider is dead, don't throw an event. Wait until the next round
-                if(!IsProviderPlayingAndAlive)
+                if(!IsProviderPlaying)
                     return CsEventTypes.NO_EVENT;
 
                 if(ProviderTeam == CsTeam.T)
@@ -465,18 +482,44 @@ namespace GoveeLightController {
                 return CsEventTypes.NO_EVENT;
             }
 
+            // flash events
+            if(IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
+                && previousGameState.PlayerFlashed < PlayerFlashed && PlayerFlashed > 0)
+                return CsEventTypes.STARTED_FLASHED;
+
             // kill events
             if(HasMapInformation && IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerInformation && RoundKills > previousGameState.RoundKills)
                 return CsEventTypes.HAS_KILLED;
 
             // death events
-            if(HasMapInformation && IsProviderPlayingAndAlive && PlayerHealth == 0 && previousGameState.PlayerHealth > 0)
+            if(HasMapInformation && IsProviderPlaying && PlayerHealth == 0 && previousGameState.PlayerHealth > 0)
                 return CsEventTypes.HAS_DIED;
 
             // revive events
             if(HasMapInformation && IsProviderPlayingAndAlive && !previousGameState.IsProviderPlayingAndAlive)
                 return CsEventTypes.HAS_REVIVED;
 
+            // stopped smoke events
+            if(IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
+                && previousGameState.PlayerSmoked > PlayerSmoked && PlayerSmoked == 0)
+                return CsEventTypes.STOPPED_SMOKED;
+
+            // started smoked events
+            if(IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
+                && previousGameState.PlayerSmoked < PlayerSmoked && PlayerSmoked > 0)
+                return CsEventTypes.STARTED_SMOKED;
+
+            // stopped burning events
+            if(IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
+                && previousGameState.PlayerBurning > PlayerBurning && PlayerBurning == 0)
+                return CsEventTypes.STOPPED_BURNING;
+
+            // started burning events
+            if(IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
+                && previousGameState.PlayerBurning < PlayerBurning && PlayerBurning > 0)
+                return CsEventTypes.STARTED_BURNING;
+
+          
 
             return CsEventTypes.NO_EVENT;
         }
@@ -495,6 +538,8 @@ namespace GoveeLightController {
                 && this.HasPlayerStateInformation == otherGameState.HasPlayerStateInformation
                 && this.PlayerHealth == otherGameState.PlayerHealth
                 && this.PlayerFlashed == otherGameState.PlayerFlashed
+                && this.PlayerSmoked == otherGameState.PlayerSmoked
+                && this.PlayerBurning == otherGameState.PlayerBurning
                 && this.RoundKills == otherGameState.RoundKills
                 && this.RoundTotalDamage == otherGameState.RoundTotalDamage
                 && this.HasRoundInformation == otherGameState.HasRoundInformation
@@ -520,6 +565,8 @@ namespace GoveeLightController {
                 hash = hash * 23 + HasPlayerStateInformation.GetHashCode();
                 hash = hash * 23 + PlayerHealth.GetHashCode();
                 hash = hash * 23 + PlayerFlashed.GetHashCode();
+                hash = hash * 23 + PlayerSmoked.GetHashCode();
+                hash = hash * 23 + PlayerBurning.GetHashCode();
                 hash = hash * 23 + RoundKills.GetHashCode();
                 hash = hash * 23 + RoundTotalDamage.GetHashCode();
                 hash = hash * 23 + HasRoundInformation.GetHashCode();
@@ -555,6 +602,8 @@ namespace GoveeLightController {
             if(HasPlayerStateInformation) {
                 output += "\n\tPlayerHealth: " + PlayerHealth;
                 output += "\n\tPlayerFlashed: " + PlayerFlashed;
+                output += "\n\tPlayerSmoked: " + PlayerSmoked;
+                output += "\n\tPlayerBurning: " + PlayerBurning;
                 output += "\n\tRoundKills: " + RoundKills;
                 output += "\n\tRoundTotalDamage: " + RoundTotalDamage;
             }

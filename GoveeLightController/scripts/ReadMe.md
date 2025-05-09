@@ -130,24 +130,40 @@ For Counter Strike and League of Legends you can create a __custom lightshow bas
 The Effect Managers for the games will look for specific light scripts, that will be executed if a particular event happens.  
 You can __change what the light scripts will do__ as well.  
 __If multiple events happen at the same time, only the most "relevant" event will be selected!__  
-E.g. If you make a "Kill" in League of Legends, which is also a "PentaKill", only the "PentaKill" Event will trigge
+E.g. If you make a "Kill" in League of Legends, which is also a "PentaKill", only the "PentaKill" Event will trigger  
+E.g. If you win a round in CS, but this was the last round, only the "GameWon" Event will trigger
 
 ### Counter Strike Events
 All Counter Strike Events can be found in "Documents/davidgolunski/goveelightcontroller/CounterStrikeEffects.json".  
 The following list is _ordered by the priority in which the events will be triggered_.
 
-1. __CS@GAME_WON__: Happens if you win a game.
-2. __CS@GAME_LOST__: Happens if you loose a game.
-3. __CS@ROUND_WON__: Happens if you win a round.
-4. __CS@ROUND_LOST__: Happens if you loose a round.
-5. __CS@ROUND_STARTED_T__: Happens if a new round (or warmup) starts in which you are in the "Terrorist" Team.
-6. __CS@ROUND_STARTED_CT__: Happens if a new round (or warmup) starts in which you are in the "CounterTerrorist" Team.
-7. __CS@HAS_KILLED__: Happens if you kill an enemy.
-8. __CS@HAS_DIED__: Happens if you die in game.
-9. __CS@HAS_REVIVED__: Happens if you revive in game (this can happen in gamemodes like Deathmatch or Arms Race).
-10. __CS@ENTERRED_MAIN_MENU__; Happens if you enter the main menu.
-11. __CS@INTEGRAITON_STARTED__: Happens when you start the integration.
-12. __CS@INTEGRATION_STOPPED__: Happens when you stop the integration.
+1. __CS@ENTERRED_MAIN_MENU__: Happens when you go into the main menu of Counterstrike.
+2. __CS@SPECTATOR_GAME_WON_T__: Happens if you are spectating and the terrorits win the game.
+3. __CS@SPECATOR_GAME_WON_CT__: Happens if you are spectating and the counter-terrorists wind the game.
+4. __CS@SPECTATOR_GAME_TIED__: Happens if you are spectating and the game ends in a tie.
+5. __CS@SPECTATOR_ROUND_WON_T__: Happens if you are spectating and the terrorists win the round.
+6. __CS@SPECTATOR_ROUND_WON_CT__: Happens if you are spectating and the counter-terrorists win the round.
+7. __CS@SPECTATOR_FREECAM__: Happens if you are spectating and you switch to the free camera.
+8. __CS@SPECTATOR_WATCHING_T__: Happens if you are spectating and you switch to a terrorists camera.
+9. __CS@SPECTATOR_WATCHING_CT__: Happens if you are spectating and you switch to a counter-terrorists.
+10. __CS@GAME_WON__: Happens if you win a game.
+11. __CS@GAME_LOST__: Happens if you loose a game.
+12. __CS@GAME_TIED__: Happens if you tie a game.
+13. __CS@ROUND_WON__: Happens if you win a round.
+14. __CS@ROUND_LOST__: Happens if you loose a round.
+15. __CS@ROUND_STARTED_T__: Happens if a new round (or warmup) starts in which you are in the "Terrosit" Team.
+16. __CS@ROUND_STARTED_CT__: Happens if a new round (or warmup) starts in which you are in the "Terrosit" Team.
+17. __CS@STARTED_FLASHED__: Happens when you get flashed.
+18. __CS@HAS_KILLED__: Happens if you kill an enemy.
+19. __CS@HAS_DIED__: Happens when you die in game.
+20. __CS@HAS_REVIVED__: Happens if you revive in game (this can happen in gamemodes like Deathmatch or Arms Race).
+21. __CS@STOPPED_SMOKED__: Happens if you step out of a smoke.
+22. __CS@STARTED_SMOKED__: Happens if you step into a smoke.
+23. __CS@STOPPED_BURNING__: Happens if you step out of a molotov.
+24. __CS@STARTED_BURNING__: Happens if you step into a molotov.
+25. __CS@INTEGRAITON_STARTED__: Happens when you start the integration.
+26. __CS@INTEGRATION_STOPPED__: Happens when you stop the integration.
+
 
 
 ### League of Legends Events
