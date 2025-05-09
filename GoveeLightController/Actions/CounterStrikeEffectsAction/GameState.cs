@@ -81,7 +81,8 @@ namespace GoveeLightController {
         // map information
         private bool HasMapInformation { get; set; } = false;
         private CsMapPhases MapPhase { get; set; } = CsMapPhases.UNAVAILABLE;
-        private int Round { get; set; } = -1;
+        private int ScoreTeamT { get; set; } = -1;
+        private int ScoreTeamCT { get; set; } = -1;
 
 
         // Data not sent directly by CS, but calculated instead
@@ -229,8 +230,11 @@ namespace GoveeLightController {
                 MapPhase = CsMapPhases.GAME_OVER;
             }
 
-            string roundString = map["round"]?.ToString();
-            if(!string.IsNullOrEmpty(roundString)) Round = Convert.ToInt32(roundString);
+            string scoreTeamTString = map["team_t"]?["score"]?.ToString();
+            if(!string.IsNullOrEmpty(scoreTeamTString)) ScoreTeamT = Convert.ToInt32(scoreTeamTString);
+
+            string scoreTeamCTString = map["team_ct"]?["score"]?.ToString();
+            if(!string.IsNullOrEmpty(scoreTeamCTString)) ScoreTeamCT = Convert.ToInt32(scoreTeamCTString);
 
             return true;
         }
@@ -351,10 +355,11 @@ namespace GoveeLightController {
                     && HasRoundInformation && previousGameState.HasRoundInformation
                     && MapPhase == CsMapPhases.GAME_OVER && previousGameState.MapPhase != CsMapPhases.GAME_OVER) {
 
-                    if(WinTeam == CsTeam.T)
+                    if(ScoreTeamT > ScoreTeamCT)
                         return CsEventTypes.SPECTATOR_GAME_WON_T;
-                    if(WinTeam == CsTeam.CT)
+                    if(ScoreTeamCT > ScoreTeamCT)
                         return CsEventTypes.SPECTATOR_GAME_WON_CT;
+
                     return CsEventTypes.SPECTATOR_GAME_TIED;
                 }
 
@@ -400,6 +405,12 @@ namespace GoveeLightController {
                     if(previousGameState.PlayerTeam == CsTeam.T && PlayerTeam == CsTeam.CT)
                         return CsEventTypes.SPECTATOR_WATCHING_CT;
 
+                    // if provider was not spectating before
+                    if(!previousGameState.IsSpectator && PlayerTeam == CsTeam.T)
+                        return CsEventTypes.SPECTATOR_WATCHING_T;
+                    if(!previousGameState.IsSpectator && PlayerTeam == CsTeam.CT)
+                        return CsEventTypes.SPECTATOR_WATCHING_CT;
+
                     // no switch in teams happend
                     return CsEventTypes.NO_EVENT;
                 }
@@ -412,22 +423,19 @@ namespace GoveeLightController {
                 && HasRoundInformation && previousGameState.HasRoundInformation
                 && MapPhase == CsMapPhases.GAME_OVER && previousGameState.MapPhase != CsMapPhases.GAME_OVER) {
 
-                if(WinTeam == CsTeam.T && ProviderTeam == CsTeam.T) {
+                if(ProviderTeam == CsTeam.T && ScoreTeamT > ScoreTeamCT) {
                     return CsEventTypes.GAME_WON;
                 }
-                else if(WinTeam == CsTeam.CT && ProviderTeam == CsTeam.CT) {
+                else if(ProviderTeam == CsTeam.CT && ScoreTeamCT > ScoreTeamT) {
                     return CsEventTypes.GAME_WON;
                 }
-                else if(WinTeam == CsTeam.T && ProviderTeam == CsTeam.CT) {
+                else if(ProviderTeam == CsTeam.CT && ScoreTeamT > ScoreTeamCT) {
                     return CsEventTypes.GAME_LOST;
                 }
-                else if(WinTeam == CsTeam.CT && ProviderTeam == CsTeam.T) {
+                else if(ProviderTeam == CsTeam.T && ScoreTeamCT > ScoreTeamT) {
                     return CsEventTypes.GAME_LOST;
                 }
-                else {
-                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "GameState - Unable to determine who won. ProviderTeam: " + ProviderTeam.ToString() + " WinTeam: " + WinTeam.ToString());
-                    return CsEventTypes.GAME_TIED;
-                }
+                return CsEventTypes.GAME_TIED;
             }
 
             // Round Ended Events
@@ -494,7 +502,8 @@ namespace GoveeLightController {
                 && this.WinTeam == otherGameState.WinTeam
                 && this.HasMapInformation == otherGameState.HasMapInformation
                 && this.MapPhase == otherGameState.MapPhase
-                && this.Round == otherGameState.Round
+                && this.ScoreTeamT == otherGameState.ScoreTeamT
+                && this.ScoreTeamCT == otherGameState.ScoreTeamCT
                 && this.IsSpectator == otherGameState.IsSpectator
                 && this.ProviderTeam == otherGameState.ProviderTeam;
         }
@@ -518,7 +527,8 @@ namespace GoveeLightController {
                 hash = hash * 23 + WinTeam.GetHashCode();
                 hash = hash * 23 + HasMapInformation.GetHashCode();
                 hash = hash * 23 + MapPhase.GetHashCode();
-                hash = hash * 23 + Round.GetHashCode();
+                hash = hash * 23 + ScoreTeamT.GetHashCode();
+                hash = hash * 23 + ScoreTeamCT.GetHashCode();
                 hash = hash * 23 + IsSpectator.GetHashCode();
                 hash = hash * 23 + ProviderTeam.GetHashCode();
 
@@ -558,7 +568,8 @@ namespace GoveeLightController {
             output += "\nHasMapInformation: " + HasMapInformation;
             if(HasMapInformation) {
                 output += "\n\tMapPhase: " + MapPhase.ToString();
-                output += "\n\tRound: " + Round;
+                output += "\n\tScoreTeamT: " + ScoreTeamT;
+                output += "\n\tScoreTeamCT: " + ScoreTeamCT;
             }
             
             return output; 
