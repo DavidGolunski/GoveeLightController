@@ -99,13 +99,14 @@ namespace GoveeLightController {
             previousGameState = currentGameState;
             currentGameState = new GameState(csUpdates, previousGameState);
 
+            /*
             if(currentGameState.Equals(previousGameState)) {
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, "Message Handling Successfull. No Changes");
             }
             else {
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, "Message Handling Successfull\n" + currentGameState.ToString());
             }
-
+            */
             return true;
         }
 

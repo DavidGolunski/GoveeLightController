@@ -23,11 +23,12 @@ namespace GoveeLightController {
 
         HAS_DIED,
         HAS_KILLED,
+        HAS_KILLED_HEADSHOT,
         HAS_ASSISTED,
         HAS_REVIVED,
 
-        TEAM_PLANTED_BOMB,
-        ENEMIES_PLANTED_BOMB,
+        HAS_BOUGHT_EQUIPMENT,
+
 
         STARTED_FLASHED,
         STARTED_SMOKED,
@@ -95,6 +96,8 @@ namespace GoveeLightController {
         private int PlayerSmoked { get; set; } = -1;
         private int PlayerBurning { get; set; } = -1;
         private int RoundKills { get; set; } = -1;
+        private int RoundKillsHS { get; set; } = -1;
+        private int EquipValue { get; set; } = -1;
         private int RoundTotalDamage { get; set; } = -1; // this is only sent if the user is a spectator to a game (not a dead player spectating someone else). If this is set, then the provider is definetely spectating
 
         // round information
@@ -205,8 +208,15 @@ namespace GoveeLightController {
             string roundKills = state["round_kills"]?.ToString();
             if(!string.IsNullOrEmpty(roundKills)) RoundKills = Convert.ToInt32(roundKills);
 
+            string roundHsKills = state["round_killhs"]?.ToString();
+            if(!string.IsNullOrEmpty(roundHsKills)) RoundKillsHS = Convert.ToInt32(roundHsKills);
+
+            string equipmentValue = state["equip_value"]?.ToString();
+            if(!string.IsNullOrEmpty(equipmentValue)) EquipValue = Convert.ToInt32(equipmentValue);
+
             string roundTotalDamage = state["round_totaldmg"]?.ToString();
             if(!string.IsNullOrEmpty(roundTotalDamage)) RoundTotalDamage = Convert.ToInt32(roundTotalDamage); // if this field exists, the provider is a spectator to a game as they can see information that players of the game can't see
+
 
             return true;
         }
@@ -505,52 +515,60 @@ namespace GoveeLightController {
                 return CsEventTypes.NO_EVENT;
             }
 
-            // flash events
-            if(IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
-                && previousGameState.PlayerFlashed < PlayerFlashed && PlayerFlashed > 0)
-                return CsEventTypes.STARTED_FLASHED;
-
-            // bomb planted events
-            if(IsProviderPlayingAndAlive && HasRoundInformation && previousGameState.HasRoundInformation 
-                && RoundPhase == CsRoundPhases.LIVE && ProviderTeam != CsTeam.UNAVAILABLE 
-                && BombStatus == CsBombStatus.PLANTED && previousGameState.BombStatus == CsBombStatus.UNAVAILABLE)
-                return ProviderTeam == CsTeam.T ? CsEventTypes.TEAM_PLANTED_BOMB : CsEventTypes.ENEMIES_PLANTED_BOMB;
-
-
-            // kill events
-            if(HasMapInformation && IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerInformation && RoundKills > previousGameState.RoundKills)
-                return CsEventTypes.HAS_KILLED;
-
             // death events
-            if(HasMapInformation && IsProviderPlaying && PlayerHealth == 0 && previousGameState.PlayerHealth > 0)
+            if(HasMapInformation && IsProviderPlaying && PlayerHealth == 0 && previousGameState.PlayerHealth > 0 && 
+                HasRoundInformation && RoundPhase == CsRoundPhases.LIVE)
                 return CsEventTypes.HAS_DIED;
 
             // revive events
             if(HasMapInformation && IsProviderPlayingAndAlive && !previousGameState.IsProviderPlayingAndAlive)
                 return CsEventTypes.HAS_REVIVED;
 
+            // has bought events
+            if(HasMapInformation && IsProviderPlayingAndAlive && HasRoundInformation && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
+                && RoundPhase == CsRoundPhases.FREEZETIME && EquipValue > previousGameState.EquipValue)
+                return CsEventTypes.HAS_BOUGHT_EQUIPMENT;
+
+
+            // from here on out all events should only happen if the provider is alive and the round is live (don't flash green when you make kills after the round has ended)
+            if(!IsProviderPlayingAndAlive || RoundPhase != CsRoundPhases.LIVE)
+                return CsEventTypes.NO_EVENT; // exit early, since no other events will happen
+
+
+            // flash events
+            if(HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
+                && previousGameState.PlayerFlashed < PlayerFlashed && PlayerFlashed > 0) // player flashed is either 1 or 0
+                return CsEventTypes.STARTED_FLASHED;
+
+            // kill headshot event
+            if(HasMapInformation && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation && RoundKillsHS > previousGameState.RoundKillsHS)
+                return CsEventTypes.HAS_KILLED_HEADSHOT;
+
+            // kill events
+            if(HasMapInformation && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation && RoundKills > previousGameState.RoundKills)
+                return CsEventTypes.HAS_KILLED;
+
             // stopped smoke events
-            if(IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
-                && previousGameState.PlayerSmoked > PlayerSmoked && PlayerSmoked == 0)
+            if(HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
+                && previousGameState.PlayerSmoked > PlayerSmoked && previousGameState.PlayerSmoked > 80 && PlayerSmoked <= 80)
                 return CsEventTypes.STOPPED_SMOKED;
 
             // started smoked events
-            if(IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
-                && previousGameState.PlayerSmoked < PlayerSmoked && PlayerSmoked > 0)
+            if(HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
+                && previousGameState.PlayerSmoked < PlayerSmoked && previousGameState.PlayerSmoked <= 80 && PlayerSmoked > 80) // can go up to 255, but with a value around 80 your vision in cs starts to get grey
                 return CsEventTypes.STARTED_SMOKED;
 
             // stopped burning events
-            if(IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
-                && previousGameState.PlayerBurning > PlayerBurning && PlayerBurning == 0)
+            if(HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
+                && previousGameState.PlayerBurning > PlayerBurning && PlayerBurning < 255) // the value of 255 is only slowly going down, even if you are totally out of the fire already
                 return CsEventTypes.STOPPED_BURNING;
 
             // started burning events
-            if(IsProviderPlayingAndAlive && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
-                && previousGameState.PlayerBurning < PlayerBurning && PlayerBurning > 0)
+            if(HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
+                && previousGameState.PlayerBurning < PlayerBurning && PlayerBurning == 255) // 255 is the value when you are standing in the fire
                 return CsEventTypes.STARTED_BURNING;
 
           
-
             return CsEventTypes.NO_EVENT;
         }
 
@@ -571,6 +589,8 @@ namespace GoveeLightController {
                 && this.PlayerSmoked == otherGameState.PlayerSmoked
                 && this.PlayerBurning == otherGameState.PlayerBurning
                 && this.RoundKills == otherGameState.RoundKills
+                && this.RoundKillsHS == otherGameState.RoundKillsHS
+                && this.EquipValue == otherGameState.EquipValue
                 && this.RoundTotalDamage == otherGameState.RoundTotalDamage
                 && this.HasRoundInformation == otherGameState.HasRoundInformation
                 && this.RoundPhase == otherGameState.RoundPhase
@@ -599,6 +619,8 @@ namespace GoveeLightController {
                 hash = hash * 23 + PlayerSmoked.GetHashCode();
                 hash = hash * 23 + PlayerBurning.GetHashCode();
                 hash = hash * 23 + RoundKills.GetHashCode();
+                hash = hash * 23 + RoundKillsHS.GetHashCode();
+                hash = hash * 23 + EquipValue.GetHashCode();
                 hash = hash * 23 + RoundTotalDamage.GetHashCode();
                 hash = hash * 23 + HasRoundInformation.GetHashCode();
                 hash = hash * 23 + RoundPhase.GetHashCode();
@@ -637,6 +659,8 @@ namespace GoveeLightController {
                 output += "\n\tPlayerSmoked: " + PlayerSmoked;
                 output += "\n\tPlayerBurning: " + PlayerBurning;
                 output += "\n\tRoundKills: " + RoundKills;
+                output += "\n\tRoundKillsHS: " + RoundKillsHS;
+                output += "\n\tEquipValue: " + EquipValue;
                 output += "\n\tRoundTotalDamage: " + RoundTotalDamage;
             }
 
