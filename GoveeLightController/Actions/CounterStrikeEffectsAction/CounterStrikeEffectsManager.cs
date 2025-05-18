@@ -1,4 +1,5 @@
 ﻿using BarRaider.SdTools;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -151,6 +152,31 @@ namespace GoveeLightController {
                 return null;
 
             return combinedPath;
+        }
+
+        public static string GetPathByAppId(string jsonContent) {
+            // Parse the JSON into a JObject
+            var root = JObject.Parse(jsonContent);
+
+            // Navigate to the "libraryfolders" object
+            var libraryFolders = root["libraryfolders"] as JObject;
+            if(libraryFolders == null)
+                return null;
+
+            // Iterate through each folder entry
+            foreach(var property in libraryFolders.Properties()) {
+                var folder = property.Value as JObject;
+                if(folder == null)
+                    continue;
+
+                var apps = folder["apps"] as JObject;
+                if(apps != null && apps["730"] != null) {
+                    return folder["path"]?.ToString();
+                }
+            }
+
+            // App ID not found
+            return null;
         }
 
         private static bool CopyConfigurationFile(string configurationFileLocation, string targetFolder) {

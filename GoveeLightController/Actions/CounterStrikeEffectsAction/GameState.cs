@@ -307,12 +307,14 @@ namespace GoveeLightController {
                 return;
             }
 
+            /*
             // check if the player is spectating (also happens if the player is in a pre-game team selection). No Provider team is avaialble
-            if(!HasPlayerInformation && !HasPlayerStateInformation && HasMapInformation) {
+            // after you die in competetive you do not get any player information
+            if(!HasPlayerInformation && !HasPlayerStateInformation && HasMapInformation && WinTeam == CsTeam.UNAVAILABLE) {
                 IsSpectator = true;
                 ProviderTeam = CsTeam.UNAVAILABLE;
                 return;
-            }
+            }*/
 
             // check if the Player is actively Playing
             if(IsProviderPlaying && HasMapInformation && HasRoundInformation) {
@@ -321,12 +323,13 @@ namespace GoveeLightController {
                 return;
             }
 
+            /*
             // check if the Player is Playing and spectating another player from their own team. This is the case if they don't have access to the RoundTotalDamage Stat
             if(HasPlayerInformation && HasPlayerStateInformation && HasMapInformation && HasRoundInformation && RoundTotalDamage < 0) {
                 IsSpectator = false;
                 ProviderTeam = PlayerTeam;
                 return;
-            }
+            }*/
 
             // from here we have to rely on the previous state to deliver missing information
             if(previousState != null) {

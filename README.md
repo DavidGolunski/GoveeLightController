@@ -49,6 +49,13 @@ If you face any issues with the plugin you can always start ask for help on the 
 
 
 ## Change and Release Notes
+### Version 1.2.0
+- Fixed a bug that could cause light shows to get stuck if they get spammed
+- Fixed many errors with the CS-Integration event detection
+- CS-Integration now also works as a spectator with many custom events
+- Added a lot of CS events like "Flashed", "Burning", "Smoked", "Bought Item"
+- The plugin will also look for CounterStrike installations on your default "D:" and "E": drive location for Steam games. This is needed to place the configuration file automatically.
+
 ### Version 1.1.0
 - Improved stability of light scripts
 - ScriptActions now show which action is currently running and can be stopped by holding the button down
