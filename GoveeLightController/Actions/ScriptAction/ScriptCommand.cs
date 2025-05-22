@@ -323,7 +323,6 @@ namespace GoveeLightController {
 
                 // wait on the script task to exit gracefully
                 ScriptActionTask?.GetAwaiter().GetResult();
-                Task.Delay(10).GetAwaiter().GetResult(); // added this delay because without it the lights can get stuck sometimes
                 
                 cancellationTokenSource.Dispose();
                 cancellationTokenSource = null;
@@ -348,6 +347,7 @@ namespace GoveeLightController {
             ScriptActionTask = Task.Run(async () => {
                 ActiveScriptActionName = action;
                 OnActiveScriptActionChanged?.Invoke();
+                Task.Delay(10).GetAwaiter().GetResult(); // added this delay because without it the lights can get stuck sometimes when spammed
 
                 try {
                     await RunScriptAction(commands, ips, cancellationToken);
