@@ -54,7 +54,7 @@ If you face any issues with the plugin you can always start ask for help on the 
 - Fixed many errors with the CS-Integration event detection
 - CS-Integration now also works as a spectator with many custom events
 - Added a lot of CS events like "Flashed", "Burning", "Smoked", "Bought Item"
-- The plugin will also look for CounterStrike installations on your default "D:" and "E": drive location for Steam games. This is needed to place the configuration file automatically.
+- The plugin will not find the CS installation path more reliably
 
 ### Version 1.1.0
 - Improved stability of light scripts

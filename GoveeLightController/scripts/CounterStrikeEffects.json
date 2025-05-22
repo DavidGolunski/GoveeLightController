@@ -57,7 +57,7 @@
     { "command": "CallOtherAction", "name": "CS@ROUND_LOST" }
   ],
   "_CS@GAME_WON": [
-    { "command": "SetColor", "r": 0, "g": 255, "b": 0 },
+    { "command": "SetColor", "r": 255, "g": 188, "b": 0 },
     { "command": "CallOtherAction", "name": "_CS_TURN_ON_IF_DEAD" },
     { "command": "CallOtherAction", "name": "_CS_ACTIVATE_HIGHLIGHT_BRIGHTNESS" },
 
@@ -128,28 +128,41 @@
     { "command": "Wait", "delay": 10 },
     { "command": "ActivatePrimaryColor" }
   ],
+  "_CS@HAS_KILLED_HEADSHOT": [
+    { "command": "SetColor", "r": 255, "g": 188, "b": 0 },
+    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_HIGHLIGHT_BRIGHTNESS" },
+    { "command": "Wait", "delay": 1000 },
+    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" },
+    { "command": "Wait", "delay": 10 },
+    { "command": "ActivatePrimaryColor" }
+  ],
   "_CS@HAS_DIED": [
     { "command": "SetColor", "r": 255, "g": 0, "b": 0 },
     { "command": "CallOtherAction", "name": "_CS_ACTIVATE_HIGHLIGHT_BRIGHTNESS" },
     { "command": "Wait", "delay": 2000 },
     { "command": "TurnOff" }
   ],
-  "_CS@HAS_REVIVED": [
+  "_CS@HAS_REVIVED_T": [
+    { "command": "SetPrimaryColor", "r": 255, "g": 106, "b": 0 },
     { "command": "ActivatePrimaryColor" },
     { "command": "Wait", "delay": 10 },
     { "command": "TurnOn" },
     { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" }
   ],
-  "_CS@TEAM_PLANTED_BOMB": [
-    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_HIGHLIGHT_BRIGHTNESS" },
-    { "command": "Wait", "delay": 2000 },
+  "_CS@HAS_REVIVED_CT": [
+    { "command": "SetPrimaryColor", "r": 0, "g": 0, "b": 255 },
+    { "command": "ActivatePrimaryColor" },
+    { "command": "Wait", "delay": 10 },
+    { "command": "TurnOn" },
     { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" }
   ],
-  "_CS@ENEMIES_PLANTED_BOMB": [
-    { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
+  "_CS@HAS_BOUGHT_EQUIPMENT": [
+    { "command": "SetColor", "r": 255, "g": 255, "b": 0 },
     { "command": "CallOtherAction", "name": "_CS_ACTIVATE_HIGHLIGHT_BRIGHTNESS" },
-    { "command": "Wait", "delay": 2000 },
-    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" }
+    { "command": "Wait", "delay": 300 },
+    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" },
+    { "command": "Wait", "delay": 10 },
+    { "command": "ActivatePrimaryColor" }
   ],
   "_CS@STARTED_FLASHED": [
     { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
@@ -186,10 +199,13 @@
     { "command": "TurnOn" },
     { "command": "CallOtherAction", "name": "_CS_ACTIVATE_HIGHLIGHT_BRIGHTNESS" },
     { "command": "Wait", "delay": 2000 },
-    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" }
+    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" },
+    { "command": "Wait", "delay": 10 },
+    { "command": "ActivatePrimaryColor" }
   ],
   "_CS@SPECTATOR_FREECAM": [
-    { "command": "SetColor", "r": 255, "g": 255, "b": 255 },
+    { "command": "SetPrimaryColor", "r": 255, "g": 255, "b": 255 },
+    { "command": "ActivatePrimaryColor" },
     { "command": "Wait", "delay": 10 },
     { "command": "TurnOn" },
     { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" }
@@ -206,16 +222,15 @@
     { "command": "ActivatePrimaryColor" },
     { "command": "Wait", "delay": 10 },
     { "command": "TurnOn" },
-    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" } ],
+    { "command": "CallOtherAction", "name": "_CS_ACTIVATE_DEFAULT_BRIGHTNESS" } 
+  ],
   "_CS@SPECTATOR_ROUND_WON_T": [
     { "command": "SetColor", "r": 255, "g": 106, "b": 0 },
     { "command": "Wait", "delay": 10 },
     { "command": "TurnOn" },
     { "command": "CallOtherAction", "name": "_CS_ACTIVATE_HIGHLIGHT_BRIGHTNESS" }, 
     { "command": "Wait", "delay": 3000 },
-    { "command": "SetBrightness", "value": 20 },
-    { "command": "Wait", "delay": 100 },
-    { "command": "SetColor", "r": 255, "g": 106, "b": 0 }
+    { "command": "SetBrightness", "value": 20 }
   ],
   "_CS@SPECTATOR_ROUND_WON_CT": [
     { "command": "SetColor", "r": 0, "g": 0, "b": 255 },
@@ -223,9 +238,7 @@
     { "command": "TurnOn" },
     { "command": "CallOtherAction", "name": "_CS_ACTIVATE_HIGHLIGHT_BRIGHTNESS" }, 
     { "command": "Wait", "delay": 3000 },
-    { "command": "SetBrightness", "value": 20 },
-    { "command": "Wait", "delay": 100 },
-    { "command": "SetColor", "r": 0, "g": 0, "b": 255 }
+    { "command": "SetBrightness", "value": 20 }
   ],
   "_CS@SPECTATOR_ROUND_WON_CT_BOMB_DEFUSED": [
     { "command": "CallOtherAction", "name": "_CS@SPECTATOR_ROUND_WON_CT" }

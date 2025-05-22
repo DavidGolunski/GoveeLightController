@@ -53,8 +53,8 @@ namespace GoveeLightController {
 
 
             // Delete GameStateLog file if it exists
-            if(File.Exists("GameStateLog.txt"))
-                File.Delete("GameStateLog.txt");
+            // if(File.Exists("GameStateLog.txt"))
+            //    File.Delete("GameStateLog.txt");
 
             cancellationTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = cancellationTokenSource.Token;
@@ -183,7 +183,7 @@ namespace GoveeLightController {
                 // Inside apps, check if app ID of CounterStrike exists
                 if (insideApps && line.StartsWith("\"730\"")) {
                     if(currentPath == null) {
-                        Logger.Instance.LogMessage(TracingLevel.DEBUG, "Found AppID 730, but have not found a path");
+                        Logger.Instance.LogMessage(TracingLevel.DEBUG, "Found AppID 730, but did not find a path");
                         return null;
                     }
                     break;

@@ -158,20 +158,21 @@ The following list is _ordered by the priority in which the events will be trigg
 19. __CS@ROUND_LOST_BOMB_DEFUSED__: Happens if you loose a round by letting the bomb get defused.
 20. __CS@ROUND_WON__: Happens if you win a round.
 21. __CS@ROUND_LOST__: Happens if you loose a round.
-22. __CS@ROUND_STARTED_T__: Happens if a new round (or warmup) starts in which you are in the "Terrosit" Team.
-23. __CS@ROUND_STARTED_CT__: Happens if a new round (or warmup) starts in which you are in the "Terrosit" Team.
+22. __CS@ROUND_STARTED_T__: Happens if a new round (or warmup) starts in which you are in the "Terrorist" team.
+23. __CS@ROUND_STARTED_CT__: Happens if a new round (or warmup) starts in which you are in the "Terrorist" team.
 24. __CS@HAS_DIED__: Happens when you die in game.
-25. __CS@HAS_REVIVED__: Happens if you revive in game (this can happen in gamemodes like Deathmatch or Arms Race).
-26. __CS@HAS_BOUGH_EQUIPMENT__: Happens when you buy equipment during the buy phase.
-27. __CS@STARTED_FLASHED__: Happens when you get flashed. (you need to be alive for this event to happen).
-28. __CS@HAS_KILLED_HEADSHOT__: Happens if you kill an enemy with a headshot. (you need to be alive for this event to happen).
-29. __CS@HAS_KILLED__: Happens if you kill an enemy. (you need to be alive for this event to happen).
-30. __CS@STOPPED_SMOKED__: Happens if you step out of a smoke. (you need to be alive for this event to happen).
-31. __CS@STARTED_SMOKED__: Happens if you step into a smoke. (you need to be alive for this event to happen).
-32. __CS@STOPPED_BURNING__: Happens if you step out of a molotov. (you need to be alive for this event to happen).
-33. __CS@STARTED_BURNING__: Happens if you step into a molotov. (you need to be alive for this event to happen).
-34. __CS@INTEGRAITON_STARTED__: Happens when you start the integration.
-35. __CS@INTEGRATION_STOPPED__: Happens when you stop the integration.
+25. __CS@HAS_REVIVED_T__: Happens if you revive in game in the "Terrorist" team (this can happen in gamemodes like Deathmatch or Arms Race, or when in warm-ups).
+26. __CS@HAS_REVIVED_CT__: Happens if you revive in game in the "Counter-Terrorist" team (this can happen in gamemodes like Deathmatch or Arms Race, or when in warm-ups).
+27. __CS@HAS_BOUGH_EQUIPMENT__: Happens when you buy equipment during the buy phase.
+28. __CS@STARTED_FLASHED__: Happens when you get flashed. (you need to be alive for this event to happen).
+29. __CS@HAS_KILLED_HEADSHOT__: Happens if you kill an enemy with a headshot. (you need to be alive for this event to happen).
+30. __CS@HAS_KILLED__: Happens if you kill an enemy. (you need to be alive for this event to happen).
+31. __CS@STOPPED_SMOKED__: Happens if you step out of a smoke. (you need to be alive for this event to happen).
+32. __CS@STARTED_SMOKED__: Happens if you step into a smoke. (you need to be alive for this event to happen).
+33. __CS@STOPPED_BURNING__: Happens if you step out of a molotov. (you need to be alive for this event to happen).
+34. __CS@STARTED_BURNING__: Happens if you step into a molotov. (you need to be alive for this event to happen).
+35. __CS@INTEGRAITON_STARTED__: Happens when you start the integration.
+36. __CS@INTEGRATION_STOPPED__: Happens when you stop the integration.
 
 
 

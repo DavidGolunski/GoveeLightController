@@ -63,8 +63,8 @@ namespace GoveeLightController {
                 }
 
                 successfull = HandleMessage(json);
-                string timestampedEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {json.Replace("\n", " ").Replace("\t", " ")}{Environment.NewLine}";
-                File.AppendAllText("GameStateLog.txt", timestampedEntry);
+                // string timestampedEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {json.Replace("\n", " ").Replace("\t", " ")}{Environment.NewLine}";
+                // File.AppendAllText("GameStateLog.txt", timestampedEntry);
                 
                 // Send a response back to CS
                 HttpListenerResponse response = context.Response;

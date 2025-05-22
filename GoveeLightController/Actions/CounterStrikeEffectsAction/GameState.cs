@@ -25,7 +25,8 @@ namespace GoveeLightController {
         HAS_KILLED,
         HAS_KILLED_HEADSHOT,
         HAS_ASSISTED,
-        HAS_REVIVED,
+        HAS_REVIVED_T,
+        HAS_REVIVED_CT,
 
         HAS_BOUGHT_EQUIPMENT,
 
@@ -175,13 +176,9 @@ namespace GoveeLightController {
             string playerTeamString = player["team"]?.ToString();
             if("T".Equals(playerTeamString)) {
                 PlayerTeam = CsTeam.T;
-                if(PlayerSteamID == ProviderSteamID)
-                    ProviderTeam = CsTeam.T;
             }
             else if("CT".Equals(playerTeamString)) {
                 PlayerTeam = CsTeam.CT;
-                if(PlayerSteamID == ProviderSteamID)
-                    ProviderTeam = CsTeam.CT;
             }
 
             return true;
@@ -307,29 +304,12 @@ namespace GoveeLightController {
                 return;
             }
 
-            /*
-            // check if the player is spectating (also happens if the player is in a pre-game team selection). No Provider team is avaialble
-            // after you die in competetive you do not get any player information
-            if(!HasPlayerInformation && !HasPlayerStateInformation && HasMapInformation && WinTeam == CsTeam.UNAVAILABLE) {
-                IsSpectator = true;
-                ProviderTeam = CsTeam.UNAVAILABLE;
-                return;
-            }*/
-
             // check if the Player is actively Playing
-            if(IsProviderPlaying && HasMapInformation && HasRoundInformation) {
+            if(IsProviderPlaying && HasMapInformation) { 
                 IsSpectator = false;
                 ProviderTeam = PlayerTeam;
                 return;
             }
-
-            /*
-            // check if the Player is Playing and spectating another player from their own team. This is the case if they don't have access to the RoundTotalDamage Stat
-            if(HasPlayerInformation && HasPlayerStateInformation && HasMapInformation && HasRoundInformation && RoundTotalDamage < 0) {
-                IsSpectator = false;
-                ProviderTeam = PlayerTeam;
-                return;
-            }*/
 
             // from here we have to rely on the previous state to deliver missing information
             if(previousState != null) {
@@ -517,15 +497,22 @@ namespace GoveeLightController {
                 Logger.Instance.LogMessage(TracingLevel.WARN, "Wanted to send Round Started Event, but ProviderTeam was not a valid Team.\n" + this.ToString());
                 return CsEventTypes.NO_EVENT;
             }
-
             // death events
             if(HasMapInformation && IsProviderPlaying && PlayerHealth == 0 && previousGameState.PlayerHealth > 0 && 
                 HasRoundInformation && RoundPhase == CsRoundPhases.LIVE)
                 return CsEventTypes.HAS_DIED;
 
             // revive events
-            if(HasMapInformation && IsProviderPlayingAndAlive && !previousGameState.IsProviderPlayingAndAlive)
-                return CsEventTypes.HAS_REVIVED;
+            if(HasMapInformation && IsProviderPlayingAndAlive && !previousGameState.IsProviderPlayingAndAlive) {
+                if(ProviderTeam == CsTeam.T)
+                    return CsEventTypes.HAS_REVIVED_T;
+
+                if(ProviderTeam == CsTeam.CT)
+                    return CsEventTypes.HAS_REVIVED_CT;
+
+                Logger.Instance.LogMessage(TracingLevel.WARN, "Wanted to send Revived Event, but ProviderTeam was not a valid Team.\n" + this.ToString());
+                return CsEventTypes.NO_EVENT;
+            }
 
             // has bought events
             if(HasMapInformation && IsProviderPlayingAndAlive && HasRoundInformation && HasPlayerStateInformation && previousGameState.HasPlayerStateInformation
