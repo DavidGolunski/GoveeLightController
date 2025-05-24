@@ -55,6 +55,9 @@ If you face any issues with the plugin you can always start ask for help on the 
 - CS-Integration now also works as a spectator with many custom events
 - Added a lot of CS events like "Flashed", "Burning", "Smoked", "Bought Item"
 - The plugin will not find the CS installation path more reliably
+- Added the "Set Temperature" action
+- Added the "Temperature Control" dial action
+- Added the "SetTemperature" light show command
 
 ### Version 1.1.0
 - Improved stability of light scripts

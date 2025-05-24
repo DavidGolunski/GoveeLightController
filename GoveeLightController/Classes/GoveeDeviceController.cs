@@ -78,6 +78,16 @@ namespace GoveeLightController {
             }
         }
 
+        public void SetTemperature(int temperature, List<string> ips = null) {
+            AddNonExistingDevices(ips);
+
+            List<string> ipsToUse = ips ?? _devices.Keys.ToList();
+            foreach(var ip in ipsToUse) {
+                _devices[ip].SetTemperature(temperature);
+            }
+        }
+
+
         #region supportive functions
         // heavily used by action settings (DeviceSettings) and ScriptCommands
         public static bool IsValidIP(string ip) {

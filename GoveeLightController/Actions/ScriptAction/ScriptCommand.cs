@@ -14,6 +14,7 @@ namespace GoveeLightController {
         TurnOn,
         TurnOff,
         SetColor,
+        SetTemperature,
         SetBrightness,
         SetPrimaryColor,
         ActivatePrimaryColor,
@@ -46,6 +47,7 @@ namespace GoveeLightController {
         public int R { get; set; } // used for SetColor
         public int G { get; set; } // used for SetColor
         public int B { get; set; } // used for SetColor
+        public int Temperature { get; set; } // used for SetTemperature
         public int Value { get; set; } // used for SetBrightness
         public int MinDelay { get; set; } // used for RandomWait
         public int MaxDelay { get; set; } // used for RandomWait
@@ -61,6 +63,7 @@ namespace GoveeLightController {
             R = -1;
             G = -1;
             B = -1;
+            Temperature = -1;
             Value = -1;
             MinDelay = -1;
             MaxDelay = -1;
@@ -79,6 +82,9 @@ namespace GoveeLightController {
                 commandInfo.G = Convert.ToInt32(g);
             if(parameters.TryGetValue("b", out var b))
                 commandInfo.B = Convert.ToInt32(b);
+
+            if(parameters.TryGetValue("temperature", out var temperature))
+                commandInfo.Temperature = Convert.ToInt32(temperature);
 
             if(parameters.TryGetValue("value", out var value))
                 commandInfo.Value = Convert.ToInt32(value);
@@ -165,6 +171,18 @@ namespace GoveeLightController {
                     }
 
                     break;
+                case Commands.SetTemperature:
+                    if(Temperature < 2000 || Temperature > 9000) {
+                        Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid value. A Temperature must be between 2000 and 9000");
+                        return false;
+                    }
+
+                    if(!string.IsNullOrEmpty(IpString) && !GoveeDeviceController.IsValidIP(IpString)) {
+                        Logger.Instance.LogMessage(TracingLevel.ERROR, "The Script Command \"" + Command.ToString() + "\" had an invalid ip address (\"" + IpString + "\"). ");
+                        return false;
+                    }
+
+                    break; 
                 case Commands.ActivatePrimaryColor:
                 case Commands.TurnOn:
                 case Commands.TurnOff:
@@ -223,6 +241,12 @@ namespace GoveeLightController {
                     else
                         GoveeDeviceController.Instance.SetColor(Color.FromArgb(255, R, G, B), new List<string>() { IpString });
                     break;
+                case Commands.SetTemperature:
+                    if(string.IsNullOrEmpty(IpString))
+                        GoveeDeviceController.Instance.SetTemperature(Temperature, ips);
+                    else
+                        GoveeDeviceController.Instance.SetTemperature(Temperature, new List<string>() { IpString });
+                    break; 
                 case Commands.TurnOn:
                     if(string.IsNullOrEmpty(IpString))
                         GoveeDeviceController.Instance.TurnOn(ips);
@@ -264,6 +288,8 @@ namespace GoveeLightController {
                 case Commands.SetPrimaryColor:
                 case Commands.SetColor:
                     return $"{Command}, R({R}), G({G}), B({B})" + " ifCondition: \"" + IfCondition + "\"";
+                case Commands.SetTemperature:
+                    return $"{Command}, Temperature({Temperature}) ifCondition: \"{IfCondition}\"";
                 case Commands.CallOtherAction:
                     return $"{Command}, Name({OtherScriptName})" + " ifCondition: \"" + IfCondition + "\"";
                 case Commands.TurnOn:
@@ -377,11 +403,15 @@ namespace GoveeLightController {
                         // Insert the new commands right after the current one
                         commands.InsertRange(i + 1, newCommands);
                     }
+
+                    if(cancellationToken.IsCancellationRequested)
+                        break;
+
+                    continue;
                 }
 
-                if(cancellationToken.IsCancellationRequested) {
-                    break;
-                }
+                if(cancellationToken.IsCancellationRequested)
+                    break; 
 
                 await Task.Yield(); // Yield to allow responsiveness in async context
             }
@@ -443,12 +473,10 @@ namespace GoveeLightController {
                 foreach(var action in json.Values) {
                     foreach(var command in action) {
                         if(!command.ContainsKey("command")) {
-                            Logger.Instance.LogMessage(TracingLevel.ERROR, "Parsing Error: " + fileName + " did not contain \"command\"");
+                            Logger.Instance.LogMessage(TracingLevel.ERROR, "Parsing Error: " + fileName + " did not contain \"command\" in at least one of its actions");
                             return false;
                         }
-
-
-
+ 
                         string commandName = command["command"].ToString();
                         if(!Enum.TryParse(commandName, true, out Commands parsedCommand) || parsedCommand == Commands.Unknown) {
                             Logger.Instance.LogMessage(TracingLevel.ERROR, "Parsing Error: " + fileName + " had an unknown command (" + commandName + ")");
@@ -459,7 +487,7 @@ namespace GoveeLightController {
                         parameters.Remove("command");
                         ScriptCommand scriptCommand = ScriptCommand.FromDictionary(parsedCommand, parameters);
                         if(scriptCommand == null || !scriptCommand.IsValid()) {
-                            Logger.Instance.LogMessage(TracingLevel.ERROR, "The Command " + scriptCommand + " could not be parsed");
+                            Logger.Instance.LogMessage(TracingLevel.ERROR, "The Command \"" + commandName  + "\" could not be parsed");
                             return false;
                         }
                     }

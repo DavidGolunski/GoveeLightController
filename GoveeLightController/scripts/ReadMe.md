@@ -38,6 +38,13 @@ __Parameters:__
 "b": 0-255  
 (optional) "ip": "[ip address of a light]" - By adding this, this command will only change the light at the ip address  
 
+### Command: "SetTemperature"
+__Description:__  
+Sets the color of the light based on a temperature value
+__Parameters:__  
+"temperature": 2000-9000  
+(optional) "ip": "[ip address of a light]" - By adding this, this command will only change the light at the ip address  
+
 ### Command: "SetBrightness"
 __Description:__  
 Sets the brightness of the light  

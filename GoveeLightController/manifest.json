@@ -73,10 +73,51 @@
       "SupportedInMultiActions": false,
       "DisableCaching": true,
       "UserTitleEnabled": true,
-      "Tooltip": "A Dial action that scrolls through colors",
+      "Tooltip": "A dial action that scrolls through colors",
       "UUID": "com.davidgolunski.goveelightcontroller.setcolordialaction",
       "PropertyInspectorPath": "Actions/SetColorAction/SetColorDialAction.html"
     },
+    {
+      "Icon": "Actions/SetTemperatureAction/TemperatureIcon",
+      "Name": "Set Temperature",
+      "States": [
+        {
+          "Image": "Actions/SetTemperatureAction/LightbulbTemperature",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Changes the color based on a temperature value of one or more lights",
+      "UUID": "com.davidgolunski.goveelightcontroller.settemperatureaction",
+      "PropertyInspectorPath": "Actions/SetTemperatureAction/SetTemperatureAction.html"
+    },
+    {
+      "Icon": "Actions/SetTemperatureAction/TemperatureIcon",
+      "Name": "Temperature Control",
+      "States": [
+        {
+          "Image": "Actions/SetTemperatureAction/TemperatureIcon",
+          "TitleAlignment": "middle",
+          "FontSize": "13"
+        }
+      ],
+      "Controllers": [ "Encoder" ],
+      "Encoder": {
+        "layout": "Actions/SetTemperatureAction/temperatureDialLayout.json",
+        "TriggerDescription": {
+          "Rotate": "Increase/Decrease",
+          "Push": "Increase Rotate Stepsize",
+          "Touch": "Set Current Temperature"
+        }
+      },
+      "SupportedInMultiActions": false,
+      "DisableCaching": true,
+      "UserTitleEnabled": true,
+      "Tooltip": "A dial action that changes the color based on a temperature value",
+      "UUID": "com.davidgolunski.goveelightcontroller.settemperaturedialaction",
+      "PropertyInspectorPath": "Actions/SetTemperatureAction/SetTemperatureDialAction.html"
+    }, 
     {
       "Icon": "Actions/SetBrightnessAction/BrightnessIcon",
       "Name": "Change Brightness",
@@ -114,7 +155,7 @@
       "SupportedInMultiActions": false,
       "DisableCaching": true,
       "UserTitleEnabled": true,
-      "Tooltip": "A Dial action that adjusts the brightness",
+      "Tooltip": "A dial action that adjusts the brightness",
       "UUID": "com.davidgolunski.goveelightcontroller.setbrightnessdialaction",
       "PropertyInspectorPath": "Actions/SetBrightnessAction/SetBrightnessDialAction.html"
     },

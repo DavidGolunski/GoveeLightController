@@ -15,7 +15,9 @@ namespace GoveeLightController {
         public string DeviceId { get; }
         public string Sku { get; }
         public Color CurrentColor { get; private set; } = Color.Black; // Placeholder for color tracking
+        public int CurrentTemperature { get; private set; } = 0; 
         public int CurrentBrightness { get; private set; } = 100;
+        
         private readonly UdpClient _udpClient;
 
         public GoveeDevice(string ip, string deviceId, string sku) {
@@ -43,8 +45,7 @@ namespace GoveeLightController {
         }
 
         public void TurnOn() {
-            var message = new Dictionary<string, object>
-            {
+            var message = new Dictionary<string, object> {
                 { "msg", new { cmd = "turn", data = new { value = 1 } } }
             };
             //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Turning On: " + Ip);
@@ -52,8 +53,7 @@ namespace GoveeLightController {
         }
 
         public void TurnOff() {
-            var message = new Dictionary<string, object>
-            {
+            var message = new Dictionary<string, object> {
                 { "msg", new { cmd = "turn", data = new { value = 0 } } }
             };
             //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Turning Off: " + Ip);
@@ -64,10 +64,9 @@ namespace GoveeLightController {
             if(brightness < 0 || brightness > 100)
                 throw new ArgumentOutOfRangeException(nameof(brightness), "Brightness must be between 0 and 100.");
 
-            var message = new Dictionary<string, object>
-            {
-            { "msg", new { cmd = "brightness", data = new { value = brightness } } }
-        };
+            var message = new Dictionary<string, object> {
+                { "msg", new { cmd = "brightness", data = new { value = brightness } } }
+            };
             SendMessage(message);
             CurrentBrightness = brightness;
             //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Setting Brightness to " + CurrentBrightness + ": " + Ip);
@@ -77,26 +76,46 @@ namespace GoveeLightController {
             if(color == null)
                 throw new ArgumentNullException(nameof(color));
 
-            var message = new Dictionary<string, object>
-            {
-            {
-                "msg", new
+            var message = new Dictionary<string, object> {
                 {
-                    cmd = "colorwc",
-                    data = new
+                    "msg", new
                     {
-                        color = new { r = color.R, g = color.G, b = color.B },
-                        colorTemInKelvin = 0
+                        cmd = "colorwc",
+                        data = new
+                        {
+                            color = new { r = color.R, g = color.G, b = color.B },
+                            colorTemInKelvin = 0
+                        }
                     }
                 }
-            }
-        };
+            };
             SendMessage(message);
             CurrentColor = color;
+            CurrentTemperature = 0;
             //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Setting Color to " + CurrentColor.ToString() + ": " + Ip);
         }
+ 
+        public void SetTemperature(int temperature) {
+            if(temperature < 2000 || temperature > 9000)
+                throw new ArgumentOutOfRangeException(nameof(temperature), "Temperature must be between 2000 and 9000.");
 
-
+            var message = new Dictionary<string, object> {
+                {
+                    "msg", new
+                    {
+                        cmd = "colorwc",
+                        data = new
+                        {
+                            color = new { r = 255, g = 255, b = 255 },
+                            colorTemInKelvin = temperature
+                        }
+                    }
+                }
+            };
+            SendMessage(message);
+            CurrentColor = Color.White;
+            CurrentTemperature = temperature;
+        }
 
         #region static functions
 

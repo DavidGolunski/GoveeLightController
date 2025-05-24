@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <title>GoveeLightController Set Temperature</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdpi.css">
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/sdtools.common.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/rangeTooltip.css">
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi-v2@latest/src/rangeTooltip.js"></script>
+
+    <script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
+</head>
+<body>
+    <div class="sdpi-info-label hidden" style="top: -1000;" value="">Tooltip</div>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Description</div>
+            <div class="sdpi-item-value">
+                Sets the color based on a temperature value of one or more lights specified in the device list below.
+            </div>
+        </div>
+        <br />
+        <div type="range" class="sdpi-item sdShowTooltip" id="dvSpeed">
+            <div class="sdpi-item-label" id="temperatureLabel">Temperature</div>
+            <div class="sdpi-item-value">
+                <span class="clickable" value="2000">2000</span>
+                <input type="range" min="2000" max="9000" value=6500 data-suffix=" K" class="sdProperty" id="temperature" oninput="setSettings()">
+                <span class="clickable" value="9000">9000</span>
+                <label for="temperature" class="rangeLabel"></label>
+            </div>
+        </div>
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Device Selection</div>
+            <select class="sdpi-item-value sdProperty" setting="useGlobalSettingsOption" id="useGlobalSettingsOption" oninput="setSettings()">
+                <option value="global">From Global Settings</option>
+                <option value="local">From Device IP List</option>
+            </select>
+        </div>
+        <div class="sdpi-item" id="dvDeviceIpList">
+            <div class="sdpi-item-label">Device IP List</div>
+            <sdpi-textarea class="sdpi-item-value sdProperty" setting="deviceIpListString" id="deviceIpListString"
+                           rows="4" oninput="setSettings()"></sdpi-textarea>
+        </div>
+        <div class="sdpi-item" id="dvSelectedIps">
+            <div class="sdpi-item-label">Selected IPs</div>
+            <div class="sdpi-item-value sdProperty sdHTML" style="font-size: 16px;" id="validatedDeviceIpListString"></div>
+        </div>
+        <br />
+        <details style="border: 1px solid #ccc; border-radius: 5px; padding: 3px; background: #3d3d3d; font-size: 10px;">
+            <summary style="font-weight: bold; cursor: pointer;">Feedback and Support</summary>
+            <br />
+            <div>Links to Discord, guides and more can be found on the marketplace site!</div>
+            <button onclick="OpenMarketplaceLink()" style="font-size: 10px; padding: 3px">Marketplace</button>
+            <br />
+            <br />
+            <div>The plugin is free, but development is not. Any contribution or feedback no matter how small is greatly appreciated.</div>
+        </details>
+    </div>
+
+    <script>
+        function OpenMarketplaceLink() {
+            if (websocket && (websocket.readyState === 1)) {
+                const json = {
+                    'event': 'openUrl',
+                    'payload': {
+                        'url': 'https://marketplace.elgato.com/product/govee-light-contoller-29d301d8-e245-497e-97e0-23fb09542bb1'
+                    }
+                };
+                websocket.send(JSON.stringify(json));
+            }
+        }
+
+        // Function to toggle visibility
+        function toggleDeviceIpList() {
+            // Get references to the dropdown and the divs
+            const dropdown = document.getElementById('useGlobalSettingsOption');
+            const deviceIpListDiv = document.getElementById('dvDeviceIpList');
+            const selectedIpsDiv = document.getElementById('dvSelectedIps');
+
+            if (dropdown.value === 'global') {
+                deviceIpListDiv.style.display = 'none'; // Hide the div
+                selectedIpsDiv.style.display = 'none';
+            } else {
+                deviceIpListDiv.style.display = ''; // Show the div
+                selectedIpsDiv.style.display = '';
+            }
+        }
+
+        // add Event listener that triggers if the device selection is changed
+        const dropdown = document.getElementById('useGlobalSettingsOption');
+        dropdown.addEventListener('change', toggleDeviceIpList);
+
+
+        // add event listener that triggers when a message is recieved (this is called when the Property inspector is opened)
+        document.addEventListener('websocketCreate', function () {
+
+            websocket.addEventListener('message', function (event) {
+                toggleDeviceIpList();
+            });
+
+        });
+
+    </script>
+</body>
+</html>
