@@ -62,6 +62,7 @@ namespace GoveeLightController {
 
             Logger.Instance.LogMessage(TracingLevel.INFO, "Started Counter Strike Effects Manager Task");
             // run the script that should run, when the cs integration starts
+            Logger.Instance.LogMessage(TracingLevel.INFO, "CounterStrike Event detected: INTEGRATION_STARTED");
             bool successfull = ScriptCommand.StartScriptAction("CS@INTEGRATION_STARTED", deviceIpList);
             if(!successfull) {
                 Logger.Instance.LogMessage(TracingLevel.WARN, "No effect found called: CS@INTEGRATION_STARTED");
@@ -101,6 +102,7 @@ namespace GoveeLightController {
             if(deviceIpList != null) {
                 // run the script that should run, when the cs integration stops
                 bool successfull = ScriptCommand.StartScriptAction("CS@INTEGRATION_STOPPED", deviceIpList);
+                Logger.Instance.LogMessage(TracingLevel.INFO, "CounterStrike Event detected: INTEGRATION_STOPPED");
                 if(!successfull) {
                     Logger.Instance.LogMessage(TracingLevel.WARN, "No effect found called: CS@INTEGRATION_STOPPED");
                 }
@@ -122,7 +124,7 @@ namespace GoveeLightController {
             if(csEvent == CsEventTypes.NO_EVENT)
                 return;
 
-            Logger.Instance.LogMessage(TracingLevel.INFO, "CounterStrike Event Found: " + csEvent.ToString());
+            Logger.Instance.LogMessage(TracingLevel.INFO, "CounterStrike Event detected: " + csEvent.ToString());
 
             bool successfull = ScriptCommand.StartScriptAction("CS@" + csEvent.ToString(), deviceIpList);
             if(!successfull) {

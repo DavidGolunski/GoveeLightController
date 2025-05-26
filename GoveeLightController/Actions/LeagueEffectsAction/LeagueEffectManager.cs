@@ -44,6 +44,7 @@ namespace GoveeLightController {
             Logger.Instance.LogMessage(TracingLevel.INFO, "Started League Effects Manager Task");
 
             // run the script that should run, when the lol integration starts
+            Logger.Instance.LogMessage(TracingLevel.INFO, "League Event detected: INTEGRATION_STARTED");
             bool successfull = ScriptCommand.StartScriptAction("LOL@INTEGRATION_STARTED", deviceIpList);
             if(!successfull) {
                 Logger.Instance.LogMessage(TracingLevel.WARN, "No effect found called: LOL@INTEGRATION_STARTED");
@@ -80,6 +81,7 @@ namespace GoveeLightController {
 
             if(deviceIpList != null) {
                 // run the script that should run, when the lol integration stops
+                Logger.Instance.LogMessage(TracingLevel.INFO, "League Event detected: INTEGRATION_STOPPED");
                 bool successfull = ScriptCommand.StartScriptAction("LOL@INTEGRATION_STOPPED", deviceIpList);
                 if(!successfull) {
                     Logger.Instance.LogMessage(TracingLevel.WARN, "No effect found called: LOL@INTEGRATION_STOPPED");
@@ -100,7 +102,7 @@ namespace GoveeLightController {
             if(leagueEvent == LeagueEventTypes.NO_EVENT)
                 return;
 
-            Logger.Instance.LogMessage(TracingLevel.INFO, "League Event found: " + leagueEvent.ToString());
+            Logger.Instance.LogMessage(TracingLevel.INFO, "League Event detected: " + leagueEvent.ToString());
             bool successfull = ScriptCommand.StartScriptAction("LOL@" + leagueEvent.ToString(), deviceIpList);
             if(!successfull) {
                 Logger.Instance.LogMessage(TracingLevel.WARN, "No effect found called: LOL@" + leagueEvent.ToString());
