@@ -50,14 +50,14 @@ If you face any issues with the plugin you can always start ask for help on the 
 
 ## Change and Release Notes
 ### Version 1.2.0
+- Added the "Set Temperature" action
+- Added the "Temperature Control" dial action
+- Added the "SetTemperature" light show command
 - Fixed a bug that could cause light shows to get stuck if they get spammed
 - Fixed many errors with the CS-Integration event detection
 - CS-Integration now also works as a spectator with many custom events
 - Added a lot of CS events like "Flashed", "Burning", "Smoked", "Bought Item"
-- The plugin will not find the CS installation path more reliably
-- Added the "Set Temperature" action
-- Added the "Temperature Control" dial action
-- Added the "SetTemperature" light show command
+- The plugin will now find the CS installation path more reliably
 
 ### Version 1.1.0
 - Improved stability of light scripts
