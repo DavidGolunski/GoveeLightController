@@ -370,13 +370,13 @@ namespace GoveeLightController {
             CancellationToken cancellationToken = cancellationTokenSource.Token;
             
 
-            ScriptActionTask = Task.Run(async () => {
+            ScriptActionTask = Task.Run(() => {
                 ActiveScriptActionName = action;
                 OnActiveScriptActionChanged?.Invoke();
                 Task.Delay(10).GetAwaiter().GetResult(); // added this delay because without it the lights can get stuck sometimes when spammed
 
                 try {
-                    await RunScriptAction(commands, ips, cancellationToken);
+                    RunScriptAction(commands, ips, cancellationToken);
                     // automatically notify the ActiveScript Listeners about the end of this function, this will be skipped if task is cancelled
                     ActiveScriptActionName = null;
                     OnActiveScriptActionChanged?.Invoke();
@@ -390,7 +390,7 @@ namespace GoveeLightController {
         }
 
 
-        private static async Task RunScriptAction(List<ScriptCommand> commands, List<string> ips, CancellationToken cancellationToken) {
+        private static void RunScriptAction(List<ScriptCommand> commands, List<string> ips, CancellationToken cancellationToken) {
             for(int i = 0; i < commands.Count && !cancellationToken.IsCancellationRequested; i++) {
                
 
@@ -412,8 +412,6 @@ namespace GoveeLightController {
 
                 if(cancellationToken.IsCancellationRequested)
                     break; 
-
-                await Task.Yield(); // Yield to allow responsiveness in async context
             }
         }
 

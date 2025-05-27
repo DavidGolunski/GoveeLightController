@@ -53,8 +53,8 @@ namespace GoveeLightController {
 
 
             // Delete GameStateLog file if it exists
-            // if(File.Exists("GameStateLog.txt"))
-            //    File.Delete("GameStateLog.txt");
+            //if(File.Exists("GameStateLog.txt"))
+            //   File.Delete("GameStateLog.txt");
 
             cancellationTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = cancellationTokenSource.Token;
