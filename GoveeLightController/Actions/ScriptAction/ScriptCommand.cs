@@ -221,6 +221,7 @@ namespace GoveeLightController {
                 return null;
             }
 
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Executing " + this.ToString() + " " + LeagueAPI.Instance.IsDead);
             switch(Command) {
                 case Commands.Wait:
                     Task.Delay(Delay, cancellationToken).Wait(cancellationToken);
@@ -278,29 +279,33 @@ namespace GoveeLightController {
         }
 
         public override string ToString() {
+            string result = Command.ToString();
             switch(Command) {
                 case Commands.Wait:
-                    return $"{Command}, Delay({Delay})" + " ifCondition: \"" + IfCondition + "\"";
+                    result += $"Delay({Delay})";
+                    break;
                 case Commands.RandomWait:
-                    return $"{Command}, Min({MinDelay}), Max({MaxDelay})" + " ifCondition: \"" + IfCondition + "\"";
+                    result += $"Min({MinDelay}), Max({MaxDelay})";
+                    break;
                 case Commands.SetBrightness:
-                    return $"{Command}, Value({Value})" + " ifCondition: \"" + IfCondition + "\"";
+                    result += $"Value({Value})";
+                    break;
                 case Commands.SetPrimaryColor:
                 case Commands.SetColor:
-                    return $"{Command}, R({R}), G({G}), B({B})" + " ifCondition: \"" + IfCondition + "\"";
+                    result += $"R({R}), G({G}), B({B})";
+                    break;
                 case Commands.SetTemperature:
-                    return $"{Command}, Temperature({Temperature}) ifCondition: \"{IfCondition}\"";
+                    result += $"Temperature({Temperature})";
+                    break;
                 case Commands.CallOtherAction:
-                    return $"{Command}, Name({OtherScriptName})" + " ifCondition: \"" + IfCondition + "\"";
-                case Commands.TurnOn:
-                case Commands.TurnOff:
-                case Commands.ActivatePrimaryColor:
-                case Commands.Unknown:
-                default:
-                    return Command.ToString() + " ifCondition: \"" + IfCondition + "\"";
+                    result += $"Name({OtherScriptName})";
+                    break;
             }
-        }
 
+            if(!string.IsNullOrEmpty(IfCondition))
+                result += " if: \"" + IfCondition + "\"";
+            return result;
+        }
 
         #region static functions
 
@@ -362,6 +367,8 @@ namespace GoveeLightController {
             if(commands == null)
                 return false;
 
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Starting Action " + action);
+
             StopScriptAction(); // Ensure any running task is stopped
             if(commands.Count == 0)
                 return true;
@@ -384,6 +391,7 @@ namespace GoveeLightController {
                 catch(OperationCanceledException) { 
                     // Expected during cancellation
                 }
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Stopped Script Action: " + action);
             });
 
             return true;
@@ -391,28 +399,44 @@ namespace GoveeLightController {
 
 
         private static void RunScriptAction(List<ScriptCommand> commands, List<string> ips, CancellationToken cancellationToken) {
-            for(int i = 0; i < commands.Count && !cancellationToken.IsCancellationRequested; i++) {
-               
+            int listIndex = 0;
 
-                string result = commands[i].Execute(cancellationToken, ips); // Execute the command
+            List<ScriptCommand> currentCommands = new List<ScriptCommand>();
+            currentCommands.AddRange(commands);
+
+            while(!cancellationToken.IsCancellationRequested) { 
+                if(listIndex >= currentCommands.Count)
+                    break; 
+
+                string commandListString = "[";
+                for(int j = listIndex; j < currentCommands.Count; j++) {
+                    if(j != listIndex)
+                        commandListString += ", ";
+
+                    commandListString += currentCommands[j].Command.ToString();
+                }
+                commandListString += "]";
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "CommandList: " + commandListString);
+
+
+                string result = currentCommands[listIndex].Execute(cancellationToken, ips);
 
                 // if the function returned a string, then a new action should be called
-                if(!string.IsNullOrEmpty(result)) {
+                if(!string.IsNullOrEmpty(result)) { 
                     List<ScriptCommand> newCommands = GetAction(result);
-                    if(newCommands != null && newCommands.Count > 0) {
-                        // Insert the new commands right after the current one
-                        commands.InsertRange(i + 1, newCommands);
+                    if(newCommands == null || newCommands.Count == 0) {
+                        listIndex += 1;
+                        continue;
                     }
-
-                    if(cancellationToken.IsCancellationRequested)
-                        break;
-
-                    continue;
+                    currentCommands.RemoveRange(0, listIndex + 1);
+                    currentCommands.InsertRange(0, newCommands);
+                    listIndex = 0;
+                    continue; 
                 }
 
-                if(cancellationToken.IsCancellationRequested)
-                    break; 
+                listIndex += 1;
             }
+
         }
 
 
