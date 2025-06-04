@@ -49,6 +49,9 @@ If you face any issues with the plugin you can always start ask for help on the 
 
 
 ## Change and Release Notes
+### Version 1.2.1
+- Hotfix: Fixed a memory issue with "CallOtherAction" lightshow commands
+
 ### Version 1.2.0
 - Added the "Set Temperature" action
 - Added the "Temperature Control" dial action

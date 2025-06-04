@@ -221,7 +221,6 @@ namespace GoveeLightController {
                 return null;
             }
 
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Executing " + this.ToString() + " " + LeagueAPI.Instance.IsDead);
             switch(Command) {
                 case Commands.Wait:
                     Task.Delay(Delay, cancellationToken).Wait(cancellationToken);
@@ -367,8 +366,6 @@ namespace GoveeLightController {
             if(commands == null)
                 return false;
 
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Starting Action " + action);
-
             StopScriptAction(); // Ensure any running task is stopped
             if(commands.Count == 0)
                 return true;
@@ -391,7 +388,6 @@ namespace GoveeLightController {
                 catch(OperationCanceledException) { 
                     // Expected during cancellation
                 }
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "Stopped Script Action: " + action);
             });
 
             return true;
@@ -407,17 +403,6 @@ namespace GoveeLightController {
             while(!cancellationToken.IsCancellationRequested) { 
                 if(listIndex >= currentCommands.Count)
                     break; 
-
-                string commandListString = "[";
-                for(int j = listIndex; j < currentCommands.Count; j++) {
-                    if(j != listIndex)
-                        commandListString += ", ";
-
-                    commandListString += currentCommands[j].Command.ToString();
-                }
-                commandListString += "]";
-                Logger.Instance.LogMessage(TracingLevel.DEBUG, "CommandList: " + commandListString);
-
 
                 string result = currentCommands[listIndex].Execute(cancellationToken, ips);
 
